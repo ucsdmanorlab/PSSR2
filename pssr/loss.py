@@ -27,6 +27,7 @@ class SSIMLoss(nn.Module):
         self.ssim = MS_SSIM(channel=channels, win_size=win_size, win_sigma=win_sigma, data_range=1, **kwargs) if ms else SSIM(channel=channels, win_size=win_size, win_sigma=win_sigma, data_range=1, **kwargs)
 
         if mix < 1:
+            # Generate Gaussian window for L1 loss
             coords = torch.arange(win_size, dtype=torch.float) - win_size // 2
 
             gaussian = torch.exp(-(coords ** 2) / (2 * win_sigma ** 2))
@@ -39,8 +40,9 @@ class SSIMLoss(nn.Module):
         self.mix = mix
 
     def forward(self, input, target):
-        x = 1-self.ssim(input, target)
+        x = 1 - self.ssim(input, target)
         if self.mix < 1:
+            # Combine SSIM with L1 loss with applied Gaussian window for elementwise multiplication against non-reduced L1 loss
             l1 = F.conv2d(F.l1_loss(input, target, reduction="none"), self.gaussian.to(input.get_device()), groups=self.channels, padding=(self.win_size-1)//2).mean()  # F.conv2d with Gaussian filter
             x = self.mix*x + (1-self.mix)*l1
         return x
