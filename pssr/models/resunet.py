@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from ._blocks import Reconstruction
 
 class ResUNet(nn.Module):
-    def __init__(self, channels : int, hidden : list[int], scale : int = 4, depth : int = 2, image_range : int = 255):
+    def __init__(self, channels : int = 1, hidden : list[int] = [64, 128, 256, 512, 1024], scale : int = 4, depth : int = 3):
         r"""A modified Residual UNet as detailed in Zhang et al., 2017 with an additional image upscaling block.
 
         Args:
@@ -15,8 +15,6 @@ class ResUNet(nn.Module):
             scale (int) : Upscaling factor for predictions. Choose a power of 2 for best results. Default is 4.
 
             depth (int) : Number of hidden layers per residual block. Default is 2.
-
-            image_range (int) : Value space for images. Default is 255.
         """
         super().__init__()
         
@@ -32,8 +30,6 @@ class ResUNet(nn.Module):
                 self.upscale.append(nn.PixelShuffle(2))
 
         self.reconstuction = Reconstruction(channels, hidden[0], scale)
-
-        self.image_range = image_range
 
     def forward(self, x):
         x = self.norm(x) # Scale input approx from [0, 255] to [-1, 1]
@@ -57,7 +53,7 @@ class ResUNet(nn.Module):
 
         x = self.reconstuction(x)
 
-        x = x * self.image_range / 2 + self.image_range / 2 # Scale output approx from [-1, 1] to [0, 255]
+        x = x * 128 + 128 # Scale output approx from [-1, 1] to [0, 255]
         return x
 
 class _ResBlock(nn.Module):

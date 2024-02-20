@@ -32,15 +32,18 @@ class AdditiveGaussian(Crappifier):
         return np.clip(image + np.random.normal(self.mean, self.deviation, image.shape), 0, 255)
     
 class Poisson(Crappifier):
-    def __init__(self, intensity : float = 1):
+    def __init__(self, gain : float = 0, intensity : float = 1):
         r"""Adds Poisson noise to a low resolution image.
 
         Args:
+            gain (float) : Value gain added to the output.
+
             intensity (float) : Interpolated mix of generated Poisson image. 1 is full noise, 0 is none. Default is 1.
         """
+        self.gain = gain
         self.intensity = intensity
     def crappify(self, image : np.ndarray):
-        return np.clip(self._interpolate(image, np.random.poisson(image/255*image.max())/image.max()*255), 0, 255)
+        return np.clip(self._interpolate(image, np.random.poisson(image/255*image.max())/image.max()*255) + self.gain, 0, 255)
     
     def _interpolate(self, x, y):
         return x * (1 - self.intensity) + y * self.intensity

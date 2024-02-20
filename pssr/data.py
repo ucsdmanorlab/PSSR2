@@ -4,13 +4,10 @@ from torch.utils.data import Dataset
 from pathlib import Path
 from PIL import Image
 from aicsimageio import AICSImage
-from .crappifiers import Crappifier, AdditiveGaussian
-
-# TODO: Replace PIL with np fancy indexing
-# TODO: Proper shuffle call on new epoch
+from .crappifiers import Crappifier, Poisson
 
 class ImageDataset(Dataset):
-    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = AdditiveGaussian(), extension : str = "tif", mode : str = "L", rotation : bool = True, shuffle : bool = True, transforms : list[torch.nn.Module] = None):
+    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), val_split : float = 0.1, extension : str = "tif", mode : str = "L", rotation : bool = True, transforms : list[torch.nn.Module] = None):
         r"""Training dataset for loading high resolution images from individual files and returning high and low resolution pairs, the latter receiving crappification.
 
         Args:
@@ -20,15 +17,13 @@ class ImageDataset(Dataset):
 
             lr_scale (int) : Downscaling factor for low resolution images to simulate undersampling. Choose a power of 2 for best results. Default is 4.
 
-            crappifier (Crappifier) : Crappifier for degrading low resolution images to simulate undersampling. Default is :class:`AdditiveGaussian`.
+            crappifier (Crappifier) : Crappifier for degrading low resolution images to simulate undersampling. Default is :class:`Poisson`.
 
             extension (str) : File extension of images. Default is "tif".
 
             mode (str) : PIL image mode for loading images, e.g. "L" for grayscale, "RGB" for color. Default is "L".
 
-            rotation (bool) : Whether to randomly rotate images when loading data. Default is true.
-
-            shuffle (bool) : Whether to shuffle the order of images when loading data. Default is true.
+            rotation (bool) : Whether to randomly rotate images when loading data. Default is True.
 
             transforms (list[nn.Module]) : Additional final data transforms to apply. Default is None.
         """
@@ -37,8 +32,8 @@ class ImageDataset(Dataset):
         assert path.exists(), "Data does not exist at given path."
 
         self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=path))
-        if shuffle:
-            random.shuffle(self.hr_files)
+        # if shuffle:
+        #     random.shuffle(self.hr_files)
 
         self.path = path
         self.hr_res = hr_res
@@ -48,8 +43,11 @@ class ImageDataset(Dataset):
         self.rotation = rotation
         self.transforms = transforms
 
+        self.val_len = int(val_split*len(self.hr_files))
+        self.train_len = len(self.hr_files)-self.val_len
+
     def __len__(self):
-        return len(self.hr_files)
+        return self.train_len
     
     def __getitem__(self, idx):
         hr = Image.open(Path(self.path, self.hr_files[idx]))
@@ -57,7 +55,7 @@ class ImageDataset(Dataset):
         return _gen_pair(hr, self.hr_res, self.lr_scale, self.rotation, self.crappifier, self.mode, self.transforms)
 
 class SlidingDataset(Dataset):
-    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = AdditiveGaussian(), extension : str = "czi", overlap : int = 32, rotation : bool = True, shuffle : bool = True, transforms : list[torch.nn.Module] = None):
+    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), val_split : float = 0.1, extension : str = "czi", overlap : int = 32, rotation : bool = True, transforms : list[torch.nn.Module] = None):
         r"""Training dataset for loading high resolution image tiles from an image sheet and returning high and low resolution pairs, the latter receiving crappification.
 
         Args:
@@ -67,15 +65,13 @@ class SlidingDataset(Dataset):
 
             lr_scale (int) : Downscaling factor for low resolution images to simulate undersampling. Choose a power of 2 for best results. Default is 4.
 
-            crappifier (Crappifier) : Crappifier for degrading low resolution images to simulate undersampling. Default is :class:`AdditiveGaussian`.
+            crappifier (Crappifier) : Crappifier for degrading low resolution images to simulate undersampling. Default is :class:`Poisson`.
 
             extension (str) : File extension of images. Default is "czi".
 
             overlap (int) : Overlapping pixels between neighboring tiles to increase effective dataset size. Default is 32.
 
-            rotation (bool) : Whether to randomly rotate images when loading data. Default is true.
-
-            shuffle (bool) : Whether to shuffle the order of images when loading data. Default is true.
+            rotation (bool) : Whether to randomly rotate images when loading data. Default is True.
 
             transforms (list[nn.Module]) : Additional final data transforms to apply. Default is None.
         """
@@ -85,15 +81,13 @@ class SlidingDataset(Dataset):
         self.path = path
         
         hr_files = sorted(glob.glob(f"*.{extension}", root_dir=path))
-        if shuffle:
-            random.shuffle(hr_files)
 
         if extension == "czi":
             self.hr_images = [_remove_empty_z(AICSImage(Path(path, file)).get_image_data("CXYZ", T=0)).astype(np.uint8) for file in hr_files]
         else:
             try:
                 # TODO
-                self.hr_images = []
+                self.hr_images = [Image.open(Path(path, file)) for file in hr_files]
             except:
                 raise ValueError(f"File type {extension} not supported.")
 
@@ -108,9 +102,12 @@ class SlidingDataset(Dataset):
         for image in self.hr_images:
             tiles_x, tiles_y = _n_tiles(image, self.hr_res, self.stride)
             self.total_tiles += tiles_x * tiles_y
+
+        self.val_len = int(val_split*self.total_tiles)
+        self.train_len = self.total_tiles-self.val_len
         
     def __len__(self):
-        return self.total_tiles
+        return self.train_len
     
     def __getitem__(self, idx):
         assert idx < self.total_tiles, "Tried to retrieve invalid tile."
@@ -124,7 +121,7 @@ class SlidingDataset(Dataset):
         return _gen_pair(result, self.hr_res, self.lr_scale, self.rotation, self.mode, self.crappifier, self.transforms)
     
 class PairedImageDataset(Dataset):
-    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_res : int = 128, extension : str = "tif", mode : str = "L", rotation : bool = True, transforms : list[torch.nn.Module] = None):
+    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_res : int = 128, val_split : float = 0.1, extension : str = "tif", mode : str = "L", rotation : bool = True, transforms : list[torch.nn.Module] = None):
         r"""Training dataset for loading paired low and high resolution images without using crappification. Can be used for approximating :class:`MixedCrappifier` parameters.
 
         Args:
@@ -140,7 +137,7 @@ class PairedImageDataset(Dataset):
 
             mode (str) : PIL image mode for loading images, e.g. "L" for grayscale, "RGB" for color. Default is "L".
 
-            rotation (bool) : Whether to randomly rotate images when loading data. Default is true.
+            rotation (bool) : Whether to randomly rotate images when loading data. Default is True.
 
             transforms (list[nn.Module]) : Additional final data transforms to apply. Default is None.
         """
@@ -153,6 +150,11 @@ class PairedImageDataset(Dataset):
         self.lr_files = sorted(glob.glob(f"*.{extension}", root_dir=lr_path))
         assert len(self.hr_files) == len(self.lr_files), "Length mismatch between high and low resolution images."
 
+        # if shuffle:
+        #     zipped = list(zip(self.hr_files, self.lr_files))
+        #     random.shuffle(zipped)
+        #     self.hr_files, self.lr_files = zip(*zipped)
+
         self.hr_path = hr_path
         self.lr_path = lr_path
         self.hr_res = hr_res
@@ -161,16 +163,19 @@ class PairedImageDataset(Dataset):
         self.rotation = rotation
         self.transforms = transforms
 
+        self.val_len = int(val_split*len(self.hr_files))
+        self.train_len = len(self.hr_files)-self.val_len
+
     def __len__(self):
-        return len(self.hr_files)
+        return self.train_len
     
     def __getitem__(self, idx):
         hr = Image.open(Path(self.hr_path, self.hr_files[idx]))
         lr = Image.open(Path(self.lr_path, self.lr_files[idx]))
 
-        return _transform_pair(hr, lr, self.hr_res, self.lr_res, self.mode, self.transforms)
+        return _transform_pair(hr, lr, self.hr_res, self.lr_res, self.rotation, self.mode, self.transforms)
     
-def preprocess_hr(path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = AdditiveGaussian(), extension : str = "tif", mode : str = "L"):
+def preprocess_hr(path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), extension : str = "tif", mode : str = "L"):
     r"""Preprocesses and crappifies low resolution images from high resolution images.
     However, it is better for most use cases to process data at runtime using a dataset such as :class:`ImageDataset` to save disk space at the cost of negligible CPU usage.
 
@@ -181,7 +186,7 @@ def preprocess_hr(path : Path, hr_res : int = 512, lr_scale : int = 4, crappifie
 
         lr_scale (int) : Downscaling factor for low resolution images to simulate undersampling. Choose a power of 2 for best results. Default is 4.
 
-        crappifier (Crappifier) : Crappifier for degrading low resolution images to simulate undersampling. Default is :class:`AdditiveGaussian`.
+        crappifier (Crappifier) : Crappifier for degrading low resolution images to simulate undersampling. Default is :class:`Poisson`.
 
         extension (str) : File extension of images. Default is "tif".
 
@@ -216,17 +221,17 @@ def preprocess_hr(path : Path, hr_res : int = 512, lr_scale : int = 4, crappifie
 def _gen_pair(hr, hr_res, lr_scale, rotation, crappifier, mode, transforms):
     r"""Creates training ready pair of images from a single high resolution image.
     """
-    hr = _square_crop(hr).resize(([hr_res]*2), Image.Resampling.NEAREST)
+    hr = _square_crop(hr).resize(([hr_res]*2), Image.Resampling.BILINEAR)
     
     if rotation:
         # Set random rotation and flip in xy axis
         hr = np.rot90(hr, axes=(0,1)) if bool(random.getrandbits(1)) else hr
-        hr = Image.fromarray(np.flip(hr, axis=random.choice((2,0,1,(0,1)))))
+        hr = Image.fromarray(np.flip(hr, axis=random.choice((0,1,(0,1)))))
 
     hr = hr.convert(mode)
 
     # Crappification
-    lr = np.asarray(hr.resize([hr_res//lr_scale]*2, Image.Resampling.NEAREST))
+    lr = np.asarray(hr.resize([hr_res//lr_scale]*2, Image.Resampling.BILINEAR))
     if crappifier is not None:
         # Allows either Crappifier or nn.Module to be used as a crappifier
         lr = crappifier.crappify(lr) if issubclass(type(crappifier), Crappifier) else crappifier(lr)
@@ -236,11 +241,11 @@ def _gen_pair(hr, hr_res, lr_scale, rotation, crappifier, mode, transforms):
 def _transform_pair(hr, lr, hr_res, lr_res, rotation, mode, transforms):
     r"""Same as _gen_pair, but uses paired high and low resolution images.
     """
-    hr = _square_crop(hr).resize(([hr_res]*2), Image.Resampling.NEAREST)
-    lr = _square_crop(lr).resize(([lr_res]*2), Image.Resampling.NEAREST)
+    hr = _square_crop(hr).resize(([hr_res]*2), Image.Resampling.BILINEAR)
+    lr = _square_crop(lr).resize(([lr_res]*2), Image.Resampling.BILINEAR)
 
     if rotation:
-        choice = bool(random.getrandbits(1)), random.choice((2,0,1,(0,1)))
+        choice = bool(random.getrandbits(1)), random.choice((0,1,(0,1)))
 
         hr, lr = np.rot90(hr, axes=(0,1)) if choice[0] else hr, np.rot90(lr, axes=(0,1)) if choice[0] else lr
         hr, lr = Image.fromarray(np.flip(hr, axis=choice[1])), Image.fromarray(np.flip(lr, axis=choice[1]))

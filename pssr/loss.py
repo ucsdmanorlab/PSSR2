@@ -1,4 +1,4 @@
-import torch
+import torch, math
 import torch.nn.functional as F
 import torch.nn as nn
 import numpy as np
@@ -46,3 +46,9 @@ class SSIMLoss(nn.Module):
             l1 = F.conv2d(F.l1_loss(input, target, reduction="none"), self.gaussian.to(input.get_device()), groups=self.channels, padding=(self.win_size-1)//2).mean()  # F.conv2d with Gaussian filter
             x = self.mix*x + (1-self.mix)*l1
         return x
+
+def pixel_metric(mse : float, image_range : int):
+    return math.sqrt(mse) * image_range
+
+def psnr_metric(mse, max):
+    return 20 * torch.log10(max / torch.sqrt(mse))

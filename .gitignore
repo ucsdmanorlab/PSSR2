@@ -1,5 +1,8 @@
 __pycache__/
 data/
 preds/
+models/
 
 *.pth
+
+PANELpy/
