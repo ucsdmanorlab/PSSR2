@@ -1,8 +1,7 @@
 __pycache__/
-data/
+testdata/
 preds/
-models/
-
+trained/
 *.pth
 
 PANELpy/

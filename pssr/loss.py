@@ -5,13 +5,13 @@ import numpy as np
 from pytorch_msssim import SSIM, MS_SSIM
 
 class SSIMLoss(nn.Module):
-    def __init__(self, channels : int = 1, mix : float = .6, win_size : int = 11, win_sigma : float = 1.5, ms : bool = True, kwargs = None):
+    def __init__(self, channels : int = 1, mix : float = .8, win_size : int = 11, win_sigma : float = 1.5, ms : bool = True, kwargs = None):
         r"""SSIM and MS-SSIM loss with Mix as detailed in Zhao et al., 2018.
 
         Args:
             channels (int) : Number of channels in image. Default is 1.
 
-            mix (float) : Mix of SSIM loss in loss calculation. 1 is entirely SSIM, 0 is entirely L1 with Gaussian correction. Default is 0.6.
+            mix (float) : Mix of SSIM loss in loss calculation. 1 is entirely SSIM, 0 is entirely L1 with Gaussian correction. Default is 0.8.
 
             win_size (int) : Size of Gaussian window. Must be odd. Default is 11.
 
@@ -47,8 +47,9 @@ class SSIMLoss(nn.Module):
             x = self.mix*x + (1-self.mix)*l1
         return x
 
+def psnr_metric(mse : float, max : float):
+    return 20 * torch.log10(max / torch.sqrt(mse))
+
 def pixel_metric(mse : float, image_range : int):
     return math.sqrt(mse) * image_range
 
-def psnr_metric(mse, max):
-    return 20 * torch.log10(max / torch.sqrt(mse))

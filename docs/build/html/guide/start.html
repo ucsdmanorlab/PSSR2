@@ -1,0 +1,460 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Principles of PSSR" href="principles.html" /><link rel="prev" title="PSSR Documentation" href="../index.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>Getting Started - PSSR 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">PSSR 1.0.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">PSSR 1.0.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="principles.html">Principles of PSSR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflow.html">Workflow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/api.html">pssr</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of pssr</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/train.html">train</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of train</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/train/train_paired.html">train_paired</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/train/train_crappifier.html">train_crappifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/train/approximate_crappifier.html">approximate_crappifier</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/predict.html">predict</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of predict</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/predict/predict_images.html">predict_images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/predict/predict_collage.html">predict_collage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/predict/test_metrics.html">test_metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/data.html">data</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/ImageDataset.html">ImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/SlidingDataset.html">SlidingDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/PairedImageDataset.html">PairedImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/preprocess_hr.html">preprocess_hr</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/crappifiers.html">crappifiers</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of crappifiers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/crappifiers/Crappifier.html">Crappifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/crappifiers/Poisson.html">Poisson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/crappifiers/AdditiveGaussian.html">AdditiveGaussian</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/models/ResUNet.html">ResUNet</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/loss/SSIMLoss.html">SSIMLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/loss/psnr_metric.html">psnr_metric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/loss/pixel_metric.html">pixel_metric</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+<p>Before installing <strong>PSSR</strong>, you may want to create an environment for it with</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(base)</span> <span class="gp">$ </span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>pssr
+</pre></div>
+</div>
+<p>or the equivalent for any other environment manager.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>It is recommended that <strong>PSSR</strong> be installed via the <code class="docutils literal notranslate"><span class="pre">pip</span></code> package manager:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(env)</span> <span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>pssr
+</pre></div>
+</div>
+<p>However, specific versions can also be installed directly from the <a class="reference external" href="https://github.com/haydenstites/PSSR">GitHub</a> repository:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(env)</span> <span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/haydenstites/PSSR/dist/pssr-1.0.0.tar.gz
+</pre></div>
+</div>
+</section>
+<section id="running-the-demo">
+<h2>Running the Demo<a class="headerlink" href="#running-the-demo" title="Link to this heading">#</a></h2>
+<p>The demo file is available <a class="reference external" href="https://github.com/haydenstites/PSSR/blob/master/demo.py">here</a> and offers the simplest interface for a <strong>PSSR</strong> workflow.
+It can be downloaded with:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(env)</span> <span class="gp">$ </span>wget<span class="w"> </span>https://github.com/haydenstites/PSSR/raw/master/demo.py
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>The demo can run in either <em>train</em> or <em>predict</em> mode. It takes in a number of arugments, described below.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+Demo Arguments<div class="sd-summary-down docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
+<div class="sd-summary-up docutils">
+<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
+</summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><p class="sd-card-text">PSSR CLI demo for basic usage</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">python</span> <span class="n">demo</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dp</span> <span class="n">DATA_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dt</span> <span class="n">DATA_TYPE</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">mt</span> <span class="n">MODEL_TYPE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">mp</span> <span class="n">MODEL_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">e</span> <span class="n">EPOCHS</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">b</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">lr</span> <span class="n">LR</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="n">PATIENCE</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="named-arguments">
+<h3>Named Arguments<a class="headerlink" href="#named-arguments" title="Link to this heading">#</a></h3>
+<dl class="option-list">
+<dt><kbd>-t, --train</kbd></dt>
+<dd><p class="sd-card-text">enable train mode</p>
+<p class="sd-card-text">Default: False</p>
+</dd>
+<dt><kbd>-dp, --data-path</kbd></dt>
+<dd><p class="sd-card-text">specify dataset path</p>
+</dd>
+<dt><kbd>-dt, --data-type</kbd></dt>
+<dd><p class="sd-card-text">specify dataset type e.g. ImageDataset</p>
+<p class="sd-card-text">Default: “ImageDataset”</p>
+</dd>
+<dt><kbd>-mt, --model-type</kbd></dt>
+<dd><p class="sd-card-text">specify model type e.g. ResUNet</p>
+<p class="sd-card-text">Default: “ResUNet”</p>
+</dd>
+<dt><kbd>-mp, --model-path</kbd></dt>
+<dd><p class="sd-card-text">specify model path</p>
+<p class="sd-card-text">Default: “model.pth”</p>
+</dd>
+<dt><kbd>-e, --epochs</kbd></dt>
+<dd><p class="sd-card-text">specify number of epochs</p>
+<p class="sd-card-text">Default: 10</p>
+</dd>
+<dt><kbd>-b, --batch-size</kbd></dt>
+<dd><p class="sd-card-text">specify batch size</p>
+<p class="sd-card-text">Default: 16</p>
+</dd>
+<dt><kbd>-lr, --lr</kbd></dt>
+<dd><p class="sd-card-text">specify learning rate</p>
+<p class="sd-card-text">Default: 0.001</p>
+</dd>
+<dt><kbd>-p, --patience</kbd></dt>
+<dd><p class="sd-card-text">specify learning rate decay patience</p>
+<p class="sd-card-text">Default: 3</p>
+</dd>
+</dl>
+</section>
+</div>
+</details><p>Keep in mind that arguments representing an object such as a dataset or model can be defined as a class declaration with additonal arguments in Python syntax.
+For example <code class="docutils literal notranslate"><span class="pre">--model-type</span></code> could be given as <code class="docutils literal notranslate"><span class="pre">-mt</span> <span class="pre">ResUNet(hidden=[128,</span> <span class="pre">256],</span> <span class="pre">scale=4)</span></code>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>If you do not have access to a microscopy dataset, a sample dataset can be found
+<a class="reference external" href="https://drive.google.com/file/d/1Sirrh180WrkHgPR0S8_43-f0S2GaK7iZ/view">here</a> containing <em>high-resolution</em> images of resolution 512.
+All data used in the <strong>PSSR</strong> paper can also be found on <a class="reference external" href="https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/">3Dem.org</a>.
+If your dataset have different resolution data, <code class="docutils literal notranslate"><span class="pre">hr_res</span></code> and <code class="docutils literal notranslate"><span class="pre">scale</span></code> can be changed correspondingly.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="training">
+<h3>Training<a class="headerlink" href="#training" title="Link to this heading">#</a></h3>
+<p>A model can be trained by running</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(env)</span> <span class="gp">$ </span>python<span class="w"> </span>demo.py<span class="w"> </span>-t<span class="w"> </span>-dp<span class="w"> </span>your/path
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">your/path</span></code> is replaced with the path of your training dataset (folder containing <em>high-resolution</em> images/image sheets).</p>
+<p>The <em>low-resolution</em> images will generated via <a class="reference internal" href="../reference/crappifiers/Crappifier.html"><span class="doc">Crappifier</span></a>, which is explained in <a class="reference internal" href="principles.html"><span class="doc">Principles of PSSR</span></a>.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>By default the trained model will be saved as <code class="docutils literal notranslate"><span class="pre">model.pth</span></code>.</p>
+<p>By default the dataset used is <a class="reference internal" href="../reference/data/ImageDataset.html"><span class="doc">ImageDataset</span></a>.
+If your dataset contains image sheets (e.g. .czi files) rather than many images, you can use <a class="reference internal" href="../reference/data/SlidingDataset.html"><span class="doc">SlidingDataset</span></a> by adding the argument <code class="docutils literal notranslate"><span class="pre">-dt</span> <span class="pre">SlidingDataset</span></code>.
+The batch size can also be changed with the <code class="docutils literal notranslate"><span class="pre">-b</span></code> argument.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="predicting">
+<h3>Predicting<a class="headerlink" href="#predicting" title="Link to this heading">#</a></h3>
+<p>To run the demo in predict mode, omit the <code class="docutils literal notranslate"><span class="pre">-t</span></code> argument. The dataset path should be changed to the path containing the <em>low-resolution</em> images to be upscaled.
+The predicted upscaled images will be saved to <code class="docutils literal notranslate"><span class="pre">preds</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="../reference/data/SlidingDataset.html"><span class="doc">SlidingDataset</span></a> does not automatically detect <em>low-resolution</em> inputs.
+<code class="docutils literal notranslate"><span class="pre">hr_res</span></code> must be lowered to the size of the <em>low-resolution</em> image and <code class="docutils literal notranslate"><span class="pre">lr_scale</span></code> must be lowered to 1.</p>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>If a <a class="reference internal" href="../reference/data/PairedImageDataset.html"><span class="doc">PairedImageDataset</span></a> instance with <em>high-low-resolution</em> image pairs is given as the dataset, additional performance metrics will be calculated.</p>
+<p>If <em>high-resolution</em> images were given instead, then the <em>low-resolution</em> images will generated via <a class="reference internal" href="../reference/crappifiers/Crappifier.html"><span class="doc">Crappifier</span></a> and the performance metrics will be calculated as well.</p>
+</section>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">#</a></h2>
+<p>If you are not familar with <strong>PSSR</strong> or super-resolution, understand the <a class="reference internal" href="principles.html"><span class="doc">Principles of PSSR</span></a>.</p>
+<p>For usage of <strong>PSSR</strong> beyond the extents of the demo, learn how to implement your own <a class="reference internal" href="workflow.html"><span class="doc">Workflow</span></a>.</p>
+<p>Full reference and explanations of all <strong>PSSR</strong> tools is available in <a class="reference internal" href="../reference/api.html"><span class="doc">API Reference</span></a>.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="principles.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Principles of PSSR</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Home</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Hayden Stites
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Getting Started</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#running-the-demo">Running the Demo</a><ul>
+<li><a class="reference internal" href="#training">Training</a></li>
+<li><a class="reference internal" href="#predicting">Predicting</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=32e29ea5"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    </body>
+</html>

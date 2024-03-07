@@ -1,9 +1,10 @@
 import torch, argparse
 from pssr.models import ResUNet
-from pssr.data import ImageDataset, SlidingDataset, PairedImageDataset
+from pssr.data import ImageDataset, SlidingDataset # PairedImageDataset
 from pssr.crappifiers import AdditiveGaussian, Poisson
 from pssr.loss import SSIMLoss
-from pssr.train import train_paired, predict_images, test_metrics
+from pssr.train import train_paired
+from pssr.predict import predict_images, test_metrics
 
 def _handle_declaration(arg, defaults, req=None):
     req = ", ".join(req)+", " if req is not None else ""
@@ -15,27 +16,35 @@ def _handle_declaration(arg, defaults, req=None):
 
     return eval(expression)
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="PSSR CLI for basic usage")
+def parse():
+    parser = argparse.ArgumentParser(description="PSSR CLI demo for basic usage")
 
     parser.add_argument("-t", "--train", action="store_true", help="enable train mode")
 
+    parser.add_argument("-dp", "--data-path", type=str, help="specify dataset path")
+    parser.add_argument("-dt", "--data-type", type=str, default="ImageDataset", help="specify dataset type e.g. ImageDataset")
     parser.add_argument("-mt", "--model-type", type=str, default="ResUNet", help="specify model type e.g. ResUNet")
     parser.add_argument("-mp", "--model-path", type=str, default="model.pth", help="specify model path")
-    parser.add_argument("-dt", "--data-type", type=str, default="ImageDataset", help="specify dataset type e.g. ImageDataset")
-    parser.add_argument("-dp", "--data-path", type=str, help="specify dataset path")
 
     parser.add_argument("-e", "--epochs", type=int, default=10, help="specify number of epochs")
     parser.add_argument("-b", "--batch-size", type=int, default=16, help="specify batch size")
     parser.add_argument("-lr", "--lr", type=float, default=1e-3, help="specify learning rate")
     parser.add_argument("-p", "--patience", type=int, default=3, help="specify learning rate decay patience")
 
-    args = parser.parse_args()
+    return parser
+
+if __name__ == "__main__":
+    args = parse().parse_args()
 
     model = _handle_declaration(args.model_type, ["ResUNet"])
     dataset = _handle_declaration(args.data_type, ["ImageDataset", "SlidingDataset", "PairedImageDataset"], req=[f"'{args.data_path}'"] if args.train else [f"'{args.data_path}'", "val_split=1"])
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    if torch.cuda.is_available():
+        device = "cuda"
+        print("CUDA enabled device detected, running on GPU.")
+    else:
+        device = "cpu"
+        print("CUDA enabled device NOT detected, running on CPU.")
 
     kwargs = dict(
         shuffle = True,
@@ -72,8 +81,9 @@ if __name__ == "__main__":
         print("\nPredicting images from low resolution...")
         predict_images(model, dataset, device, "preds")
 
-        metrics = test_metrics(model, dataset, device=device, dataloader_kwargs=kwargs)
+        if not dataset.is_lr:
+            metrics = test_metrics(model, dataset, device=device, dataloader_kwargs=kwargs)
 
-        print("\nMetrics:")
-        for metric in metrics:
-            print(f"{metric}: {metrics[metric]}")
+            print("\nMetrics:")
+            for metric in metrics:
+                print(f"{metric}: {metrics[metric]}")
