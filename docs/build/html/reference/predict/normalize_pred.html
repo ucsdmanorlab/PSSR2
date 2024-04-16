@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="pixel_metric" href="pixel_metric.html" /><link rel="prev" title="SSIMLoss" href="SSIMLoss.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="data" href="../data.html" /><link rel="prev" title="test_metrics" href="test_metrics.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>psnr_metric - PSSR 1.0.0 documentation</title>
+        <title>normalize_pred - PSSR 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -170,16 +170,18 @@
 <li class="toctree-l3"><a class="reference internal" href="../train/approximate_crappifier.html">approximate_crappifier</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../predict.html">predict</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of predict</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../predict/predict_images.html">predict_images</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../predict/predict_collage.html">predict_collage</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../predict/test_metrics.html">test_metrics</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../predict.html">predict</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of predict</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="predict_images.html">predict_images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="predict_collage.html">predict_collage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="test_metrics.html">test_metrics</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">normalize_pred</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../data.html">data</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../data/ImageDataset.html">ImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../data/SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../data/PairedImageDataset.html">PairedImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../data/preprocess_hr.html">preprocess_hr</a></li>
 </ul>
 </li>
@@ -191,12 +193,12 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../models/ResUNet.html">ResUNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/ResUNetA.html">ResUNetA</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="../loss.html">loss</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">psnr_metric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pixel_metric.html">pixel_metric</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../loss/SSIMLoss.html">SSIMLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../loss/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
 </ul>
@@ -235,15 +237,34 @@
           </label>
         </div>
         <article role="main">
-          <section id="psnr-metric">
-<h1>psnr_metric<a class="headerlink" href="#psnr-metric" title="Link to this heading">#</a></h1>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.loss</span> <span class="kn">import</span> <span class="n">psnr_metric</span>
+          <section id="normalize-pred">
+<h1>normalize_pred<a class="headerlink" href="#normalize-pred" title="Link to this heading">#</a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.predict</span> <span class="kn">import</span> <span class="n">normalize_pred</span>
 </pre></div>
 </div>
 <dl class="py function">
-<dt class="sig sig-object py" id="pssr.loss.psnr_metric">
-<span class="sig-prename descclassname"><span class="pre">pssr.loss.</span></span><span class="sig-name descname"><span class="pre">psnr_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.loss.psnr_metric" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="pssr.predict.normalize_pred">
+<span class="sig-prename descclassname"><span class="pre">pssr.predict.</span></span><span class="sig-name descname"><span class="pre">normalize_pred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hr_hat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">99.9</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.predict.normalize_pred" title="Link to this definition">#</a></dt>
+<dd><p>Normalizes prediction image intensities to ground truth for fair benchmarking.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hr</strong> (<em>ndarray</em>) – High-resolution ground truth image as array.</p></li>
+<li><p><strong>hr_hat</strong> (<em>ndarray</em>) – High-resolution prediction image as array.</p></li>
+<li><p><strong>pmin</strong> (<em>float</em>) – Percentile minimum image intensity. Default is 0.1.</p></li>
+<li><p><strong>pmax</strong> (<em>float</em>) – Percentile maximum image intensity. Default is 99.9.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Normalized high-resolution ground truth image.</p>
+<p>hr_hat_norm (ndarray) : Normalized high-resolution prediction image.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>hr_norm (ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -252,23 +273,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="pixel_metric.html">
+          <a class="next-page" href="../data.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">pixel_metric</div>
+                <div class="title">data</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="SSIMLoss.html">
+          <a class="prev-page" href="test_metrics.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">SSIMLoss</div>
+                <div class="title">test_metrics</div>
                 
               </div>
             </a>
@@ -302,8 +323,8 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">psnr_metric</a><ul>
-<li><a class="reference internal" href="#pssr.loss.psnr_metric"><code class="docutils literal notranslate"><span class="pre">psnr_metric()</span></code></a></li>
+<li><a class="reference internal" href="#">normalize_pred</a><ul>
+<li><a class="reference internal" href="#pssr.predict.normalize_pred"><code class="docutils literal notranslate"><span class="pre">normalize_pred()</span></code></a></li>
 </ul>
 </li>
 </ul>

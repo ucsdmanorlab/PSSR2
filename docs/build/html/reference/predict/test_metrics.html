@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="data" href="../data.html" /><link rel="prev" title="predict_collage" href="predict_collage.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="normalize_pred" href="normalize_pred.html" /><link rel="prev" title="predict_collage" href="predict_collage.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
         <title>test_metrics - PSSR 1.0.0 documentation</title>
@@ -174,12 +174,14 @@
 <li class="toctree-l3"><a class="reference internal" href="predict_images.html">predict_images</a></li>
 <li class="toctree-l3"><a class="reference internal" href="predict_collage.html">predict_collage</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">test_metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="normalize_pred.html">normalize_pred</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../data.html">data</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../data/ImageDataset.html">ImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../data/SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../data/PairedImageDataset.html">PairedImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../data/preprocess_hr.html">preprocess_hr</a></li>
 </ul>
 </li>
@@ -191,11 +193,11 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../models/ResUNet.html">ResUNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/ResUNetA.html">ResUNetA</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../loss/SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../loss/psnr_metric.html">psnr_metric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../loss/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
@@ -242,19 +244,26 @@
 </div>
 <dl class="py function">
 <dt class="sig sig-object py" id="pssr.predict.test_metrics">
-<span class="sig-prename descclassname"><span class="pre">pssr.predict.</span></span><span class="sig-name descname"><span class="pre">test_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">['mse',</span> <span class="pre">'pixel',</span> <span class="pre">'psnr',</span> <span class="pre">'ssim']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.predict.test_metrics" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pssr.predict.</span></span><span class="sig-name descname"><span class="pre">test_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">['mse',</span> <span class="pre">'pixel',</span> <span class="pre">'psnr',</span> <span class="pre">'ssim']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.predict.test_metrics" title="Link to this definition">#</a></dt>
 <dd><p>Computes image restoration metrics of predicted vs ground truth images.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>nn.Module</em>) – Model recieve low-resolution images.</p></li>
 <li><p><strong>dataset</strong> (<em>Dataset</em>) – Paired image dataset to load data from.</p></li>
-<li><p><strong>batch_size</strong> (<em>int</em>) – Batch size for dataloader. Default is 1.</p></li>
-<li><p><strong>metrics</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Metrics to calculate out of “mse”, “pixel”, “psnr”, and “ssim”. Default is all.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Batch size for dataloader.</p></li>
 <li><p><strong>device</strong> (<em>str</em>) – Device to train model on. Default is “cpu”.</p></li>
-<li><p><strong>clamp</strong> (<em>bool</em>) – Whether to clamp model image output before weight calculation. Default is False.</p></li>
+<li><p><strong>metrics</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Metrics to calculate out of “mse”, “pixel”, “psnr”, and “ssim”. Default is all.</p></li>
+<li><p><strong>avg</strong> (<em>bool</em>) – Whether to return a single averaged value per metric. Default is True.</p></li>
+<li><p><strong>norm</strong> (<em>bool</em>) – Whether to normalize prediction image intensities to ground truth. Default is True.</p></li>
 <li><p><strong>dataloader_kwargs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Keyword arguments for pytorch Dataloader. Default is None.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of metric names and outputs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>metrics (dict[str, Any])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -266,12 +275,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../data.html">
+          <a class="next-page" href="normalize_pred.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">data</div>
+                <div class="title">normalize_pred</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

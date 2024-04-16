@@ -174,12 +174,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../predict/predict_images.html">predict_images</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../predict/predict_collage.html">predict_collage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../predict/test_metrics.html">test_metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../predict/normalize_pred.html">normalize_pred</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../data.html">data</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">ImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="PairedImageDataset.html">PairedImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PairedSlidingDataset.html">PairedSlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="preprocess_hr.html">preprocess_hr</a></li>
 </ul>
 </li>
@@ -191,11 +193,11 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../models/ResUNet.html">ResUNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/ResUNetA.html">ResUNetA</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../loss/SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../loss/psnr_metric.html">psnr_metric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../loss/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
@@ -242,21 +244,23 @@
 </div>
 <dl class="py function">
 <dt class="sig sig-object py" id="pssr.data.ImageDataset.__init__">
-<span class="sig-prename descclassname"><span class="pre">pssr.data.ImageDataset.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">~pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hr_res:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scale:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crappifier:</span> <span class="pre">~pssr.crappifiers.Crappifier</span> <span class="pre">=</span> <span class="pre">&lt;pssr.crappifiers.Poisson</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'L'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms:</span> <span class="pre">list[~torch.nn.modules.module.Module]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.data.ImageDataset.__init__" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pssr.data.ImageDataset.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">~pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hr_res:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scale:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crappifier:</span> <span class="pre">~pssr.crappifiers.Crappifier</span> <span class="pre">=</span> <span class="pre">&lt;pssr.crappifiers.Poisson</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'L'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_seed:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms:</span> <span class="pre">list[~torch.nn.modules.module.Module]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.data.ImageDataset.__init__" title="Link to this definition">#</a></dt>
 <dd><p>Training dataset for loading high-resolution images from individual files and returning high-low-resolution pairs, the latter receiving crappification.</p>
 <p>Dataset used for pre-tiled image files. For image sheets (e.g. .czi files), use <code class="xref py py-class docutils literal notranslate"><span class="pre">SlidingDataset</span></code>.</p>
-<p>LR mode for predictions can be enabled by either inputting images of LR size or by setting <cite>lr_scale</cite> = 1 and <cite>hr_res</cite> = LR resolution.</p>
+<p>LR mode for predictions (dataset loads only unmodified low-resolution images) can be enabled by
+either inputting images less than or equal to LR size (<cite>hr_res</cite>/<cite>lr_scale</cite>) or by setting <cite>lr_scale</cite> = 1 and <cite>hr_res</cite> = LR resolution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>Path</em>) – Path to folder containing high resolution images. Can also be a str.</p></li>
-<li><p><strong>hr_res</strong> (<em>int</em>) – Resolution of high resolution images. Images larger than this will be downscaled to this resolution. Default is 512.</p></li>
-<li><p><strong>lr_scale</strong> (<em>int</em>) – Downscaling factor for low resolution images to simulate undersampling. Choose a power of 2 for best results. Default is 4.</p></li>
-<li><p><strong>crappifier</strong> (<a class="reference internal" href="../crappifiers/Crappifier.html#pssr.crappifiers.Crappifier" title="pssr.crappifiers.Crappifier"><em>Crappifier</em></a>) – Crappifier for degrading low resolution images to simulate undersampling. Default is <code class="xref py py-class docutils literal notranslate"><span class="pre">Poisson</span></code>.</p></li>
-<li><p><strong>val_split</strong> (<em>float</em>) – Fraction of images to be held out for validation. Default is 0.1.</p></li>
+<li><p><strong>path</strong> (<em>Path</em>) – Path to folder containing high-resolution images. Can also be a str.</p></li>
+<li><p><strong>hr_res</strong> (<em>int</em>) – Resolution of high-resolution images. Images larger than this will be downscaled to this resolution. Images smaller will be padded. Default is 512.</p></li>
+<li><p><strong>lr_scale</strong> (<em>int</em>) – Downscaling factor for low-resolution images to simulate undersampling. Choose a power of 2 for best results. Default is 4.</p></li>
+<li><p><strong>crappifier</strong> (<a class="reference internal" href="../crappifiers/Crappifier.html#pssr.crappifiers.Crappifier" title="pssr.crappifiers.Crappifier"><em>Crappifier</em></a>) – Crappifier for degrading low-resolution images to simulate undersampling. Not used in LR mode. Default is <code class="xref py py-class docutils literal notranslate"><span class="pre">Poisson</span></code>.</p></li>
+<li><p><strong>val_split</strong> (<em>float</em>) – Fraction of images to be held out for evaluation. Default is 0.1.</p></li>
 <li><p><strong>extension</strong> (<em>str</em>) – File extension of images. Default is “tif”.</p></li>
 <li><p><strong>mode</strong> (<em>str</em>) – PIL image mode for loading images, e.g. “L” for grayscale, “RGB” for color. Default is “L”.</p></li>
-<li><p><strong>rotation</strong> (<em>bool</em>) – Whether to randomly rotate images when loading data. Default is True.</p></li>
+<li><p><strong>rotation</strong> (<em>bool</em>) – Whether to randomly rotate images when loading data. Automatically set to False during evaluation if <cite>val_split</cite> is not less than 1, or in LR mode. Default is True.</p></li>
+<li><p><strong>split_seed</strong> (<em>int</em>) – Seed for random train/evaluation data splitting. A value of None splits the last images as evaluation. Default is 0.</p></li>
 <li><p><strong>transforms</strong> (<em>list</em><em>[</em><em>nn.Module</em><em>]</em>) – Additional final data transforms to apply. Default is None.</p></li>
 </ul>
 </dd>

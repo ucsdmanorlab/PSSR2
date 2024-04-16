@@ -174,12 +174,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../reference/predict/predict_images.html">predict_images</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/predict/predict_collage.html">predict_collage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/predict/test_metrics.html">test_metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/predict/normalize_pred.html">normalize_pred</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/data.html">data</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../reference/data/ImageDataset.html">ImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/data/SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/data/PairedImageDataset.html">PairedImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/data/preprocess_hr.html">preprocess_hr</a></li>
 </ul>
 </li>
@@ -191,11 +193,11 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../reference/models/ResUNet.html">ResUNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/models/ResUNetA.html">ResUNetA</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../reference/loss/SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../reference/loss/psnr_metric.html">psnr_metric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/loss/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
@@ -278,7 +280,7 @@ Demo Arguments<div class="sd-summary-down docutils">
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">python</span> <span class="n">demo</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dp</span> <span class="n">DATA_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dt</span> <span class="n">DATA_TYPE</span><span class="p">]</span>
                       <span class="p">[</span><span class="o">-</span><span class="n">mt</span> <span class="n">MODEL_TYPE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">mp</span> <span class="n">MODEL_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">e</span> <span class="n">EPOCHS</span><span class="p">]</span>
-                      <span class="p">[</span><span class="o">-</span><span class="n">b</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">lr</span> <span class="n">LR</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="n">PATIENCE</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">b</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">lr</span> <span class="n">LR</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="n">PATIENCE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">mse</span><span class="p">]</span>
 </pre></div>
 </div>
 <section id="named-arguments">
@@ -304,7 +306,7 @@ Demo Arguments<div class="sd-summary-down docutils">
 <p class="sd-card-text">Default: “model.pth”</p>
 </dd>
 <dt><kbd>-e, --epochs</kbd></dt>
-<dd><p class="sd-card-text">specify number of epochs</p>
+<dd><p class="sd-card-text">specify number of training epochs</p>
 <p class="sd-card-text">Default: 10</p>
 </dd>
 <dt><kbd>-b, --batch-size</kbd></dt>
@@ -319,6 +321,10 @@ Demo Arguments<div class="sd-summary-down docutils">
 <dd><p class="sd-card-text">specify learning rate decay patience</p>
 <p class="sd-card-text">Default: 3</p>
 </dd>
+<dt><kbd>-mse, --mse</kbd></dt>
+<dd><p class="sd-card-text">use MSE loss instead of SSIM loss</p>
+<p class="sd-card-text">Default: False</p>
+</dd>
 </dl>
 </section>
 </div>
@@ -327,9 +333,10 @@ For example <code class="docutils literal notranslate"><span class="pre">--model
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<p>If you do not have access to a microscopy dataset, a sample dataset can be found
+<p>If you do not have access to a microscopy dataset, a sample training dataset can be found
 <a class="reference external" href="https://drive.google.com/file/d/1Sirrh180WrkHgPR0S8_43-f0S2GaK7iZ/view">here</a> containing <em>high-resolution</em> images of resolution 512.
-All data used in the <strong>PSSR</strong> paper can also be found on <a class="reference external" href="https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/">3Dem.org</a>.
+Real-world <em>high-low-resolution</em> image pairs for testing can be found <a class="reference external" href="https://drive.google.com/file/d/1BI6K5r65ubn3Vj866ikUUj8VVqHT0j-4/view">here</a>.
+Larger datasets and all data used in the <strong>PSSR</strong> paper can also be found on <a class="reference external" href="https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/">3Dem.org</a>.
 If your dataset have different resolution data, <code class="docutils literal notranslate"><span class="pre">hr_res</span></code> and <code class="docutils literal notranslate"><span class="pre">scale</span></code> can be changed correspondingly.</p>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -355,8 +362,10 @@ The batch size can also be changed with the <code class="docutils literal notran
 </section>
 <section id="predicting">
 <h3>Predicting<a class="headerlink" href="#predicting" title="Link to this heading">#</a></h3>
+<p>A pretrained <strong>PSSR</strong> model for EM data can be found <a class="reference external" href="https://drive.google.com/file/d/1DIWlcjljG4fRNCoMSjkNdhtzSZJ4QXHg/view">here</a>,
+a <a class="reference internal" href="../reference/models/ResUNet.html"><span class="doc">ResUNet</span></a> with default arguments.</p>
 <p>To run the demo in predict mode, omit the <code class="docutils literal notranslate"><span class="pre">-t</span></code> argument. The dataset path should be changed to the path containing the <em>low-resolution</em> images to be upscaled.
-The predicted upscaled images will be saved to <code class="docutils literal notranslate"><span class="pre">preds</span></code>.</p>
+The <cite>-mp</cite> argument can be set to your model path if its different than the default. The predicted upscaled images will be saved to the <code class="docutils literal notranslate"><span class="pre">preds</span></code> folder.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><a class="reference internal" href="../reference/data/SlidingDataset.html"><span class="doc">SlidingDataset</span></a> does not automatically detect <em>low-resolution</em> inputs.
@@ -365,8 +374,17 @@ The predicted upscaled images will be saved to <code class="docutils literal not
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<p>If a <a class="reference internal" href="../reference/data/PairedImageDataset.html"><span class="doc">PairedImageDataset</span></a> instance with <em>high-low-resolution</em> image pairs is given as the dataset, additional performance metrics will be calculated.</p>
-<p>If <em>high-resolution</em> images were given instead, then the <em>low-resolution</em> images will generated via <a class="reference internal" href="../reference/crappifiers/Crappifier.html"><span class="doc">Crappifier</span></a> and the performance metrics will be calculated as well.</p>
+<p>If a <a class="reference internal" href="../reference/data/PairedImageDataset.html"><span class="doc">PairedImageDataset</span></a> instance with <em>high-low-resolution</em> image pairs is given as the dataset, additional performance metrics will be calculated.
+To define both <em>high-resolution</em> and <em>low-resolution</em> data paths, omit the <code class="docutils literal notranslate"><span class="pre">-dp</span></code> argument and instead use</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(env)</span> <span class="gp">$ </span>python<span class="w"> </span>demo.py<span class="w"> </span>-mt<span class="w"> </span><span class="s2">&quot;PairedImageDataset(hr_path=&#39;your/hr&#39;, lr_path=&#39;your/lr&#39;)&quot;</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">your/hr</span></code> and <code class="docutils literal notranslate"><span class="pre">your/lr</span></code> are repleaced by your <em>high-resolution</em> and <em>low-resolution</em> data paths respectively.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>If <em>high-resolution</em> images are given using an <a class="reference internal" href="../reference/data/ImageDataset.html"><span class="doc">ImageDataset</span></a>,
+then <em>low-resolution</em> images will be generated via <a class="reference internal" href="../reference/crappifiers/Crappifier.html"><span class="doc">Crappifier</span></a> and performance metrics will still be calculated.</p>
 </section>
 </section>
 <section id="next-steps">

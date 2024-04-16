@@ -15,5 +15,4 @@ Modules
    :titlesonly:
 
    loss/SSIMLoss
-   loss/psnr_metric
    loss/pixel_metric

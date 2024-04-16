@@ -174,12 +174,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../reference/predict/predict_images.html">predict_images</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/predict/predict_collage.html">predict_collage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/predict/test_metrics.html">test_metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/predict/normalize_pred.html">normalize_pred</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/data.html">data</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../reference/data/ImageDataset.html">ImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/data/SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/data/PairedImageDataset.html">PairedImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/data/preprocess_hr.html">preprocess_hr</a></li>
 </ul>
 </li>
@@ -191,11 +193,11 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../reference/models/ResUNet.html">ResUNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/models/ResUNetA.html">ResUNetA</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../reference/loss/SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../reference/loss/psnr_metric.html">psnr_metric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/loss/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
@@ -270,17 +272,18 @@ It will be used to synthetically generate <em>low-resolution</em> images to trai
 </div>
 <p>Which dataset to use depends on the format of your images.</p>
 <p>In this example, we will use <a class="reference internal" href="../reference/data/ImageDataset.html"><span class="doc">ImageDataset</span></a>, assuming that our images are already sliced.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">ImageDataset</span><span class="p">(</span><span class="s2">&quot;your/hr_path&quot;</span><span class="p">,</span> <span class="n">hr_res</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">lr_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">crappifier</span><span class="o">=</span><span class="n">crappifier</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;tif&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">ImageDataset</span><span class="p">(</span><span class="s2">&quot;your/hr&quot;</span><span class="p">,</span> <span class="n">hr_res</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">lr_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">crappifier</span><span class="o">=</span><span class="n">crappifier</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;tif&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This sets the <code class="docutils literal notranslate"><span class="pre">dataset</span></code> variable to an instance of <a class="reference internal" href="../reference/data/ImageDataset.html"><span class="doc">ImageDataset</span></a>, loading <em>high-resolution</em> <code class="docutils literal notranslate"><span class="pre">.tif</span></code> images from <code class="docutils literal notranslate"><span class="pre">your/hr_path</span></code>.
+<p>This sets the <code class="docutils literal notranslate"><span class="pre">dataset</span></code> variable to an instance of <a class="reference internal" href="../reference/data/ImageDataset.html"><span class="doc">ImageDataset</span></a>, loading <em>high-resolution</em> <code class="docutils literal notranslate"><span class="pre">.tif</span></code> images from <code class="docutils literal notranslate"><span class="pre">your/hr</span></code>.
 The <em>high-resolution</em> images are specified to have a horizontal and vertical resolution of <code class="docutils literal notranslate"><span class="pre">hr_res=512</span></code>.
 If the images provided are not square or are of the wrong resolution, they will be cropped and/or rescaled to fit.</p>
 <p>We provide the <a class="reference internal" href="../reference/crappifiers/Crappifier.html"><span class="doc">Crappifier</span></a> we defined earlier as an argument that will
 generate <em>low-resolution</em> images <code class="docutils literal notranslate"><span class="pre">lr_scale=4</span></code> times smaller than the <em>high-resolution</em> images, for a resolution of 128.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Users are advised to keep image resolutions to a power of 2, elaborated in <a class="reference internal" href="../reference/models.html"><span class="doc">models</span></a>.</p>
+<p>Users are advised to keep image resolutions to a power of 2 even if the raw input images have a different size.
+This is elaborated in <a class="reference internal" href="../reference/models.html"><span class="doc">models</span></a>.</p>
 </div>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -311,7 +314,7 @@ The other arguments specify the number of channels per hidden layer, and the dep
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">SSIMLoss</span><span class="p">(</span><span class="n">mix</span><span class="o">=</span><span class="mf">.8</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Although MSE loss can be used to good results, <a class="reference internal" href="../reference/loss/SSIMLoss.html"><span class="doc">SSIMLoss</span></a> can be used optimize visually significant elements of an image, and is often used in super-resolution tasks.
+<p>While MSE loss can also be used to good results, we will instead use <a class="reference internal" href="../reference/loss/SSIMLoss.html"><span class="doc">SSIMLoss</span></a> here, which will optimize visually significant elements our predictions.
 The <code class="docutils literal notranslate"><span class="pre">mix</span></code> argument controls the inverse contribution of corrected L1 loss, while the <code class="docutils literal notranslate"><span class="pre">ms</span></code> argument enables MS-SSIM, a more robust version of SSIM.</p>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -407,7 +410,7 @@ The batch size can be adjusted depending on the amount of memory available for t
 <p>During the training phase, we loaded <em>high-resolution</em> images to create synthetic <em>low-resolution</em> images using a <a class="reference internal" href="../reference/crappifiers/Crappifier.html"><span class="doc">Crappifier</span></a>.
 While predicting images, we will instead use experimentally acquired <em>low-resolution</em> images to predict upscaled <em>high-resolution</em> images.</p>
 <p>We can do this by creating the same <a class="reference internal" href="../reference/data/ImageDataset.html"><span class="doc">ImageDataset</span></a>, only now we provide the path to our <em>low-resolution</em> images.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">test_dataset</span> <span class="o">=</span> <span class="n">ImageDataset</span><span class="p">(</span><span class="s2">&quot;your/lr_path&quot;</span><span class="p">,</span> <span class="n">hr_res</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">lr_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;tif&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">test_dataset</span> <span class="o">=</span> <span class="n">ImageDataset</span><span class="p">(</span><span class="s2">&quot;your/lr&quot;</span><span class="p">,</span> <span class="n">hr_res</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">lr_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;tif&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The <em>low-resolution</em> images are implied to have a horizontal and vertical resolution of 128 (<code class="docutils literal notranslate"><span class="pre">hr_res=512</span></code> / <code class="docutils literal notranslate"><span class="pre">lr_scale=4</span></code>).
@@ -437,7 +440,7 @@ but they will only represent training performance on crappified data and may not
 <div class="line"><br /></div>
 </div>
 <p>We can do this by creating a new <a class="reference internal" href="../reference/data/PairedImageDataset.html"><span class="doc">PairedImageDataset</span></a> instance, containing our <em>high-low-resolution</em> image pairs.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">paired_dataset</span> <span class="o">=</span> <span class="n">PairedImageDataset</span><span class="p">(</span><span class="s2">&quot;testdata/EM_pairs_crop/hr&quot;</span><span class="p">,</span> <span class="s2">&quot;testdata/EM_pairs_crop/lr&quot;</span><span class="p">,</span> <span class="n">hr_res</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">lr_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">paired_dataset</span> <span class="o">=</span> <span class="n">PairedImageDataset</span><span class="p">(</span><span class="s2">&quot;your/hr&quot;</span><span class="p">,</span> <span class="s2">&quot;your/lr&quot;</span><span class="p">,</span> <span class="n">hr_res</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">lr_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The images in each folder should be properly aligned and have a similar naming/ordering scheme so that they are returned in the same order when that dataset is iterated.</p>

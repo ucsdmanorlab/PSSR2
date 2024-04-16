@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="ImageDataset" href="data/ImageDataset.html" /><link rel="prev" title="test_metrics" href="predict/test_metrics.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="ImageDataset" href="data/ImageDataset.html" /><link rel="prev" title="normalize_pred" href="predict/normalize_pred.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
         <title>data - PSSR 1.0.0 documentation</title>
@@ -174,12 +174,14 @@
 <li class="toctree-l3"><a class="reference internal" href="predict/predict_images.html">predict_images</a></li>
 <li class="toctree-l3"><a class="reference internal" href="predict/predict_collage.html">predict_collage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="predict/test_metrics.html">test_metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="predict/normalize_pred.html">normalize_pred</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current has-children current-page"><a class="current reference internal" href="#">data</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="data/ImageDataset.html">ImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="data/SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="data/PairedImageDataset.html">PairedImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="data/preprocess_hr.html">preprocess_hr</a></li>
 </ul>
 </li>
@@ -191,11 +193,11 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="models/ResUNet.html">ResUNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/ResUNetA.html">ResUNetA</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="loss/SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3"><a class="reference internal" href="loss/psnr_metric.html">psnr_metric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="loss/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
@@ -239,10 +241,10 @@
 <h1>data<a class="headerlink" href="#data" title="Link to this heading">#</a></h1>
 <p><strong>TODO: SlidingPairedDataset and sliding preprocess_hr</strong></p>
 <p>Datasets and functions for handling and synthetically generating <em>high-low-resolution</em> image pairs.</p>
-<p>Datasets that do not take in paired data can be used in “LR mode”, taking in low-resolution data for predictions.
-Instructions are specific to individual datasets.</p>
-<p>To avoid data loss, image data should be square, non-conforming images will be cropped to fit.</p>
-<p>Users are advised to keep image resolutions to a power of 2, elaborated in <a class="reference internal" href="models.html"><span class="doc">models</span></a>.</p>
+<p>Datasets that do not take in paired data can be used in “LR mode”, where the dataset loads only unmodified low-resolution images.
+Usage is specific to individual datasets.</p>
+<p>Users are advised to keep dataloading resolutions to a power of 2 even if the raw input images have a different size.
+This is elaborated in <a class="reference internal" href="models.html"><span class="doc">models</span></a>.</p>
 <section id="modules">
 <h2>Modules<a class="headerlink" href="#modules" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.data</span> <span class="kn">import</span> <span class="o">...</span>
@@ -253,6 +255,7 @@ Instructions are specific to individual datasets.</p>
 <li class="toctree-l1"><a class="reference internal" href="data/ImageDataset.html">ImageDataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data/SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data/PairedImageDataset.html">PairedImageDataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data/preprocess_hr.html">preprocess_hr</a></li>
 </ul>
 </div>
@@ -273,14 +276,14 @@ Instructions are specific to individual datasets.</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="predict/test_metrics.html">
+          <a class="prev-page" href="predict/normalize_pred.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">test_metrics</div>
+                <div class="title">normalize_pred</div>
                 
               </div>
             </a>

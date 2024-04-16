@@ -8,13 +8,13 @@ class ResUNet(nn.Module):
         r"""A modified Residual UNet as detailed in Zhang et al., 2017 with an additional image upscaling block.
 
         Args:
-            channels (int) : Number of color channels in image data.
+            channels (int) : Number of channels in image data.
 
             hidden (list[int]) : Elementwise list of hidden layer channels controlling width and length of model.
 
             scale (int) : Upscaling factor for predictions. Choose a power of 2 for best results. Default is 4.
 
-            depth (int) : Number of hidden layers per residual block. Default is 2.
+            depth (int) : Number of hidden layers per residual block. Default is 3.
         """
         super().__init__()
         
@@ -32,7 +32,8 @@ class ResUNet(nn.Module):
         self.reconstuction = Reconstruction(channels, hidden[0], scale)
 
     def forward(self, x):
-        x = self.norm(x) # Scale input approx from [0, 255] to [-1, 1]
+        x = x / 128 - 1 # Scale input approx from [0, 255] to [-1, 1]
+        x = self.norm(x)
 
         skips = [x]
         for idx, layer in enumerate(self.encoder):
@@ -55,14 +56,17 @@ class ResUNet(nn.Module):
 
         x = x * 128 + 128 # Scale output approx from [-1, 1] to [0, 255]
         return x
-
+    
 class _ResBlock(nn.Module):
     def __init__(self, in_channels : int, out_channels : int, depth : int, norm : bool = True):
         super().__init__()
+
         self.conv = nn.Sequential()
+        
         n_layers = max(depth, 0) + 1
         for layer_idx in range(n_layers):
             self.conv.append(nn.Conv2d(in_channels if layer_idx == 0 else out_channels, out_channels, kernel_size=3, padding=1))
+            
             if norm:
                 self.conv.append(nn.BatchNorm2d(out_channels))
             if layer_idx + 1 < n_layers:

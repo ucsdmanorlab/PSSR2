@@ -1,6 +1,7 @@
 import torch, argparse
-from pssr.models import ResUNet
-from pssr.data import ImageDataset, SlidingDataset # PairedImageDataset
+from torch.nn import MSELoss
+from pssr.models import ResUNet, ResUNetA
+from pssr.data import ImageDataset, SlidingDataset, PairedImageDataset
 from pssr.crappifiers import AdditiveGaussian, Poisson
 from pssr.loss import SSIMLoss
 from pssr.train import train_paired
@@ -26,34 +27,38 @@ def parse():
     parser.add_argument("-mt", "--model-type", type=str, default="ResUNet", help="specify model type e.g. ResUNet")
     parser.add_argument("-mp", "--model-path", type=str, default="model.pth", help="specify model path")
 
-    parser.add_argument("-e", "--epochs", type=int, default=10, help="specify number of epochs")
+    parser.add_argument("-e", "--epochs", type=int, default=10, help="specify number of training epochs")
     parser.add_argument("-b", "--batch-size", type=int, default=16, help="specify batch size")
     parser.add_argument("-lr", "--lr", type=float, default=1e-3, help="specify learning rate")
     parser.add_argument("-p", "--patience", type=int, default=3, help="specify learning rate decay patience")
+    parser.add_argument("-mse", "--mse", action="store_true", help="use MSE loss instead of SSIM loss")
 
     return parser
 
 if __name__ == "__main__":
     args = parse().parse_args()
 
-    model = _handle_declaration(args.model_type, ["ResUNet"])
-    dataset = _handle_declaration(args.data_type, ["ImageDataset", "SlidingDataset", "PairedImageDataset"], req=[f"'{args.data_path}'"] if args.train else [f"'{args.data_path}'", "val_split=1"])
+    if "PairedImageDataset" not in args.data_type:
+        assert args.data_path is not None, "--data-path(-dp) must be provided for semi-synthetic datasets"
+
+    model = _handle_declaration(args.model_type, ["ResUNet", "ResUNetA"])
+    dataset = _handle_declaration(args.data_type, ["ImageDataset", "SlidingDataset"], 
+        req=[f"'{args.data_path}'"] if args.train else [f'''{f"'{args.data_path}', " if "PairedImageDataset" not in args.data_type else ""}val_split=1'''])
 
     if torch.cuda.is_available():
         device = "cuda"
-        print("CUDA enabled device detected, running on GPU.")
+        print("\nCUDA enabled device detected, running on GPU.")
     else:
         device = "cpu"
-        print("CUDA enabled device NOT detected, running on CPU.")
+        print("\nCUDA enabled device NOT detected, running on CPU.")
 
     kwargs = dict(
-        shuffle = True,
         num_workers = 4,
         pin_memory = True,
     )
 
     if args.train:
-        loss_fn = SSIMLoss(mix=.6, ms=True)
+        loss_fn = MSELoss() if args.mse else SSIMLoss(mix=.8, ms=True)
         optim = torch.optim.AdamW(model.parameters(), lr=args.lr)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, factor=0.1, patience=args.patience, threshold=5e-3, verbose=True)
 
@@ -79,11 +84,13 @@ if __name__ == "__main__":
         model.load_state_dict(torch.load(args.model_path))
 
         print("\nPredicting images from low resolution...")
-        predict_images(model, dataset, device, "preds")
+        predict_images(model, dataset, device, "preds", norm=not dataset.is_lr)
 
         if not dataset.is_lr:
-            metrics = test_metrics(model, dataset, device=device, dataloader_kwargs=kwargs)
+            metrics = test_metrics(model, dataset, args.batch_size, device=device, dataloader_kwargs=kwargs)
 
             print("\nMetrics:")
             for metric in metrics:
                 print(f"{metric}: {metrics[metric]}")
+    
+    print("\n")

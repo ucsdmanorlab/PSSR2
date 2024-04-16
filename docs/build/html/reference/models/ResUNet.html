@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="loss" href="../loss.html" /><link rel="prev" title="models" href="../models.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="ResUNetA" href="ResUNetA.html" /><link rel="prev" title="models" href="../models.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
         <title>ResUNet - PSSR 1.0.0 documentation</title>
@@ -174,12 +174,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../predict/predict_images.html">predict_images</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../predict/predict_collage.html">predict_collage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../predict/test_metrics.html">test_metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../predict/normalize_pred.html">normalize_pred</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../data.html">data</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../data/ImageDataset.html">ImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../data/SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../data/PairedImageDataset.html">PairedImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../data/preprocess_hr.html">preprocess_hr</a></li>
 </ul>
 </li>
@@ -191,11 +193,11 @@
 </li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../models.html">models</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">ResUNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ResUNetA.html">ResUNetA</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../loss/SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../loss/psnr_metric.html">psnr_metric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../loss/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
@@ -237,7 +239,7 @@
         <article role="main">
           <section id="resunet">
 <h1>ResUNet<a class="headerlink" href="#resunet" title="Link to this heading">#</a></h1>
-<p>Model derived from <a class="reference external" href="https://arxiv.org/pdf/1711.10684.pdf">Zhang et al., 2017</a>.</p>
+<p>Model derived from <a class="reference external" href="https://arxiv.org/abs/1711.10684">Zhang et al., 2017</a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.models</span> <span class="kn">import</span> <span class="n">ResUNet</span>
 </pre></div>
 </div>
@@ -248,10 +250,10 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>channels</strong> (<em>int</em>) – Number of color channels in image data.</p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – Number of channels in image data.</p></li>
 <li><p><strong>hidden</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Elementwise list of hidden layer channels controlling width and length of model.</p></li>
 <li><p><strong>scale</strong> (<em>int</em>) – Upscaling factor for predictions. Choose a power of 2 for best results. Default is 4.</p></li>
-<li><p><strong>depth</strong> (<em>int</em>) – Number of hidden layers per residual block. Default is 2.</p></li>
+<li><p><strong>depth</strong> (<em>int</em>) – Number of hidden layers per residual block. Default is 3.</p></li>
 </ul>
 </dd>
 </dl>
@@ -264,12 +266,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../loss.html">
+          <a class="next-page" href="ResUNetA.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">loss</div>
+                <div class="title">ResUNetA</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

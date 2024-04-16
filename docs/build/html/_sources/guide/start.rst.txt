@@ -53,9 +53,10 @@ For example ``--model-type`` could be given as ``-mt ResUNet(hidden=[128, 256], 
 
 |
 
-If you do not have access to a microscopy dataset, a sample dataset can be found
+If you do not have access to a microscopy dataset, a sample training dataset can be found
 `here <https://drive.google.com/file/d/1Sirrh180WrkHgPR0S8_43-f0S2GaK7iZ/view>`__ containing *high-resolution* images of resolution 512.
-All data used in the **PSSR** paper can also be found on `3Dem.org <https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/>`_.
+Real-world *high-low-resolution* image pairs for testing can be found `here <https://drive.google.com/file/d/1BI6K5r65ubn3Vj866ikUUj8VVqHT0j-4/view>`__.
+Larger datasets and all data used in the **PSSR** paper can also be found on `3Dem.org <https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/>`_.
 If your dataset have different resolution data, ``hr_res`` and ``scale`` can be changed correspondingly.
 
 |
@@ -86,8 +87,11 @@ The batch size can also be changed with the ``-b`` argument.
 Predicting
 +++++++++++
 
+A pretrained **PSSR** model for EM data can be found `here <https://drive.google.com/file/d/1DIWlcjljG4fRNCoMSjkNdhtzSZJ4QXHg/view>`__,
+a :doc:`../reference/models/ResUNet` with default arguments.
+
 To run the demo in predict mode, omit the ``-t`` argument. The dataset path should be changed to the path containing the *low-resolution* images to be upscaled.
-The predicted upscaled images will be saved to ``preds``.
+The `-mp` argument can be set to your model path if its different than the default. The predicted upscaled images will be saved to the ``preds`` folder.
 
 .. note::
 
@@ -97,8 +101,18 @@ The predicted upscaled images will be saved to ``preds``.
 |
 
 If a :doc:`../reference/data/PairedImageDataset` instance with *high-low-resolution* image pairs is given as the dataset, additional performance metrics will be calculated.
+To define both *high-resolution* and *low-resolution* data paths, omit the ``-dp`` argument and instead use
 
-If *high-resolution* images were given instead, then the *low-resolution* images will generated via :doc:`../reference/crappifiers/Crappifier` and the performance metrics will be calculated as well.
+.. code-block:: console
+
+   (env) $ python demo.py -mt "PairedImageDataset(hr_path='your/hr', lr_path='your/lr')"
+
+where ``your/hr`` and ``your/lr`` are repleaced by your *high-resolution* and *low-resolution* data paths respectively.
+
+|
+
+If *high-resolution* images are given using an :doc:`../reference/data/ImageDataset`,
+then *low-resolution* images will be generated via :doc:`../reference/crappifiers/Crappifier` and performance metrics will still be calculated.
 
 
 Next Steps

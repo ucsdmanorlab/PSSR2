@@ -172,12 +172,14 @@
 <li class="toctree-l3"><a class="reference internal" href="reference/predict/predict_images.html">predict_images</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/predict/predict_collage.html">predict_collage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/predict/test_metrics.html">test_metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/predict/normalize_pred.html">normalize_pred</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="reference/data.html">data</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="reference/data/ImageDataset.html">ImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/data/SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/data/PairedImageDataset.html">PairedImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/data/preprocess_hr.html">preprocess_hr</a></li>
 </ul>
 </li>
@@ -189,11 +191,11 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="reference/models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="reference/models/ResUNet.html">ResUNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/models/ResUNetA.html">ResUNetA</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="reference/loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="reference/loss/SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reference/loss/psnr_metric.html">psnr_metric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/loss/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
@@ -235,7 +237,7 @@
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#T"><strong>T</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#T"><strong>T</strong></a></div>
 </section>
 <section id="_" class="genindex-section">
   <h2>_</h2>
@@ -250,11 +252,15 @@
 </li>
           <li><a href="reference/data/PairedImageDataset.html#pssr.data.PairedImageDataset.__init__">(in module pssr.data.PairedImageDataset)</a>
 </li>
+          <li><a href="reference/data/PairedSlidingDataset.html#pssr.data.PairedSlidingDataset.__init__">(in module pssr.data.PairedSlidingDataset)</a>
+</li>
           <li><a href="reference/data/SlidingDataset.html#pssr.data.SlidingDataset.__init__">(in module pssr.data.SlidingDataset)</a>
 </li>
           <li><a href="reference/loss/SSIMLoss.html#pssr.loss.SSIMLoss.__init__">(in module pssr.loss.SSIMLoss)</a>
 </li>
           <li><a href="reference/models/ResUNet.html#pssr.models.ResUNet.__init__">(in module pssr.models.ResUNet)</a>
+</li>
+          <li><a href="reference/models/ResUNetA.html#pssr.models.ResUNetA.__init__">(in module pssr.models.ResUNetA)</a>
 </li>
         </ul></li>
     </ul></td>
@@ -285,6 +291,16 @@
   </tr></table>
 </section>
 
+<section id="N" class="genindex-section">
+  <h2>N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/predict/normalize_pred.html#pssr.predict.normalize_pred">normalize_pred() (in module pssr.predict)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
 <section id="P" class="genindex-section">
   <h2>P</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
@@ -298,8 +314,6 @@
         <li><a href="reference/predict/predict_images.html#pssr.predict.predict_images">predict_images() (in module pssr.predict)</a>
 </li>
         <li><a href="reference/data/preprocess_hr.html#pssr.data.preprocess_hr">preprocess_hr() (in module pssr.data)</a>
-</li>
-        <li><a href="reference/loss/psnr_metric.html#pssr.loss.psnr_metric">psnr_metric() (in module pssr.loss)</a>
 </li>
     </ul></td>
   </tr></table>

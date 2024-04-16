@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="crappifiers" href="../crappifiers.html" /><link rel="prev" title="PairedImageDataset" href="PairedImageDataset.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="crappifiers" href="../crappifiers.html" /><link rel="prev" title="PairedSlidingDataset" href="PairedSlidingDataset.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
         <title>preprocess_hr - PSSR 1.0.0 documentation</title>
@@ -174,12 +174,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../predict/predict_images.html">predict_images</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../predict/predict_collage.html">predict_collage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../predict/test_metrics.html">test_metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../predict/normalize_pred.html">normalize_pred</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../data.html">data</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="ImageDataset.html">ImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="PairedImageDataset.html">PairedImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PairedSlidingDataset.html">PairedSlidingDataset</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">preprocess_hr</a></li>
 </ul>
 </li>
@@ -191,11 +193,11 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../models/ResUNet.html">ResUNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/ResUNetA.html">ResUNetA</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../loss/SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../loss/psnr_metric.html">psnr_metric</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../loss/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
@@ -243,15 +245,15 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="pssr.data.preprocess_hr">
 <span class="sig-prename descclassname"><span class="pre">pssr.data.</span></span><span class="sig-name descname"><span class="pre">preprocess_hr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">~pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hr_res:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scale:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crappifier:</span> <span class="pre">~pssr.crappifiers.Crappifier</span> <span class="pre">=</span> <span class="pre">&lt;pssr.crappifiers.Poisson</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'L'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.data.preprocess_hr" title="Link to this definition">#</a></dt>
-<dd><p>Preprocesses and crappifies low resolution images from high resolution images.
+<dd><p>Preprocesses and crappifies low-resolution images from high-resolution images.
 However, it is better for most use cases to process data at runtime using a dataset such as <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageDataset</span></code> to save disk space at the cost of negligible CPU usage.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>Path</em>) – Path to folder containing high resolution images. Can also be a str.</p></li>
-<li><p><strong>hr_res</strong> (<em>int</em>) – Resolution of high resolution images. Images larger than this will be downscaled to this resolution. Default is 512.</p></li>
-<li><p><strong>lr_scale</strong> (<em>int</em>) – Downscaling factor for low resolution images to simulate undersampling. Choose a power of 2 for best results. Default is 4.</p></li>
-<li><p><strong>crappifier</strong> (<a class="reference internal" href="../crappifiers/Crappifier.html#pssr.crappifiers.Crappifier" title="pssr.crappifiers.Crappifier"><em>Crappifier</em></a>) – Crappifier for degrading low resolution images to simulate undersampling. Default is <code class="xref py py-class docutils literal notranslate"><span class="pre">Poisson</span></code>.</p></li>
+<li><p><strong>path</strong> (<em>Path</em>) – Path to folder containing high-resolution images. Can also be a str.</p></li>
+<li><p><strong>hr_res</strong> (<em>int</em>) – Resolution of high-resolution images. Images larger than this will be downscaled to this resolution. Default is 512.</p></li>
+<li><p><strong>lr_scale</strong> (<em>int</em>) – Downscaling factor for low-resolution images to simulate undersampling. Choose a power of 2 for best results. Default is 4.</p></li>
+<li><p><strong>crappifier</strong> (<a class="reference internal" href="../crappifiers/Crappifier.html#pssr.crappifiers.Crappifier" title="pssr.crappifiers.Crappifier"><em>Crappifier</em></a>) – Crappifier for degrading low-resolution images to simulate undersampling. Default is <code class="xref py py-class docutils literal notranslate"><span class="pre">Poisson</span></code>.</p></li>
 <li><p><strong>extension</strong> (<em>str</em>) – File extension of images. Default is “tif”.</p></li>
 <li><p><strong>mode</strong> (<em>str</em>) – PIL image mode for loading images, e.g. “L” for grayscale, “RGB” for color. Default is “L”.</p></li>
 </ul>
@@ -275,14 +277,14 @@ However, it is better for most use cases to process data at runtime using a data
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="PairedImageDataset.html">
+          <a class="prev-page" href="PairedSlidingDataset.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">PairedImageDataset</div>
+                <div class="title">PairedSlidingDataset</div>
                 
               </div>
             </a>

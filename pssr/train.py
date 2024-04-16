@@ -9,7 +9,8 @@ from skopt.space import Dimension
 from tqdm import tqdm
 from PIL import Image
 from .crappifiers import Crappifier
-from .loss import SSIMLoss, pixel_metric, psnr_metric
+from .data import _RandomIterIdx, _invert_idx
+from .loss import SSIMLoss, pixel_metric, _psnr_metric
 from .predict import _collage_preds
 from .models._blocks import GradHist
 
@@ -57,8 +58,8 @@ def train_paired(
         losses (list[float]) : List of losses during training.
     """
     dataloader_kwargs = {} if dataloader_kwargs is None else dataloader_kwargs
-    train_dataloader = DataLoader(dataset, batch_size, **dataloader_kwargs)
-    val_dataloader = DataLoader(dataset, batch_size, sampler=range(dataset.train_len, dataset.train_len + dataset.val_len), **{key:dataloader_kwargs[key] for key in dataloader_kwargs if key!="shuffle"})
+    train_dataloader = DataLoader(dataset, batch_size, sampler=_RandomIterIdx(_invert_idx(dataset.val_idx, len(dataset))), **dataloader_kwargs)
+    val_dataloader = DataLoader(dataset, batch_size, sampler=dataset.val_idx, **dataloader_kwargs)
     include_metric = True if type(scheduler) == torch.optim.lr_scheduler.ReduceLROnPlateau else False
     image_range = 255
 
@@ -86,7 +87,7 @@ def train_paired(
                 losses.append(loss.item())
 
                 mse = nn.functional.mse_loss(hr_hat/image_range, hr/image_range)
-                progress.set_description(f"pixel[{pixel_metric(mse, image_range):.2f}], psnr[{psnr_metric(mse, hr.max()/image_range):.2f}], ssim[{ssim(hr_hat, hr, data_range=image_range):.3f}]")
+                progress.set_description(f"pixel[{pixel_metric(mse, image_range):.2f}], psnr[{_psnr_metric(mse, hr.max()/image_range):.2f}], ssim[{ssim(hr_hat, hr, data_range=image_range):.3f}]")
 
         # Validation
         model.eval()
@@ -115,9 +116,9 @@ def train_paired(
             else:
                 scheduler.step()
   
-        collage = _collage_preds(lr, hr_hat, hr)
+        collage = _collage_preds(lr, hr_hat, hr, crop_res=dataset.crop_res)
         os.makedirs("preds", exist_ok=True)
-        collage.save(f"preds/pred{epoch}_loss{val_loss:.3f}.png")
+        collage.save(f"preds/epoch{epoch}_loss{val_loss:.3f}.png")
 
     return losses
 
@@ -135,7 +136,7 @@ def train_crappifier(
         log_frequency : int = 50, 
         dataloader_kwargs = None
     ):
-    r"""Trains an :class:`nn.Module` model as a crappifier on high and low resolution paired data.
+    r"""Trains an :class:`nn.Module` model as a crappifier on high-low-resolution paired data.
     The model must output an image the same size as the input/have a `scale` value of 1.
     This is not necessary if you are using a :class:`Crappifier` instance as your crappifier.
 
@@ -150,9 +151,9 @@ def train_crappifier(
 
         epochs (int) : Number of epochs to train model for.
 
-        sigma (int) : Precision of noise distribution. Higher values will yield better results can cause larger gradients that are unstable during training. Default is 5.
+        sigma (int) : Precision of noise distribution. Higher values will better approximate noise distribution but can cause larger gradients that are unstable during training. Default is 5.
 
-        clip : (float) : Max gradient for gradient clipping. Use None for no clipping.
+        clip : (float) : Max gradient for gradient clipping. Use None for no clipping. Default is 3.
 
         device (str) : Device to train model on. Default is "cpu".
 
@@ -168,8 +169,8 @@ def train_crappifier(
         losses (list[float]) : List of losses during training.
     """
     dataloader_kwargs = {} if dataloader_kwargs is None else dataloader_kwargs
-    train_dataloader = DataLoader(dataset, batch_size, **dataloader_kwargs)
-    val_dataloader = DataLoader(dataset, batch_size, sampler=range(dataset.train_len, dataset.train_len + dataset.val_len), **{key:dataloader_kwargs[key] for key in dataloader_kwargs if key!="shuffle"})
+    train_dataloader = DataLoader(dataset, batch_size, sampler=_RandomIterIdx(_invert_idx(dataset.val_idx, len(dataset))), **dataloader_kwargs)
+    val_dataloader = DataLoader(dataset, batch_size, sampler=dataset.val_idx, **dataloader_kwargs)
     include_metric = True if type(scheduler) == torch.optim.lr_scheduler.ReduceLROnPlateau else False
 
     model.to(device)
@@ -275,7 +276,7 @@ class _Crappifier_Objective():
 
     def sample(self, params):
         metrics = []
-        for sample in range(int(self.n_samples)):
+        for idx in range(int(self.n_samples)):
             # Grab gound truth high and low resolution images
             hr, lr = self.dataset[self.idx]
             hr, lr = np.asarray(hr, dtype=np.uint8), np.asarray(lr, dtype=np.uint8)

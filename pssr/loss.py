@@ -15,7 +15,7 @@ class SSIMLoss(nn.Module):
 
             win_size (int) : Size of Gaussian window. Must be odd. Default is 11.
 
-            win_sigma (float) : Sigma for distribution in Gaussian window. Default is 1.5.
+            win_sigma (float) : Sigma for distribution of Gaussian window. Default is 1.5.
 
             ms (bool) : Whether to use MS-SSIM over its SSIM. Default is True.
 
@@ -47,9 +47,8 @@ class SSIMLoss(nn.Module):
             x = self.mix*x + (1-self.mix)*l1
         return x
 
-def psnr_metric(mse : float, max : float):
-    return 20 * torch.log10(max / torch.sqrt(mse))
-
 def pixel_metric(mse : float, image_range : int):
     return math.sqrt(mse) * image_range
 
+def _psnr_metric(mse : float, max : float):
+    return 20 * torch.log10(max / torch.sqrt(mse))

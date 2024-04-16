@@ -1,14 +1,17 @@
 [tool.poetry]
 name = "pssr"
-version = "0.0.1"
+version = "1.0.0"
 description = "Point-Scanning Super-Resolution"
 authors = ["Hayden Stites"]
+readme = "README.rst"
 license = "MIT"
 repository = "https://github.com/Hayden-Stites/TMBot"
+documentation = "https://haydenstites.github.io/PSSR/"
 classifiers = [
     "Programming Language :: Python",
     "License :: OSI Approved :: MIT License",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Processing",
 ]
 
 [tool.poetry.dependencies]
@@ -16,12 +19,12 @@ python = "^3.11"
 torch = "^2.0.0"
 numpy = "^1.26.4"
 pillow = "^10.2.0"
+czifile = "^2019.7.2"
 opencv-python = "^4.9.0.80"
-tqdm = "^4.66.2"
+scikit-image = "^0.23.1"
 scikit-optimize = "^0.9.0"
+tqdm = "^4.66.2"
 pytorch-msssim = "^1.0.0"
-aicsimageio = "^4.14.0"
-
 
 [build-system]
 requires = ["poetry-core"]

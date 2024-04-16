@@ -44,9 +44,9 @@ In this example, we will use :doc:`../reference/data/ImageDataset`, assuming tha
 
 .. code-block:: python
 
-    dataset = ImageDataset("your/hr_path", hr_res=512, lr_scale=4, crappifier=crappifier, extension="tif")
+    dataset = ImageDataset("your/hr", hr_res=512, lr_scale=4, crappifier=crappifier, extension="tif")
 
-This sets the ``dataset`` variable to an instance of :doc:`../reference/data/ImageDataset`, loading *high-resolution* ``.tif`` images from ``your/hr_path``.
+This sets the ``dataset`` variable to an instance of :doc:`../reference/data/ImageDataset`, loading *high-resolution* ``.tif`` images from ``your/hr``.
 The *high-resolution* images are specified to have a horizontal and vertical resolution of ``hr_res=512``.
 If the images provided are not square or are of the wrong resolution, they will be cropped and/or rescaled to fit.
 
@@ -55,7 +55,8 @@ generate *low-resolution* images ``lr_scale=4`` times smaller than the *high-res
 
 .. note::
 
-    Users are advised to keep image resolutions to a power of 2, elaborated in :doc:`../reference/models`.
+    Users are advised to keep image resolutions to a power of 2 even if the raw input images have a different size.
+    This is elaborated in :doc:`../reference/models`.
 
 |
 
@@ -90,7 +91,7 @@ We will first define our loss function.
 
     loss_fn = SSIMLoss(mix=.8, ms=True)
 
-Although MSE loss can be used to good results, :doc:`../reference/loss/SSIMLoss` can be used optimize visually significant elements of an image, and is often used in super-resolution tasks.
+While MSE loss can also be used to good results, we will instead use :doc:`../reference/loss/SSIMLoss` here, which will optimize visually significant elements our predictions.
 The ``mix`` argument controls the inverse contribution of corrected L1 loss, while the ``ms`` argument enables MS-SSIM, a more robust version of SSIM.
 
 |
@@ -205,7 +206,7 @@ We can do this by creating the same :doc:`../reference/data/ImageDataset`, only 
 
 .. code-block:: python
 
-    test_dataset = ImageDataset("your/lr_path", hr_res=512, lr_scale=4, extension="tif")
+    test_dataset = ImageDataset("your/lr", hr_res=512, lr_scale=4, extension="tif")
 
 The *low-resolution* images are implied to have a horizontal and vertical resolution of 128 (``hr_res=512`` / ``lr_scale=4``).
 A crappifier does not have to be specified, as it will not be used.
@@ -239,7 +240,7 @@ We can do this by creating a new :doc:`../reference/data/PairedImageDataset` ins
 
 .. code-block:: python
 
-    paired_dataset = PairedImageDataset("testdata/EM_pairs_crop/hr", "testdata/EM_pairs_crop/lr", hr_res=512, lr_scale=4)
+    paired_dataset = PairedImageDataset("your/hr", "your/lr", hr_res=512, lr_scale=4)
 
 The images in each folder should be properly aligned and have a similar naming/ordering scheme so that they are returned in the same order when that dataset is iterated.
 

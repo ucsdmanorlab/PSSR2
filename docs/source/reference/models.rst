@@ -21,3 +21,4 @@ Modules
    :titlesonly:
 
    models/ResUNet
+   models/ResUNetA
