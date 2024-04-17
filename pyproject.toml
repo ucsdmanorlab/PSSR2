@@ -1,17 +1,22 @@
 [tool.poetry]
 name = "pssr"
-version = "1.0.0"
+version = "1.0.1"
 description = "Point-Scanning Super-Resolution"
 authors = ["Hayden Stites"]
-readme = "README.rst"
+readme = "README.md"
 license = "MIT"
-repository = "https://github.com/Hayden-Stites/TMBot"
+repository = "https://github.com/haydenstites/PSSR"
 documentation = "https://haydenstites.github.io/PSSR/"
 classifiers = [
-    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
+    "Development Status :: 5 - Production/Stable",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Environment :: GPU :: NVIDIA CUDA",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Image Processing",
+    "Topic :: Documentation :: Sphinx",
 ]
 
 [tool.poetry.dependencies]

@@ -1,4 +1,4 @@
-import torch, glob, os, random, czifile
+import torch, glob, os, random, czifile, warnings
 import numpy as np
 from torch.utils.data import Dataset
 from pathlib import Path
@@ -40,6 +40,8 @@ class ImageDataset(Dataset):
         assert self.path.exists(), f"Path {self.path} does not exist."
 
         self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.path))
+        assert len(self.hr_files) > 0, f"No {extension} files exist in {self.path}."
+
         self.val_idx = _get_val_idx(len(self.hr_files), val_split, split_seed)
 
         self.is_lr = all([size <= hr_res//lr_scale for size in Image.open(Path(self.path, self.hr_files[0])).size]) or (lr_scale == 1)
@@ -56,6 +58,8 @@ class ImageDataset(Dataset):
         return len(self.hr_files)
     
     def __getitem__(self, idx):
+        assert idx < len(self), "Tried to retrieve invalid image."
+
         hr = Image.open(Path(self.path, self.hr_files[idx]))
 
         hr = _frame_channel(hr, self.mode)
@@ -106,8 +110,9 @@ class SlidingDataset(Dataset):
         assert self.path.exists(), f"Path {self.path} does not exist."
         
         self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.path))
-        self.stride = hr_res - overlap
+        assert len(self.hr_files) > 0, f"No {extension} files exist in {self.path}."
 
+        self.stride = hr_res - overlap
         self.tiles = []
         for file in self.hr_files:
             image = _load_sheet(self.path, file, mode)
@@ -130,7 +135,7 @@ class SlidingDataset(Dataset):
         return sum(self.tiles)
     
     def __getitem__(self, idx):
-        assert idx < sum(self.tiles), "Tried to retrieve invalid tile."
+        assert idx < len(self), "Tried to retrieve invalid tile."
 
         # Find idx tile across all tiles
         image_idx = 0
@@ -187,9 +192,13 @@ class PairedImageDataset(Dataset):
         self.hr_path = Path(hr_path) if type(hr_path) is str else hr_path
         self.lr_path = Path(lr_path) if type(lr_path) is str else lr_path
         assert self.hr_path.exists() and self.lr_path.exists(), f"One path {self.hr_path} or {self.lr_path} does not exist."
+        if self.hr_path == self.lr_path:
+            warnings.warn("hr_path is equal to lr_path, this should not be done except for testing purposes. Consider using ImageDataset instead.")
 
         self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.hr_path))
         self.lr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.lr_path))
+        for files, path in zip([self.hr_files, self.lr_files], [self.hr_path, self.lr_path]):
+            assert len(files) > 0, f"No {extension} files exist in {path}."
         assert len(self.hr_files) == len(self.lr_files), "Length mismatch between high-low-resolution images."
 
         self.val_idx = _get_val_idx(len(self.hr_files), val_split, split_seed)
@@ -207,6 +216,8 @@ class PairedImageDataset(Dataset):
         return len(self.hr_files)
     
     def __getitem__(self, idx):
+        assert idx < len(self), "Tried to retrieve invalid image."
+
         hr = Image.open(Path(self.hr_path, self.hr_files[idx]))
         lr = Image.open(Path(self.lr_path, self.lr_files[idx]))
 
@@ -214,7 +225,6 @@ class PairedImageDataset(Dataset):
         lr = _frame_channel(lr, self.mode)
 
         return _transform_pair(hr, lr, self.hr_res, self.hr_res//self.lr_scale, self.rotation, self.transforms)
-        # return (*pair, ) if name else pair
 
     def _get_name(self, idx):
         return self.lr_files[idx].split('.')[0]
@@ -252,9 +262,13 @@ class PairedSlidingDataset(Dataset):
         self.hr_path = Path(hr_path) if type(hr_path) is str else hr_path
         self.lr_path = Path(lr_path) if type(lr_path) is str else lr_path
         assert self.hr_path.exists() and self.lr_path.exists(), f"One path {self.hr_path} or {self.lr_path} does not exist."
+        if self.hr_path == self.lr_path:
+            warnings.warn("hr_path is equal to lr_path, this should not be done except for testing purposes. Consider using SlidingDataset instead.")
         
         self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.hr_path))
         self.lr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.lr_path))
+        for files, path in zip([self.hr_files, self.lr_files], [self.hr_path, self.lr_path]):
+            assert len(files) > 0, f"No {extension} files exist in {path}."
         assert len(self.hr_files) == len(self.lr_files), "Length mismatch between high-low-resolution images."
 
         self.stride = hr_res - overlap
@@ -280,7 +294,7 @@ class PairedSlidingDataset(Dataset):
         return sum(self.tiles)
     
     def __getitem__(self, idx):
-        assert idx < sum(self.tiles), "Tried to retrieve invalid tile."
+        assert idx < len(self), "Tried to retrieve invalid tile."
 
         # Find idx tile across all tiles
         image_idx = 0
@@ -294,7 +308,6 @@ class PairedSlidingDataset(Dataset):
                 image_idx += 1
 
         return _transform_pair(hr, lr, self.hr_res, self.hr_res//self.lr_scale, self.rotation, self.transforms)
-        # return (*pair, f"{self.lr_files[image_idx].split('.')[0]}_{idx}") if name else pair
     
     def _get_name(self, idx):
         image_idx = 0
