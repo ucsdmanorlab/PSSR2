@@ -43,7 +43,7 @@ def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", o
             hr_hat = _pred_array(hr_hat).squeeze(0)
             
             if norm:
-                _, hr_hat = normalize_pred(np.mean(_pred_array(dataset[idx][0]), axis=0), np.mean(hr_hat, axis=0))
+                _, hr_hat = normalize_preds(np.mean(_pred_array(dataset[idx][0]), axis=0), np.mean(hr_hat, axis=0))
 
             hr_hat = Image.fromarray(hr_hat.astype(np.uint8).squeeze())
             hr_hat = hr_hat.crop([0,0,dataset.crop_res,dataset.crop_res])
@@ -104,7 +104,6 @@ def predict_collage(model : nn.Module, dataset : Dataset, batch_size : int, devi
     os.makedirs("preds", exist_ok=True)
     collage.save(f"preds/{prefix+'_' if prefix else ''}collage_{n_images}.png")
 
-# TODO: Compute only over dataset.crop_res
 def test_metrics(model : nn.Module, dataset : Dataset, batch_size : int, device : str = "cpu", metrics : list[str] = ["mse", "pixel", "psnr", "ssim"], avg : bool = True, norm : bool = True, dataloader_kwargs = None):
     r"""Computes image restoration metrics of predicted vs ground truth images.
 
@@ -146,17 +145,10 @@ def test_metrics(model : nn.Module, dataset : Dataset, batch_size : int, device 
 
             hr_hat = model(lr)
 
-            hr, hr_hat = _pred_array(hr), _pred_array(hr_hat)
+            hr, hr_hat = _pred_array(hr)[:,:,:dataset.crop_res,:dataset.crop_res], _pred_array(hr_hat)[:,:,:dataset.crop_res,:dataset.crop_res]
 
             if norm:
-                hr_norms, hr_hat_norms = [], []
-                for idx in range(len(hr)):
-                    hr_norm, hr_hat_norm = normalize_pred(np.mean(hr[idx], axis=0), np.mean(hr_hat[idx], axis=0))
-
-                    hr_norms.append(hr_norm)
-                    hr_hat_norms.append(hr_hat_norm)
-                hr = np.asarray(hr_norms)[:, np.newaxis, :, :]
-                hr_hat = np.asarray(hr_hat_norms)[:, np.newaxis, :, :]
+                hr, hr_hat = normalize_preds(hr, hr_hat)
 
             for idx in range(len(hr)):
                 mse = np.mean((hr[idx]/image_range-hr_hat[idx]/image_range)**2) if use_mse else None
@@ -173,14 +165,13 @@ def test_metrics(model : nn.Module, dataset : Dataset, batch_size : int, device 
     metrics = {metric:(sum(values)/len(values) if avg else values) for metric, values in metrics.items()}
     return metrics
 
-# TODO: Multichannel images
-def normalize_pred(hr : np.ndarray, hr_hat : np.ndarray, pmin : float = 0.1, pmax : float = 99.9):
+def normalize_preds(hr : np.ndarray, hr_hat : np.ndarray, pmin : float = 0.1, pmax : float = 99.9):
     r"""Normalizes prediction image intensities to ground truth for fair benchmarking.
 
     Args:
-        hr (ndarray) : High-resolution ground truth image as array.
+        hr (ndarray) : High-resolution ground truth images as array.
 
-        hr_hat (ndarray) : High-resolution prediction image as array.
+        hr_hat (ndarray) : High-resolution prediction images as array.
 
         pmin (float) : Percentile minimum image intensity. Default is 0.1.
 
@@ -191,43 +182,50 @@ def normalize_pred(hr : np.ndarray, hr_hat : np.ndarray, pmin : float = 0.1, pma
 
         hr_hat_norm (ndarray) : Normalized high-resolution prediction image.
     """
-    # Same procedure as in intial PSSR implementation
-    hr = hr.astype(np.float32)
-    hr_hat = hr_hat.astype(np.float32)
+    assert len(hr.shape) == len(hr_hat.shape), "hr and hr_hat must have the same number of dimensions."
+    hr_shape = hr.shape
+    hr_hat_shape = hr_hat.shape
 
-    base_max = np.percentile(hr, pmax)
-    base_mean = np.mean(hr)
+    if len(hr.shape) < 3:
+        hr, hr_hat = hr[np.newaxis, ...], hr_hat[np.newaxis, ...]
+    hr, hr_hat = hr.reshape(-1, *hr.shape[-2:]), hr_hat.reshape(-1, *hr_hat.shape[-2:])
+    assert len(hr) == len(hr_hat), "hr and hr_hat must have the same number of images."
 
-    hr = _normalize_minmax(hr, pmin, pmax)
+    hr_norms, hr_hat_norms = [], []
+    for idx in range(len(hr)):
+        # Same procedure as in intial PSSR implementation
+        hr_norm = hr[idx].astype(np.float32)
+        hr_hat_norm = hr_hat[idx].astype(np.float32)
 
-    hr_hat = hr_hat - np.mean(hr_hat)
-    hr = hr - np.mean(hr)
+        base_max = np.percentile(hr_norm, pmax)
+        base_mean = np.mean(hr_norm)
 
-    scale = np.cov(cv2.resize(hr_hat, hr.shape).flatten(), hr.flatten())[0, 1] / np.var(hr_hat.flatten())
-    hr_hat = scale * hr_hat
+        hr_norm = _normalize_minmax(hr_norm, pmin, pmax)
+
+        hr_hat_norm = hr_hat_norm - np.mean(hr_hat_norm)
+        hr_norm = hr_norm - np.mean(hr_norm)
+
+        scale = np.cov(cv2.resize(hr_hat_norm, hr_norm.shape).flatten(), hr_norm.flatten())[0, 1] / np.var(hr_hat_norm.flatten())
+        hr_hat_norm = scale * hr_hat_norm
+        
+        # Rescale to initial image intensity
+        hr_norm, hr_hat_norm = (hr_norm-hr_norm.min())*base_max, (hr_hat_norm-hr_norm.min())*base_max
+        hr_norm, hr_hat_norm = hr_norm/(hr_norm.mean()/base_mean), hr_hat_norm/(hr_hat_norm.mean()/base_mean)
+
+        hr_norms.append(hr_norm)
+        hr_hat_norms.append(hr_hat_norm)
     
-    # Rescale to initial image intensity
-    hr, hr_hat = (hr-hr.min())*base_max, (hr_hat-hr.min())*base_max
-    hr, hr_hat = hr/(hr.mean()/base_mean), hr_hat/(hr_hat.mean()/base_mean)
-
-    return np.clip(hr, 0, 255), np.clip(hr_hat, 0, 255)
+    hr, hr_hat = np.asarray(hr_norms).clip(0, 255), np.asarray(hr_hat_norms).clip(0, 255)
+    return hr.reshape(hr_shape), hr_hat.reshape(hr_hat_shape)
+    
 
 def _collage_preds(lr, hr_hat, hr, norm : bool = True, max_images : int = 5, crop_res : int = None):
     crop_res = hr.shape[-1] if crop_res is None else crop_res
     lr, hr_hat, hr = _pred_array(lr)[:,:,:crop_res//4,:crop_res//4], _pred_array(hr_hat)[:,:,:crop_res,:crop_res], _pred_array(hr)[:,:,:crop_res,:crop_res]
 
     if norm:
-        lr_norms, hr_norms, hr_hat_norms = [], [], []
-        for idx in range(len(hr)):
-            hr_norm, hr_hat_norm = normalize_pred(np.mean(hr[idx], axis=0), np.mean(hr_hat[idx], axis=0))
-            _, lr_norm = normalize_pred(np.mean(hr[idx], axis=0), np.mean(lr[idx], axis=0))
-
-            lr_norms.append(lr_norm)
-            hr_hat_norms.append(hr_hat_norm)
-            hr_norms.append(hr_norm)
-        lr = np.asarray(lr_norms)[:, np.newaxis, :, :]
-        hr_hat = np.asarray(hr_hat_norms)[:, np.newaxis, :, :]
-        hr = np.asarray(hr_norms)[:, np.newaxis, :, :]
+        hr, hr_hat = normalize_preds(hr, hr_hat)
+        _, lr = normalize_preds(hr, lr)
 
     lr = _image_stack(lr, max_images)
     hr_hat = _image_stack(hr_hat, max_images)
@@ -250,7 +248,7 @@ def _image_stack(data, max_images : int = 5, raw : bool = True):
             stack.paste(image, (width*idx, 0))
     return stack
 
-def _normalize_minmax(x, pmin=0.1, pmax=99.9, clip=False, eps=1e-20, dtype=np.float32):
+def _normalize_minmax(x, pmin=0.1, pmax=99.9, eps=1e-20, dtype=np.float32):
     # From csbdeep
     x_min = np.percentile(x, pmin, keepdims=True)
     x_max = np.percentile(x, pmax, keepdims=True)
@@ -261,8 +259,6 @@ def _normalize_minmax(x, pmin=0.1, pmax=99.9, clip=False, eps=1e-20, dtype=np.fl
     eps = dtype(eps)
 
     x = (x - x_min) / (x_max - x_min + eps)
-    if clip:
-        x = np.clip(x, 0, 1)
 
     return x
 

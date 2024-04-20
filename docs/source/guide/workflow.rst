@@ -3,7 +3,7 @@ Workflow
 
 .. note::
 
-    This section explains how to use an example **PSSR** workflow, similar to that in the `demo <https://github.com/haydenstites/PSSR/blob/master/demo.py>`_.
+    This section explains how to use an example **PSSR** workflow, similar to that implemented in the CLI.
     It does not necessarily apply to all use cases and is meant to be expanded upon.
 
 

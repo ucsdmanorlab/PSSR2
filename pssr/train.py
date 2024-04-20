@@ -1,4 +1,4 @@
-import torch, os
+import torch, os, random
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
@@ -136,7 +136,9 @@ def train_crappifier(
         log_frequency : int = 50, 
         dataloader_kwargs = None
     ):
-    r"""Trains an :class:`nn.Module` model as a crappifier on high-low-resolution paired data.
+    r"""EXPERIMENTAL, NOT CURRENTLY RECOMMENDED FOR MOST WORKFLOWS!
+    
+    Trains an :class:`nn.Module` model as a crappifier on high-low-resolution paired data.
     The model must output an image the same size as the input/have a `scale` value of 1.
     This is not necessary if you are using a :class:`Crappifier` instance as your crappifier.
 
@@ -243,7 +245,7 @@ def train_crappifier(
         collage.save(f"preds/pred{epoch}_loss{val_loss:.3f}.png")
     return losses
 
-def approximate_crappifier(crappifier : Crappifier, space : list[Dimension], dataset : Dataset, n_samples : int = 10, opt_kwargs = None):
+def approximate_crappifier(crappifier : Crappifier, space : list[Dimension], dataset : Dataset, max_images = None, opt_kwargs = None):
     r"""Approximates :class:`Crappifier` parameters from ground truth paired images. Uses Bayesian optimization because Crappifier functions are not differentiable.
 
     Args:
@@ -253,12 +255,13 @@ def approximate_crappifier(crappifier : Crappifier, space : list[Dimension], dat
 
         dataset (Dataset) : Paired image dataset to load data from.
 
-        n_samples (int) : Number of image samples to average computations over for each optimization step. Default is 10.
+        max_images (int) : Number of image samples to average computations over for each optimization step. Default is None, using all images in dataset.
 
         opt_kwargs (dict[str, Any]) : Keyword arguments for skopt :meth:`gp_minimize`. Default is None
     """
-    opt_kwargs = {} if opt_kwargs is None else opt_kwargs
     space = [space] if type(space) is not list else space
+    n_samples = len(dataset) if max_images is None else min(max_images, len(dataset))
+    opt_kwargs = {} if opt_kwargs is None else opt_kwargs
 
     objective = _Crappifier_Objective(crappifier, dataset, n_samples).sample
 
@@ -272,26 +275,21 @@ class _Crappifier_Objective():
         self.dataset = dataset
         self.n_samples = n_samples
 
-        self.idx = 0
-
     def sample(self, params):
-        metrics = []
-        for idx in range(int(self.n_samples)):
-            # Grab gound truth high and low resolution images
-            hr, lr = self.dataset[self.idx]
-            hr, lr = np.asarray(hr, dtype=np.uint8), np.asarray(lr, dtype=np.uint8)
+        sample_idx = list(range(len(self.dataset)))
+        random.shuffle(sample_idx)
 
-            self.idx = self.idx + 1 if self.idx < len(self.dataset) - 1 else 0
+        metrics = []
+        for idx in sample_idx[:self.n_samples]:
+            # Grab gound truth high and low resolution images
+            hr, lr = self.dataset[idx]
+            hr, lr = np.asarray(hr, dtype=np.uint8), np.asarray(lr, dtype=np.uint8)
             
             # Downsampled high resolution image is the baseline for noise profile comparison
-            ds_hr = np.asarray(Image.fromarray(np.squeeze(np.moveaxis(hr, 0, -1))).resize(lr.shape[-2:], Image.Resampling.BILINEAR))
-            if len(ds_hr.shape) > 2:
-                ds_hr = np.moveaxis(ds_hr, -1, 0)
+            ds_hr = np.stack([np.asarray(Image.fromarray(channel).resize(lr.shape[-2:], Image.Resampling.BILINEAR)) for channel in hr])
 
             # Generate artificial low resolution image using optimized crappifier parameters
             lr_hat = self.crappifier(*params).crappify(ds_hr)
-            if len(lr_hat.shape) < 3:
-                lr_hat = lr_hat[np.newaxis, :, :]
  
             # Generate distribution of noise values for both crappified and ground truth low resolution images
             # NOTE: Cant use SSIM or MSE on images as Crappifier noise levels will converge to zero because a noiseless downscaled image will be closer to ground truth than one with correct amount of noise
@@ -304,11 +302,10 @@ class _Crappifier_Objective():
             
             # Aggregate errors of both noise distribution and mean noise profile value
             # We are not generating the noise, so spacial significance is low and mean value is used (spacial loss would underapproximate the correct amount of noise)
-            dist_error = (target_dist - pred_dist)**2
+            dist_error = np.mean((target_dist - pred_dist)**2) / (lr.shape[-1]**2)
             value_error = abs(target_profile.mean() - pred_profile.mean())
-            mse = (target_profile - pred_profile)**2
 
-            loss = (dist_error.mean() * value_error + mse.mean()) / (255**2)
+            loss = dist_error + value_error
             metrics.append(loss)
         return sum(metrics) / len(metrics)
 
@@ -321,9 +318,9 @@ def _crappifier_loss(lr, lr_hat, ds_hr, hist_fn, ssim_loss):
     target_dist = hist_fn(target_profile)
 
     # We are generating the noise, so a spacial criterion must be present (in a lower order as to optimize purely to the "noiseless" profile)
-    dist_error = F.mse_loss(pred_dist, target_dist)
+    dist_error = F.mse_loss(pred_dist, target_dist) / (lr.shape[-1]**2)
     profile_error = ssim_loss(pred_profile, target_profile)
     # value_error = F.l1_loss(pred_profile.view(pred_profile.shape[0], -1).mean(1), target_profile.view(target_profile.shape[0], -1).mean(1))
 
-    loss = dist_error * profile_error / (255**2)
+    loss = dist_error * profile_error
     return loss

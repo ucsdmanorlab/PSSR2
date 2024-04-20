@@ -12,3 +12,4 @@ pssr
    crappifiers
    models
    loss
+   CLI

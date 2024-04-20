@@ -55,8 +55,7 @@ class Poisson(Crappifier):
         self.spread = spread
         
     def crappify(self, image : np.ndarray):
-        image_max = max(1, image.max())
-        return self._interpolate(image, np.random.poisson(image/255*image_max)/image_max*255) + self.gain
+        return self._interpolate(image, np.random.poisson(image)) + self.gain
     
     def _interpolate(self, x, y):
         intensity = max(np.random.normal(self.intensity, self.spread), 0) if self.spread > 0 else self.intensity

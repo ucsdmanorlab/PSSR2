@@ -4,13 +4,16 @@ Getting Started
 Installation
 -------------
 
+It is required that `Python <https://www.python.org>`_ is installed to use **PSSR**.
+If you have not already, download it `here <https://www.python.org/downloads>`_.
+
 Before installing **PSSR**, you may want to create an environment for it with
 
 .. code-block:: console
 
-   (base) $ conda env create pssr
+   $ conda env create pssr
 
-or the equivalent for any other environment manager.
+or the equivalent for any other environment manager if you chose to do so.
 
 |
 
@@ -18,35 +21,29 @@ It is recommended that **PSSR** be installed via the ``pip`` package manager:
 
 .. code-block:: console
 
-   (env) $ pip install pssr
+   $ pip install pssr
 
 However, specific versions can also be installed directly from the `GitHub <https://github.com/haydenstites/PSSR>`_ repository:
 
 .. code-block:: console
 
-   (env) $ pip install git+https://github.com/haydenstites/PSSR/dist/pssr-1.0.0.tar.gz
+   $ pip install git+https://github.com/haydenstites/PSSR/dist/pssr-x.x.x-py3-none-any.whl
 
 
-Running the Demo
------------------
+Running the CLI
+----------------
 
-The demo file is available `here <https://github.com/haydenstites/PSSR/blob/master/demo.py>`__ and offers the simplest interface for a **PSSR** workflow.
-It can be downloaded with:
+The **PSSR** CLI is included with package installation.
+It provides a simple interface for using **PSSR** without having to write any code, and covers most basic use cases.
 
-.. code-block:: console
+The CLI can run in either *train* or *predict* mode. It takes in a number of arugments, described below.
 
-   (env) $ wget https://github.com/haydenstites/PSSR/raw/master/demo.py
-
-|
-
-The demo can run in either *train* or *predict* mode. It takes in a number of arugments, described below.
-
-.. dropdown:: Demo Arguments
+.. dropdown:: CLI Arguments
 
    .. argparse::
-      :filename: ../demo.py
+      :filename: ../_pssr.py
       :func: parse
-      :prog: python demo.py
+      :prog: pssr
 
 Keep in mind that arguments representing an object such as a dataset or model can be defined as a class declaration with additonal arguments in Python syntax.
 For example ``--model-type`` could be given as ``-mt ResUNet(hidden=[128, 256], scale=4)``. 
@@ -68,7 +65,7 @@ A model can be trained by running
 
 .. code-block:: console
 
-   (env) $ python demo.py -t -dp your/path
+   $ python demo.py -t -dp your/path
 
 where ``your/path`` is replaced with the path of your training dataset (folder containing *high-resolution* images/image sheets).
 
@@ -105,7 +102,7 @@ To define both *high-resolution* and *low-resolution* data paths, omit the ``-dp
 
 .. code-block:: console
 
-   (env) $ python demo.py -mt "PairedImageDataset(hr_path='your/hr', lr_path='your/lr')"
+   $ python demo.py -mt "PairedImageDataset(hr_path='your/hr', lr_path='your/lr')"
 
 where ``your/hr`` and ``your/lr`` are repleaced by your *high-resolution* and *low-resolution* data paths respectively.
 

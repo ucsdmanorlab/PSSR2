@@ -1,7 +1,7 @@
-import torch, argparse
+import torch, argparse, sys
 from torch.nn import MSELoss
 from pssr.models import ResUNet, ResUNetA
-from pssr.data import ImageDataset, SlidingDataset, PairedImageDataset
+from pssr.data import ImageDataset, SlidingDataset, PairedImageDataset, PairedSlidingDataset
 from pssr.crappifiers import AdditiveGaussian, Poisson
 from pssr.loss import SSIMLoss
 from pssr.train import train_paired
@@ -18,13 +18,13 @@ def _handle_declaration(arg, defaults, req=None):
     return eval(expression)
 
 def parse():
-    parser = argparse.ArgumentParser(description="PSSR CLI demo for basic usage")
+    parser = argparse.ArgumentParser(prog="pssr", description="PSSR CLI for basic usage", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument("-t", "--train", action="store_true", help="enable train mode")
 
     parser.add_argument("-dp", "--data-path", type=str, help="specify dataset path")
-    parser.add_argument("-dt", "--data-type", type=str, default="ImageDataset", help="specify dataset type e.g. ImageDataset")
-    parser.add_argument("-mt", "--model-type", type=str, default="ResUNet", help="specify model type e.g. ResUNet")
+    parser.add_argument("-dt", "--data-type", type=str, default="ImageDataset", help="specify dataset type")
+    parser.add_argument("-mt", "--model-type", type=str, default="ResUNet", help="specify model type")
     parser.add_argument("-mp", "--model-path", type=str, default="model.pth", help="specify model path")
 
     parser.add_argument("-e", "--epochs", type=int, default=10, help="specify number of training epochs")
@@ -35,15 +35,20 @@ def parse():
 
     return parser
 
-if __name__ == "__main__":
-    args = parse().parse_args()
+def run():
+    parser = parse()
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+    args = parser.parse_args()
 
-    if "PairedImageDataset" not in args.data_type:
-        assert args.data_path is not None, "--data-path(-dp) must be provided for semi-synthetic datasets"
+    if "Paired" not in args.data_type and args.data_path is None:
+        print("--data-path(-dp) must be provided for semi-synthetic datasets")
+        return
 
     model = _handle_declaration(args.model_type, ["ResUNet", "ResUNetA"])
     dataset = _handle_declaration(args.data_type, ["ImageDataset", "SlidingDataset"], 
-        req=[f"'{args.data_path}'"] if args.train else [f'''{f"'{args.data_path}', " if "PairedImageDataset" not in args.data_type else ""}val_split=1'''])
+        req=[f"'{args.data_path}'"] if args.train else [f'''{f"'{args.data_path}', " if "Paired" not in args.data_type else ""}val_split=1'''])
 
     if torch.cuda.is_available():
         device = "cuda"
@@ -94,3 +99,6 @@ if __name__ == "__main__":
                 print(f"{metric}: {metrics[metric]}")
     
     print("\n")
+
+if __name__ == "__main__":
+    run()

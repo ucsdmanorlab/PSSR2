@@ -17,4 +17,4 @@ Modules
    predict/predict_images
    predict/predict_collage
    predict/test_metrics
-   predict/normalize_pred
+   predict/normalize_preds

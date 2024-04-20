@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Getting Started" href="guide/start.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>PSSR 1.0.0 documentation</title>
+        <title>PSSR 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">PSSR 1.0.0 documentation</div></a>
+      <a href="#"><div class="brand">PSSR 1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
   
   
-  <span class="sidebar-brand-text">PSSR 1.0.0 documentation</span>
+  <span class="sidebar-brand-text">PSSR 1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -174,7 +174,7 @@
 <li class="toctree-l3"><a class="reference internal" href="reference/predict/predict_images.html">predict_images</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/predict/predict_collage.html">predict_collage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/predict/test_metrics.html">test_metrics</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reference/predict/normalize_pred.html">normalize_pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/predict/normalize_preds.html">normalize_preds</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="reference/data.html">data</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -201,6 +201,7 @@
 <li class="toctree-l3"><a class="reference internal" href="reference/loss/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="reference/CLI.html">CLI</a></li>
 </ul>
 </li>
 </ul>
@@ -239,7 +240,7 @@
         <article role="main">
           <section id="pssr-documentation">
 <h1>PSSR Documentation<a class="headerlink" href="#pssr-documentation" title="Link to this heading">#</a></h1>
-<p><strong>PSSR</strong> <em>(Point-Scanning Super-Resolution)</em> is a standardized <a class="reference external" href="https://pytorch.org/">PyTorch</a> workflow for super-resolution tasks using microscopy images.
+<p><strong>PSSR</strong> <em>(Point-Scanning Super-Resolution)</em> is a standardized <a class="reference external" href="https://pytorch.org/">PyTorch</a>-based workflow for super-resolution tasks using microscopy images.
 This is the official reimplementation of the methods described in the original paper: <a class="reference external" href="https://www.nature.com/articles/s41592-021-01080-z">Deep learning-based point-scanning super-resolution imaging</a>,
 containing various improvements and new features.</p>
 <p>If you have never used <strong>PSSR</strong> before, <a class="reference internal" href="guide/start.html"><span class="doc">Getting Started</span></a> outlines installation and basic usage.
@@ -254,7 +255,7 @@ If you experience any bugs, unexpected behaviors, or have any suggestions, make 
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="guide/start.html">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="guide/start.html#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide/start.html#running-the-demo">Running the Demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/start.html#running-the-cli">Running the CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/start.html#next-steps">Next Steps</a></li>
 </ul>
 </li>
@@ -288,7 +289,7 @@ If you experience any bugs, unexpected behaviors, or have any suggestions, make 
 <li class="toctree-l3"><a class="reference internal" href="reference/predict/predict_images.html">predict_images</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/predict/predict_collage.html">predict_collage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/predict/test_metrics.html">test_metrics</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reference/predict/normalize_pred.html">normalize_pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/predict/normalize_preds.html">normalize_preds</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="reference/data.html">data</a><ul>
@@ -315,6 +316,7 @@ If you experience any bugs, unexpected behaviors, or have any suggestions, make 
 <li class="toctree-l3"><a class="reference internal" href="reference/loss/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="reference/CLI.html">CLI</a></li>
 </ul>
 </li>
 </ul>
@@ -381,7 +383,7 @@ If you experience any bugs, unexpected behaviors, or have any suggestions, make 
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=8d563738"></script>
+</div><script src="_static/documentation_options.js?v=f2a433a1"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

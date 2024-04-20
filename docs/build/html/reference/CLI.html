@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="ImageDataset" href="data/ImageDataset.html" /><link rel="prev" title="normalize_preds" href="predict/normalize_preds.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="pixel_metric" href="loss/pixel_metric.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>data - PSSR 1.0 documentation</title>
+        <title>CLI - PSSR 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -177,7 +177,7 @@
 <li class="toctree-l3"><a class="reference internal" href="predict/normalize_preds.html">normalize_preds</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current has-children current-page"><a class="current reference internal" href="#">data</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="data.html">data</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="data/ImageDataset.html">ImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="data/SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="data/PairedImageDataset.html">PairedImageDataset</a></li>
@@ -201,7 +201,7 @@
 <li class="toctree-l3"><a class="reference internal" href="loss/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="CLI.html">CLI</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">CLI</a></li>
 </ul>
 </li>
 </ul>
@@ -238,28 +238,60 @@
           </label>
         </div>
         <article role="main">
-          <section id="data">
-<h1>data<a class="headerlink" href="#data" title="Link to this heading">#</a></h1>
-<p><strong>TODO: SlidingPairedDataset and sliding preprocess_hr</strong></p>
-<p>Datasets and functions for handling and synthetically generating <em>high-low-resolution</em> image pairs.</p>
-<p>Datasets that do not take in paired data can be used in “LR mode”, where the dataset loads only unmodified low-resolution images.
-Usage is specific to individual datasets.</p>
-<p>Users are advised to keep dataloading resolutions to a power of 2 even if the raw input images have a different size.
-This is elaborated in <a class="reference internal" href="models.html"><span class="doc">models</span></a>.</p>
-<section id="modules">
-<h2>Modules<a class="headerlink" href="#modules" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.data</span> <span class="kn">import</span> <span class="o">...</span>
+          <section id="cli">
+<h1>CLI<a class="headerlink" href="#cli" title="Link to this heading">#</a></h1>
+<p>The <strong>PSSR</strong> CLI is included with package installation.
+It provides a simple interface for using <strong>PSSR</strong> without having to write any code, and covers most basic use cases.</p>
+<p><p>PSSR CLI for basic usage</p>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pssr</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dp</span> <span class="n">DATA_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dt</span> <span class="n">DATA_TYPE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">mt</span> <span class="n">MODEL_TYPE</span><span class="p">]</span>
+            <span class="p">[</span><span class="o">-</span><span class="n">mp</span> <span class="n">MODEL_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">e</span> <span class="n">EPOCHS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">b</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">lr</span> <span class="n">LR</span><span class="p">]</span>
+            <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="n">PATIENCE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">mse</span><span class="p">]</span>
 </pre></div>
 </div>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="data/ImageDataset.html">ImageDataset</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data/SlidingDataset.html">SlidingDataset</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data/PairedImageDataset.html">PairedImageDataset</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data/preprocess_hr.html">preprocess_hr</a></li>
-</ul>
-</div>
+<section id="named-arguments">
+<h2>Named Arguments<a class="headerlink" href="#named-arguments" title="Link to this heading">#</a></h2>
+<dl class="option-list">
+<dt><kbd>-t, --train</kbd></dt>
+<dd><p>enable train mode</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>-dp, --data-path</kbd></dt>
+<dd><p>specify dataset path</p>
+</dd>
+<dt><kbd>-dt, --data-type</kbd></dt>
+<dd><p>specify dataset type</p>
+<p>Default: “ImageDataset”</p>
+</dd>
+<dt><kbd>-mt, --model-type</kbd></dt>
+<dd><p>specify model type</p>
+<p>Default: “ResUNet”</p>
+</dd>
+<dt><kbd>-mp, --model-path</kbd></dt>
+<dd><p>specify model path</p>
+<p>Default: “model.pth”</p>
+</dd>
+<dt><kbd>-e, --epochs</kbd></dt>
+<dd><p>specify number of training epochs</p>
+<p>Default: 10</p>
+</dd>
+<dt><kbd>-b, --batch-size</kbd></dt>
+<dd><p>specify batch size</p>
+<p>Default: 16</p>
+</dd>
+<dt><kbd>-lr, --lr</kbd></dt>
+<dd><p>specify learning rate</p>
+<p>Default: 0.001</p>
+</dd>
+<dt><kbd>-p, --patience</kbd></dt>
+<dd><p>specify learning rate decay patience</p>
+<p>Default: 3</p>
+</dd>
+<dt><kbd>-mse, --mse</kbd></dt>
+<dd><p>use MSE loss instead of SSIM loss</p>
+<p>Default: False</p>
+</dd>
+</dl>
 </section>
 </section>
 
@@ -268,23 +300,15 @@ This is elaborated in <a class="reference internal" href="models.html"><span cla
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="data/ImageDataset.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">ImageDataset</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="predict/normalize_preds.html">
+          
+          <a class="prev-page" href="loss/pixel_metric.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">normalize_preds</div>
+                <div class="title">pixel_metric</div>
                 
               </div>
             </a>
@@ -318,8 +342,8 @@ This is elaborated in <a class="reference internal" href="models.html"><span cla
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">data</a><ul>
-<li><a class="reference internal" href="#modules">Modules</a></li>
+<li><a class="reference internal" href="#">CLI</a><ul>
+<li><a class="reference internal" href="#named-arguments">Named Arguments</a></li>
 </ul>
 </li>
 </ul>

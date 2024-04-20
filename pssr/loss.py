@@ -17,7 +17,7 @@ class SSIMLoss(nn.Module):
 
             win_sigma (float) : Sigma for distribution of Gaussian window. Default is 1.5.
 
-            ms (bool) : Whether to use MS-SSIM over its SSIM. Default is True.
+            ms (bool) : Whether to use MS-SSIM over basic SSIM. Default is True.
 
             kwargs (dict[str, Any]) : Keyword arguments for pytorch_msssim.
         """
@@ -47,7 +47,14 @@ class SSIMLoss(nn.Module):
             x = self.mix*x + (1-self.mix)*l1
         return x
 
-def pixel_metric(mse : float, image_range : int):
+def pixel_metric(mse : float, image_range : int = 255):
+    r"""Simple metric for calculating average pixel error.
+    
+    Args:
+        mse (float) : Mean squared error between predicted and ground truth images.
+
+        image_range (int) : Value range of image. Default is 255.
+    """
     return math.sqrt(mse) * image_range
 
 def _psnr_metric(mse : float, max : float):

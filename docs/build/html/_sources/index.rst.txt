@@ -1,7 +1,7 @@
 PSSR Documentation
 ===================
 
-**PSSR** *(Point-Scanning Super-Resolution)* is a standardized `PyTorch <https://pytorch.org/>`_ workflow for super-resolution tasks using microscopy images.
+**PSSR** *(Point-Scanning Super-Resolution)* is a standardized `PyTorch <https://pytorch.org/>`_-based workflow for super-resolution tasks using microscopy images.
 This is the official reimplementation of the methods described in the original paper: `Deep learning-based point-scanning super-resolution imaging <https://www.nature.com/articles/s41592-021-01080-z>`_,
 containing various improvements and new features.
 
