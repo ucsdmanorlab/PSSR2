@@ -19,7 +19,7 @@ class SSIMLoss(nn.Module):
 
             ms (bool) : Whether to use MS-SSIM over basic SSIM. Default is True.
 
-            kwargs (dict[str, Any]) : Keyword arguments for pytorch_msssim.
+            kwargs (dict[str, Any]) : Keyword arguments for ``pytorch_msssim``.
         """
         super().__init__()
 

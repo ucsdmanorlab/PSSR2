@@ -3,7 +3,7 @@ train
 
 Various training functions for **PSSR** models.
 
-All functions take in paired high-low-resolution image pairs.
+All functions take in paired high-low-resolution image pairs, when can be either true image pairs or semi-synthetic image pairs.
 
 
 Modules
@@ -17,5 +17,5 @@ Modules
    :titlesonly:
 
    train/train_paired
-   train/train_crappifier
    train/approximate_crappifier
+   train/train_crappifier

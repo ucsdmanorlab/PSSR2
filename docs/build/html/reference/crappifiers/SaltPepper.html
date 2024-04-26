@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="crappifiers" href="../crappifiers.html" /><link rel="prev" title="PairedSlidingDataset" href="PairedSlidingDataset.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="models" href="../models.html" /><link rel="prev" title="AdditiveGaussian" href="AdditiveGaussian.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>preprocess_hr - PSSR 1.0 documentation</title>
+        <title>SaltPepper - PSSR 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">PSSR 1.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">PSSR 1.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 1.0 documentation</span>
+  <span class="sidebar-brand-text">PSSR 1.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -166,8 +166,8 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">pssr</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of pssr</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 has-children"><a class="reference internal" href="../train.html">train</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of train</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../train/train_paired.html">train_paired</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../train/train_crappifier.html">train_crappifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../train/approximate_crappifier.html">approximate_crappifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../train/train_crappifier.html">train_crappifier</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../predict.html">predict</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of predict</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -177,18 +177,20 @@
 <li class="toctree-l3"><a class="reference internal" href="../predict/normalize_preds.html">normalize_preds</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="../data.html">data</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="ImageDataset.html">ImageDataset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="SlidingDataset.html">SlidingDataset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="PairedImageDataset.html">PairedImageDataset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="PairedSlidingDataset.html">PairedSlidingDataset</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">preprocess_hr</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../data.html">data</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../data/ImageDataset.html">ImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/SlidingDataset.html">SlidingDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/PairedImageDataset.html">PairedImageDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/preprocess_dataset.html">preprocess_dataset</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../crappifiers.html">crappifiers</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of crappifiers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../crappifiers/Crappifier.html">Crappifier</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../crappifiers/Poisson.html">Poisson</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../crappifiers/AdditiveGaussian.html">AdditiveGaussian</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../crappifiers.html">crappifiers</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of crappifiers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Crappifier.html">Crappifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MultiCrappifier.html">MultiCrappifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Poisson.html">Poisson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="AdditiveGaussian.html">AdditiveGaussian</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">SaltPepper</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -238,25 +240,21 @@
           </label>
         </div>
         <article role="main">
-          <section id="preprocess-hr">
-<h1>preprocess_hr<a class="headerlink" href="#preprocess-hr" title="Link to this heading">#</a></h1>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.data</span> <span class="kn">import</span> <span class="n">preprocess_hr</span>
+          <section id="saltpepper">
+<h1>SaltPepper<a class="headerlink" href="#saltpepper" title="Link to this heading">#</a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.crappifiers</span> <span class="kn">import</span> <span class="n">SaltPepper</span>
 </pre></div>
 </div>
 <dl class="py function">
-<dt class="sig sig-object py" id="pssr.data.preprocess_hr">
-<span class="sig-prename descclassname"><span class="pre">pssr.data.</span></span><span class="sig-name descname"><span class="pre">preprocess_hr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">~pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hr_res:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scale:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crappifier:</span> <span class="pre">~pssr.crappifiers.Crappifier</span> <span class="pre">=</span> <span class="pre">&lt;pssr.crappifiers.Poisson</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'L'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.data.preprocess_hr" title="Link to this definition">#</a></dt>
-<dd><p>Preprocesses and crappifies low-resolution images from high-resolution images.
-However, it is better for most use cases to process data at runtime using a dataset such as <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageDataset</span></code> to save disk space at the cost of negligible CPU usage.</p>
+<dt class="sig sig-object py" id="pssr.crappifiers.SaltPepper.__init__">
+<span class="sig-prename descclassname"><span class="pre">pssr.crappifiers.SaltPepper.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intensity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.crappifiers.SaltPepper.__init__" title="Link to this definition">#</a></dt>
+<dd><p>Crappifier using salt and pepper noise (full value addition/deletion). Adds salt and pepper noise to a low resolution image.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>Path</em>) – Path to folder containing high-resolution images. Can also be a str.</p></li>
-<li><p><strong>hr_res</strong> (<em>int</em>) – Resolution of high-resolution images. Images larger than this will be downscaled to this resolution. Default is 512.</p></li>
-<li><p><strong>lr_scale</strong> (<em>int</em>) – Downscaling factor for low-resolution images to simulate undersampling. Choose a power of 2 for best results. Default is 4.</p></li>
-<li><p><strong>crappifier</strong> (<a class="reference internal" href="../crappifiers/Crappifier.html#pssr.crappifiers.Crappifier" title="pssr.crappifiers.Crappifier"><em>Crappifier</em></a>) – Crappifier for degrading low-resolution images to simulate undersampling. Default is <code class="xref py py-class docutils literal notranslate"><span class="pre">Poisson</span></code>.</p></li>
-<li><p><strong>extension</strong> (<em>str</em>) – File extension of images. Default is “tif”.</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – PIL image mode for loading images, e.g. “L” for grayscale, “RGB” for color. Default is “L”.</p></li>
+<li><p><strong>intensity</strong> (<em>float</em>) – Percent of values to replace with salt and pepper noise. Default is 0.5.</p></li>
+<li><p><strong>gain</strong> (<em>float</em>) – Value gain added to the output. Default is 0.</p></li>
+<li><p><strong>spread</strong> (<em>float</em>) – Standard deviation of crappifier intensity for training on a range of crappifications. Default is 0.</p></li>
 </ul>
 </dd>
 </dl>
@@ -269,23 +267,23 @@ However, it is better for most use cases to process data at runtime using a data
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../crappifiers.html">
+          <a class="next-page" href="../models.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">crappifiers</div>
+                <div class="title">models</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="PairedSlidingDataset.html">
+          <a class="prev-page" href="AdditiveGaussian.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">PairedSlidingDataset</div>
+                <div class="title">AdditiveGaussian</div>
                 
               </div>
             </a>
@@ -319,8 +317,8 @@ However, it is better for most use cases to process data at runtime using a data
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">preprocess_hr</a><ul>
-<li><a class="reference internal" href="#pssr.data.preprocess_hr"><code class="docutils literal notranslate"><span class="pre">preprocess_hr()</span></code></a></li>
+<li><a class="reference internal" href="#">SaltPepper</a><ul>
+<li><a class="reference internal" href="#pssr.crappifiers.SaltPepper.__init__"><code class="docutils literal notranslate"><span class="pre">__init__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -332,7 +330,7 @@ However, it is better for most use cases to process data at runtime using a data
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+</div><script src="../../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>

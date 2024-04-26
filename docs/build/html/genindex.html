@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 --><title>Index - PSSR 1.0 documentation</title>
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 --><title>Index - PSSR 1.1.0 documentation</title>
 <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">PSSR 1.0 documentation</div></a>
+      <a href="index.html"><div class="brand">PSSR 1.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 1.0 documentation</span>
+  <span class="sidebar-brand-text">PSSR 1.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -164,8 +164,8 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="reference/api.html">pssr</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of pssr</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="reference/train.html">train</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of train</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="reference/train/train_paired.html">train_paired</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reference/train/train_crappifier.html">train_crappifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/train/approximate_crappifier.html">approximate_crappifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/train/train_crappifier.html">train_crappifier</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="reference/predict.html">predict</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of predict</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -180,13 +180,15 @@
 <li class="toctree-l3"><a class="reference internal" href="reference/data/SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/data/PairedImageDataset.html">PairedImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reference/data/preprocess_hr.html">preprocess_hr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/data/preprocess_dataset.html">preprocess_dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="reference/crappifiers.html">crappifiers</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of crappifiers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="reference/crappifiers/Crappifier.html">Crappifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/crappifiers/MultiCrappifier.html">MultiCrappifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/crappifiers/Poisson.html">Poisson</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/crappifiers/AdditiveGaussian.html">AdditiveGaussian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/crappifiers/SaltPepper.html">SaltPepper</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="reference/models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -247,7 +249,11 @@
         <li><a href="reference/crappifiers/AdditiveGaussian.html#pssr.crappifiers.AdditiveGaussian.__init__">__init__() (in module pssr.crappifiers.AdditiveGaussian)</a>
 
         <ul>
+          <li><a href="reference/crappifiers/MultiCrappifier.html#pssr.crappifiers.MultiCrappifier.__init__">(in module pssr.crappifiers.MultiCrappifier)</a>
+</li>
           <li><a href="reference/crappifiers/Poisson.html#pssr.crappifiers.Poisson.__init__">(in module pssr.crappifiers.Poisson)</a>
+</li>
+          <li><a href="reference/crappifiers/SaltPepper.html#pssr.crappifiers.SaltPepper.__init__">(in module pssr.crappifiers.SaltPepper)</a>
 </li>
           <li><a href="reference/data/ImageDataset.html#pssr.data.ImageDataset.__init__">(in module pssr.data.ImageDataset)</a>
 </li>
@@ -314,7 +320,7 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/predict/predict_images.html#pssr.predict.predict_images">predict_images() (in module pssr.predict)</a>
 </li>
-        <li><a href="reference/data/preprocess_hr.html#pssr.data.preprocess_hr">preprocess_hr() (in module pssr.data)</a>
+        <li><a href="reference/data/preprocess_dataset.html#pssr.data.preprocess_dataset">preprocess_dataset() (in module pssr.data)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -368,7 +374,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=f2a433a1"></script>
+</div><script src="_static/documentation_options.js?v=fc837d61"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

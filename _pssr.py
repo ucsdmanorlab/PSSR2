@@ -2,7 +2,7 @@ import torch, argparse, sys
 from torch.nn import MSELoss
 from pssr.models import ResUNet, ResUNetA
 from pssr.data import ImageDataset, SlidingDataset, PairedImageDataset, PairedSlidingDataset
-from pssr.crappifiers import AdditiveGaussian, Poisson
+from pssr.crappifiers import MultiCrappifier, Poisson, AdditiveGaussian, SaltPepper
 from pssr.loss import SSIMLoss
 from pssr.train import train_paired
 from pssr.predict import predict_images, test_metrics
@@ -32,6 +32,7 @@ def parse():
     parser.add_argument("-lr", "--lr", type=float, default=1e-3, help="specify learning rate")
     parser.add_argument("-p", "--patience", type=int, default=3, help="specify learning rate decay patience")
     parser.add_argument("-mse", "--mse", action="store_true", help="use MSE loss instead of SSIM loss")
+    parser.add_argument("-sl", "--save-losses", action="store_true", help="save training losses")
 
     return parser
 
@@ -39,7 +40,7 @@ def run():
     parser = parse()
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
-        sys.exit(1)
+        return
     args = parser.parse_args()
 
     if "Paired" not in args.data_type and args.data_path is None:
@@ -85,14 +86,20 @@ def run():
         torch.save(model, args.model_path)
         print(f"Saved trained model to {args.model_path}")
 
+        if args.save_losses:
+            with open("train_loss.txt", "w") as file:
+                for loss in losses:
+                    file.write(f"{loss}\n")
+
     else:
         model.load_state_dict(torch.load(args.model_path))
 
         print("\nPredicting images from low resolution...")
-        predict_images(model, dataset, device, "preds", norm=not dataset.is_lr)
+        predict_images(model, dataset, device, norm=not dataset.is_lr, out_dir="preds")
 
         if not dataset.is_lr:
-            metrics = test_metrics(model, dataset, args.batch_size, device=device, dataloader_kwargs=kwargs)
+            print("\nCalculating metrics...")
+            metrics = test_metrics(model, dataset, device)
 
             print("\nMetrics:")
             for metric in metrics:

@@ -52,14 +52,14 @@ def train_paired(
 
         log_frequency (int) : Frequency to log losses and recalculate metrics in steps. Default is 50.
 
-        dataloader_kwargs (dict[str, Any]) : Keyword arguments for pytorch Dataloader. Default is None.
+        dataloader_kwargs (dict[str, Any]) : Keyword arguments for pytorch ``Dataloader``. Default is None.
 
     Returns:
         losses (list[float]) : List of losses during training.
     """
     dataloader_kwargs = {} if dataloader_kwargs is None else dataloader_kwargs
     train_dataloader = DataLoader(dataset, batch_size, sampler=_RandomIterIdx(_invert_idx(dataset.val_idx, len(dataset))), **dataloader_kwargs)
-    val_dataloader = DataLoader(dataset, batch_size, sampler=dataset.val_idx, **dataloader_kwargs)
+    val_dataloader = DataLoader(dataset, batch_size, sampler=_RandomIterIdx(dataset.val_idx, seed=True), **dataloader_kwargs)
     include_metric = True if type(scheduler) == torch.optim.lr_scheduler.ReduceLROnPlateau else False
     image_range = 255
 
@@ -83,7 +83,7 @@ def train_paired(
             optim.step()
             optim.zero_grad()
 
-            if batch_idx % log_frequency == 0:
+            if batch_idx % log_frequency == 0 or batch_idx == len(progress) - 1:
                 losses.append(loss.item())
 
                 mse = nn.functional.mse_loss(hr_hat/image_range, hr/image_range)
@@ -165,14 +165,14 @@ def train_crappifier(
 
         log_frequency (int) : Frequency to log losses and recalculate metrics in steps. Default is 50.
 
-        dataloader_kwargs (dict[str, Any]) : Keyword arguments for pytorch Dataloader. Default is None.
+        dataloader_kwargs (dict[str, Any]) : Keyword arguments for pytorch ``Dataloader``. Default is None.
 
     Returns:
         losses (list[float]) : List of losses during training.
     """
     dataloader_kwargs = {} if dataloader_kwargs is None else dataloader_kwargs
     train_dataloader = DataLoader(dataset, batch_size, sampler=_RandomIterIdx(_invert_idx(dataset.val_idx, len(dataset))), **dataloader_kwargs)
-    val_dataloader = DataLoader(dataset, batch_size, sampler=dataset.val_idx, **dataloader_kwargs)
+    val_dataloader = DataLoader(dataset, batch_size, sampler=_RandomIterIdx(dataset.val_idx, seed=True), **dataloader_kwargs)
     include_metric = True if type(scheduler) == torch.optim.lr_scheduler.ReduceLROnPlateau else False
 
     model.to(device)
@@ -206,7 +206,7 @@ def train_crappifier(
             optim.step()
             optim.zero_grad()
 
-            if batch_idx % log_frequency == 0:
+            if batch_idx % log_frequency == 0 or batch_idx == len(progress) - 1:
                 losses.append(loss.item())
 
                 progress.set_description(f"loss[{loss.item():.5f}]")
@@ -240,7 +240,7 @@ def train_crappifier(
             else:
                 scheduler.step()
 
-        collage = _collage_preds(lr, lr_hat, hr)
+        collage = _collage_preds(lr, lr_hat, hr, crop_res=dataset.crop_res)
         os.makedirs("preds", exist_ok=True)
         collage.save(f"preds/pred{epoch}_loss{val_loss:.3f}.png")
     return losses
@@ -257,7 +257,7 @@ def approximate_crappifier(crappifier : Crappifier, space : list[Dimension], dat
 
         max_images (int) : Number of image samples to average computations over for each optimization step. Default is None, using all images in dataset.
 
-        opt_kwargs (dict[str, Any]) : Keyword arguments for skopt :meth:`gp_minimize`. Default is None
+        opt_kwargs (dict[str, Any]) : Keyword arguments for skopt ``gp_minimize``. Default is None
     """
     space = [space] if type(space) is not list else space
     n_samples = len(dataset) if max_images is None else min(max_images, len(dataset))

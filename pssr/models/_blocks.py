@@ -4,11 +4,11 @@ import torch.nn.functional as F
 import numpy as np
 
 class Reconstruction(nn.Module):
-    def __init__(self, channels : int, hidden : int, scale : int = 4):
+    def __init__(self, in_channels : int, out_channels : int, hidden : int, scale : int = 4):
         super().__init__()
 
-        self.pre = nn.Conv2d(in_channels=hidden + channels, out_channels=scale**2 * hidden, kernel_size=3, padding=1)
-        self.conv = nn.Conv2d(in_channels=hidden, out_channels=channels, kernel_size=3, padding=1)
+        self.pre = nn.Conv2d(in_channels=hidden + in_channels, out_channels=scale**2 * hidden, kernel_size=3, padding=1)
+        self.conv = nn.Conv2d(in_channels=hidden, out_channels=out_channels, kernel_size=3, padding=1)
 
         self.scale = scale
 
@@ -35,5 +35,4 @@ class GradHist(nn.Module):
         diff = torch.cat([torch.ones((batch, 1, size), device=x.device), x], dim=1) - torch.cat([x, torch.zeros((batch, 1, size), device=x.device)], dim=1)
 
         diff = diff.sum(dim=-1)
-        # diff[:, -2] += diff[:, -1]
         return diff[:, :-1]

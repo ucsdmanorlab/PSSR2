@@ -1,16 +1,17 @@
-import torch
+import torch, warnings
 import torch.nn as nn
 import torch.nn.functional as F
 from ._blocks import Reconstruction
+from ..data import _force_list
 
 class ResUNetA(nn.Module):
     def __init__(self, channels : int = 1, hidden : list[int] = [64, 128, 256, 512, 1024], scale : int = 4, depth : int = 3, dilations : list[list[int]] = [[1,3,15,31],[1,3,15],[1,3],[1],[1]], pool_sizes : list[int] = [1, 2, 4, 8], encoder_pool : bool = False):
         r"""A modified Atrous Residual UNet as detailed in Diakogiannis et al., 2019 with an additional image upscaling block.
 
-        Channel sizes hidden[0] (and hidden[-1] if encoder_pool) should be divisible by len(pool_sizes).
+        Channel sizes hidden[0] (and hidden[-1] if encoder_pool is True) must be divisible by len(pool_sizes).
 
         Args:
-            channels (int) : Number of channels in image data.
+            channels (int) : Number of channels in image data. Can also be a list of in channels and out channels respectively.
 
             hidden (list[int]) : Elementwise list of hidden layer channels controlling width and length of model.
 
@@ -18,21 +19,25 @@ class ResUNetA(nn.Module):
 
             depth (int) : Number of hidden layers per residual block. Default is 3.
 
-            dilations (list[list[int]]) : List of dilation values per layer.
+            dilations (list[list[int]]) : List of dilation values per layer. If value is none, atrous convolutions will not be used.
 
             pool_sizes (list[int]) : Pooling ratios for PSP pooling.
 
             encoder_pool (bool) : Whether to include PSP pooling layer at end of encoder. Should not be used if last layer has a size of less than 16 pixels. Default is False.
         """
         super().__init__()
+        channels = _force_list(channels)
+        channels = channels*2 if len(channels) == 1 else channels
 
         if dilations is None:
-            print("dilations is None, atrous convolutions will not be used.")
+            warnings.warn("dilations is None, atrous convolutions will not be used.", stacklevel=2)
             dilations = [1]*len(hidden)
-        assert len(dilations) == len(hidden), f"len(dilations) must equal len(hidden), lengths are {len(dilations)} and {len(hidden)}."
+        if len(dilations) != len(hidden): raise ValueError(f"len(dilations) must equal len(hidden). Lengths are {len(dilations)} and {len(hidden)}.")
+        if hidden[0] % len(pool_sizes) != 0: raise ValueError(f"hidden[0] must be divisible by len(pool_sizes). Sizes are {hidden[0]} and {len(pool_sizes)}.")
+        if hidden[-1] % len(pool_sizes) != 0 and encoder_pool: raise ValueError(f"hidden[-1] must be divisible by len(pool_sizes) if encoder_pool is True. Sizes are {hidden[-1]} and {len(pool_sizes)}.")
         
         self.encoder, self.decoder, self.upscale = nn.ModuleList(), nn.ModuleList(), nn.ModuleList()
-        layers = [channels, *hidden]
+        layers = [channels[0], *hidden]
         n_layers = len(layers) - 1
         for layer_idx in range(n_layers):
             self.encoder.append(_ResBlockA(in_channels=layers[layer_idx], out_channels=layers[layer_idx+1], dilations=dilations[layer_idx], depth=depth))
@@ -43,7 +48,7 @@ class ResUNetA(nn.Module):
         self.encoder_pool = _PSP_Pooling(hidden[-1], pool_sizes) if encoder_pool else None
         self.reconstuction_pool = _PSP_Pooling(hidden[0], pool_sizes)
 
-        self.reconstuction = Reconstruction(channels, hidden[0], scale)
+        self.reconstuction = Reconstruction(channels[0], channels[1], hidden[0], scale)
 
     def forward(self, x):
         x = x / 128 - 1 # Scale input approx from [0, 255] to [-1, 1]
@@ -68,7 +73,7 @@ class ResUNetA(nn.Module):
         x = self.reconstuction_pool(x)
 
         x = torch.cat([x, skips.pop()], dim=1) # Final skip connection before reconstruction
-        assert len(skips) == 0, "Skip connection mismatch between encoder and decoder."
+        if len(skips) != 0: raise IndexError(f"Skip connection mismatch between encoder and decoder. {len(skips)} skip connections are unused.")
 
         x = self.reconstuction(x)
 

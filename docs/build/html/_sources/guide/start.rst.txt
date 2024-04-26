@@ -33,7 +33,7 @@ However, specific versions can also be installed directly from the `GitHub <http
 Running the CLI
 ----------------
 
-The **PSSR** CLI is included with package installation.
+The **PSSR** CLI is included with package installation and can be run with the ``pssr`` command in the command line.
 It provides a simple interface for using **PSSR** without having to write any code, and covers most basic use cases.
 
 The CLI can run in either *train* or *predict* mode. It takes in a number of arugments, described below.
@@ -50,9 +50,9 @@ For example ``--model-type`` could be given as ``-mt ResUNet(hidden=[128, 256], 
 
 |
 
-If you do not have access to a microscopy dataset, a sample training dataset can be found
+If you do not have access to a microscopy dataset, a sample EM training dataset can be found
 `here <https://drive.google.com/file/d/1Sirrh180WrkHgPR0S8_43-f0S2GaK7iZ/view>`__ containing *high-resolution* images of resolution 512.
-Real-world *high-low-resolution* image pairs for testing can be found `here <https://drive.google.com/file/d/1BI6K5r65ubn3Vj866ikUUj8VVqHT0j-4/view>`__.
+Real-world EM *high-low-resolution* image pairs for testing can be found `here <https://drive.google.com/file/d/1BI6K5r65ubn3Vj866ikUUj8VVqHT0j-4/view>`__.
 Larger datasets and all data used in the **PSSR** paper can also be found on `3Dem.org <https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/>`_.
 If your dataset have different resolution data, ``hr_res`` and ``scale`` can be changed correspondingly.
 
@@ -65,7 +65,7 @@ A model can be trained by running
 
 .. code-block:: console
 
-   $ python demo.py -t -dp your/path
+   $ pssr -t -dp your/path
 
 where ``your/path`` is replaced with the path of your training dataset (folder containing *high-resolution* images/image sheets).
 
@@ -102,7 +102,7 @@ To define both *high-resolution* and *low-resolution* data paths, omit the ``-dp
 
 .. code-block:: console
 
-   $ python demo.py -mt "PairedImageDataset(hr_path='your/hr', lr_path='your/lr')"
+   $ pssr -dt "PairedImageDataset(hr_path='your/hr', lr_path='your/lr')"
 
 where ``your/hr`` and ``your/lr`` are repleaced by your *high-resolution* and *low-resolution* data paths respectively.
 

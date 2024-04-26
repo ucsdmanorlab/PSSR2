@@ -2,13 +2,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from ._blocks import Reconstruction
+from ..data import _force_list
 
 class ResUNet(nn.Module):
     def __init__(self, channels : int = 1, hidden : list[int] = [64, 128, 256, 512, 1024], scale : int = 4, depth : int = 3):
         r"""A modified Residual UNet as detailed in Zhang et al., 2017 with an additional image upscaling block.
 
         Args:
-            channels (int) : Number of channels in image data.
+            channels (int) : Number of channels in image data. Can also be a list of in channels and out channels respectively.
 
             hidden (list[int]) : Elementwise list of hidden layer channels controlling width and length of model.
 
@@ -17,11 +18,13 @@ class ResUNet(nn.Module):
             depth (int) : Number of hidden layers per residual block. Default is 3.
         """
         super().__init__()
+        channels = _force_list(channels)
+        channels = channels*2 if len(channels) == 1 else channels
         
-        self.norm = nn.BatchNorm2d(channels)
+        self.norm = nn.BatchNorm2d(channels[0])
         
         self.encoder, self.decoder, self.upscale = nn.ModuleList(), nn.ModuleList(), nn.ModuleList()
-        layers = [channels, *hidden]
+        layers = [channels[0], *hidden]
         n_layers = len(layers) - 1
         for layer_idx in range(n_layers):
             self.encoder.append(_ResBlock(in_channels=layers[layer_idx], out_channels=layers[layer_idx+1], depth=depth))
@@ -29,7 +32,7 @@ class ResUNet(nn.Module):
                 self.decoder.append(_ResBlock(in_channels=layers[-layer_idx-1] - int(layers[-layer_idx-2]/2), out_channels=layers[-layer_idx-2], depth=depth))
                 self.upscale.append(nn.PixelShuffle(2))
 
-        self.reconstuction = Reconstruction(channels, hidden[0], scale)
+        self.reconstuction = Reconstruction(channels[0], channels[1], hidden[0], scale)
 
     def forward(self, x):
         x = x / 128 - 1 # Scale input approx from [0, 255] to [-1, 1]
@@ -50,7 +53,7 @@ class ResUNet(nn.Module):
             x = layer(x)
 
         x = torch.cat([x, skips.pop()], dim=1) # Final skip connection before reconstruction
-        assert len(skips) == 0, "Skip connection mismatch between encoder and decoder."
+        if len(skips) != 0: raise IndexError(f"Skip connection mismatch between encoder and decoder. {len(skips)} skip connections are unused.")
 
         x = self.reconstuction(x)
 

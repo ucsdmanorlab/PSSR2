@@ -17,5 +17,7 @@ Modules
    :titlesonly:
 
    crappifiers/Crappifier
+   crappifiers/MultiCrappifier
    crappifiers/Poisson
    crappifiers/AdditiveGaussian
+   crappifiers/SaltPepper

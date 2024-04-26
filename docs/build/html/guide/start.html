@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Principles of PSSR" href="principles.html" /><link rel="prev" title="PSSR Documentation" href="../index.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>Getting Started - PSSR 1.0 documentation</title>
+        <title>Getting Started - PSSR 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">PSSR 1.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">PSSR 1.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 1.0 documentation</span>
+  <span class="sidebar-brand-text">PSSR 1.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -166,8 +166,8 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../reference/api.html">pssr</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of pssr</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/train.html">train</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of train</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../reference/train/train_paired.html">train_paired</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../reference/train/train_crappifier.html">train_crappifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/train/approximate_crappifier.html">approximate_crappifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/train/train_crappifier.html">train_crappifier</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/predict.html">predict</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of predict</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -182,13 +182,15 @@
 <li class="toctree-l3"><a class="reference internal" href="../reference/data/SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/data/PairedImageDataset.html">PairedImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../reference/data/preprocess_hr.html">preprocess_hr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/data/preprocess_dataset.html">preprocess_dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/crappifiers.html">crappifiers</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of crappifiers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../reference/crappifiers/Crappifier.html">Crappifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/crappifiers/MultiCrappifier.html">MultiCrappifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/crappifiers/Poisson.html">Poisson</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/crappifiers/AdditiveGaussian.html">AdditiveGaussian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/crappifiers/SaltPepper.html">SaltPepper</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -263,7 +265,7 @@ If you have not already, download it <a class="reference external" href="https:/
 </section>
 <section id="running-the-cli">
 <h2>Running the CLI<a class="headerlink" href="#running-the-cli" title="Link to this heading">#</a></h2>
-<p>The <strong>PSSR</strong> CLI is included with package installation.
+<p>The <strong>PSSR</strong> CLI is included with package installation and can be run with the <code class="docutils literal notranslate"><span class="pre">pssr</span></code> command in the command line.
 It provides a simple interface for using <strong>PSSR</strong> without having to write any code, and covers most basic use cases.</p>
 <p>The CLI can run in either <em>train</em> or <em>predict</em> mode. It takes in a number of arugments, described below.</p>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
@@ -277,7 +279,7 @@ CLI Arguments<div class="sd-summary-down docutils">
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pssr</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dp</span> <span class="n">DATA_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dt</span> <span class="n">DATA_TYPE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">mt</span> <span class="n">MODEL_TYPE</span><span class="p">]</span>
             <span class="p">[</span><span class="o">-</span><span class="n">mp</span> <span class="n">MODEL_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">e</span> <span class="n">EPOCHS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">b</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">lr</span> <span class="n">LR</span><span class="p">]</span>
-            <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="n">PATIENCE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">mse</span><span class="p">]</span>
+            <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="n">PATIENCE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">mse</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">sl</span><span class="p">]</span>
 </pre></div>
 </div>
 <section id="named-arguments">
@@ -322,6 +324,10 @@ CLI Arguments<div class="sd-summary-down docutils">
 <dd><p class="sd-card-text">use MSE loss instead of SSIM loss</p>
 <p class="sd-card-text">Default: False</p>
 </dd>
+<dt><kbd>-sl, --save-losses</kbd></dt>
+<dd><p class="sd-card-text">save training losses</p>
+<p class="sd-card-text">Default: False</p>
+</dd>
 </dl>
 </section>
 </div>
@@ -330,9 +336,9 @@ For example <code class="docutils literal notranslate"><span class="pre">--model
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<p>If you do not have access to a microscopy dataset, a sample training dataset can be found
+<p>If you do not have access to a microscopy dataset, a sample EM training dataset can be found
 <a class="reference external" href="https://drive.google.com/file/d/1Sirrh180WrkHgPR0S8_43-f0S2GaK7iZ/view">here</a> containing <em>high-resolution</em> images of resolution 512.
-Real-world <em>high-low-resolution</em> image pairs for testing can be found <a class="reference external" href="https://drive.google.com/file/d/1BI6K5r65ubn3Vj866ikUUj8VVqHT0j-4/view">here</a>.
+Real-world EM <em>high-low-resolution</em> image pairs for testing can be found <a class="reference external" href="https://drive.google.com/file/d/1BI6K5r65ubn3Vj866ikUUj8VVqHT0j-4/view">here</a>.
 Larger datasets and all data used in the <strong>PSSR</strong> paper can also be found on <a class="reference external" href="https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/">3Dem.org</a>.
 If your dataset have different resolution data, <code class="docutils literal notranslate"><span class="pre">hr_res</span></code> and <code class="docutils literal notranslate"><span class="pre">scale</span></code> can be changed correspondingly.</p>
 <div class="line-block">
@@ -341,7 +347,7 @@ If your dataset have different resolution data, <code class="docutils literal no
 <section id="training">
 <h3>Training<a class="headerlink" href="#training" title="Link to this heading">#</a></h3>
 <p>A model can be trained by running</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>demo.py<span class="w"> </span>-t<span class="w"> </span>-dp<span class="w"> </span>your/path
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pssr<span class="w"> </span>-t<span class="w"> </span>-dp<span class="w"> </span>your/path
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">your/path</span></code> is replaced with the path of your training dataset (folder containing <em>high-resolution</em> images/image sheets).</p>
@@ -373,7 +379,7 @@ The <cite>-mp</cite> argument can be set to your model path if its different tha
 </div>
 <p>If a <a class="reference internal" href="../reference/data/PairedImageDataset.html"><span class="doc">PairedImageDataset</span></a> instance with <em>high-low-resolution</em> image pairs is given as the dataset, additional performance metrics will be calculated.
 To define both <em>high-resolution</em> and <em>low-resolution</em> data paths, omit the <code class="docutils literal notranslate"><span class="pre">-dp</span></code> argument and instead use</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>demo.py<span class="w"> </span>-mt<span class="w"> </span><span class="s2">&quot;PairedImageDataset(hr_path=&#39;your/hr&#39;, lr_path=&#39;your/lr&#39;)&quot;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pssr<span class="w"> </span>-dt<span class="w"> </span><span class="s2">&quot;PairedImageDataset(hr_path=&#39;your/hr&#39;, lr_path=&#39;your/lr&#39;)&quot;</span>
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">your/hr</span></code> and <code class="docutils literal notranslate"><span class="pre">your/lr</span></code> are repleaced by your <em>high-resolution</em> and <em>low-resolution</em> data paths respectively.</p>
@@ -466,7 +472,7 @@ then <em>low-resolution</em> images will be generated via <a class="reference in
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=f2a433a1"></script>
+</div><script src="../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=32e29ea5"></script>

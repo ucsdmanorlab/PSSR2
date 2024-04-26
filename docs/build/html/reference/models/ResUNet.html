@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="ResUNetA" href="ResUNetA.html" /><link rel="prev" title="models" href="../models.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>ResUNet - PSSR 1.0 documentation</title>
+        <title>ResUNet - PSSR 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">PSSR 1.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">PSSR 1.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 1.0 documentation</span>
+  <span class="sidebar-brand-text">PSSR 1.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -166,8 +166,8 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">pssr</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of pssr</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 has-children"><a class="reference internal" href="../train.html">train</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of train</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../train/train_paired.html">train_paired</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../train/train_crappifier.html">train_crappifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../train/approximate_crappifier.html">approximate_crappifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../train/train_crappifier.html">train_crappifier</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../predict.html">predict</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of predict</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -182,13 +182,15 @@
 <li class="toctree-l3"><a class="reference internal" href="../data/SlidingDataset.html">SlidingDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../data/PairedImageDataset.html">PairedImageDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../data/PairedSlidingDataset.html">PairedSlidingDataset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../data/preprocess_hr.html">preprocess_hr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../data/preprocess_dataset.html">preprocess_dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../crappifiers.html">crappifiers</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of crappifiers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../crappifiers/Crappifier.html">Crappifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../crappifiers/MultiCrappifier.html">MultiCrappifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../crappifiers/Poisson.html">Poisson</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../crappifiers/AdditiveGaussian.html">AdditiveGaussian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../crappifiers/SaltPepper.html">SaltPepper</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../models.html">models</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
@@ -251,7 +253,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>channels</strong> (<em>int</em>) – Number of channels in image data.</p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – Number of channels in image data. Can also be a list of in channels and out channels respectively.</p></li>
 <li><p><strong>hidden</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Elementwise list of hidden layer channels controlling width and length of model.</p></li>
 <li><p><strong>scale</strong> (<em>int</em>) – Upscaling factor for predictions. Choose a power of 2 for best results. Default is 4.</p></li>
 <li><p><strong>depth</strong> (<em>int</em>) – Number of hidden layers per residual block. Default is 3.</p></li>
@@ -330,7 +332,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+</div><script src="../../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
