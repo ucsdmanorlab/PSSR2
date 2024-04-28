@@ -23,11 +23,11 @@ It is recommended that **PSSR** be installed via the ``pip`` package manager:
 
    $ pip install pssr
 
-However, specific versions can also be installed directly from the `GitHub <https://github.com/haydenstites/PSSR>`_ repository:
+However, specific versions can also be installed directly from the `GitHub <https://github.com/ucsdmanorlab/PSSR>`_ repository:
 
 .. code-block:: console
 
-   $ pip install git+https://github.com/haydenstites/PSSR/dist/pssr-x.x.x-py3-none-any.whl
+   $ pip install git+https://github.com/ucsdmanorlab/PSSR/dist/pssr-x.x.x-py3-none-any.whl
 
 
 Running the CLI
