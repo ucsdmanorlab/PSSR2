@@ -57,5 +57,5 @@ def pixel_metric(mse : float, image_range : int = 255):
     """
     return math.sqrt(mse) * image_range
 
-def _psnr_metric(mse : float, max : float):
-    return 20 * torch.log10(max / torch.sqrt(mse))
+def _psnr_metric(mse : float):
+    return 20 * torch.log10(1 / torch.sqrt(mse))

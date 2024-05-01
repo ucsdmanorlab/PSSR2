@@ -17,7 +17,7 @@ or the equivalent for any other environment manager if you chose to do so.
 
 |
 
-It is recommended that **PSSR** be installed via the ``pip`` package manager:
+You can easily install **PSSR** via the ``pip`` package manager:
 
 .. code-block:: console
 
@@ -41,7 +41,7 @@ The CLI can run in either *train* or *predict* mode. It takes in a number of aru
 .. dropdown:: CLI Arguments
 
    .. argparse::
-      :filename: ../_pssr.py
+      :filename: ../pssr/__main__.py
       :func: parse
       :prog: pssr
 
@@ -51,8 +51,8 @@ For example ``--model-type`` could be given as ``-mt ResUNet(hidden=[128, 256], 
 |
 
 If you do not have access to a microscopy dataset, a sample EM training dataset can be found
-`here <https://drive.google.com/file/d/1Sirrh180WrkHgPR0S8_43-f0S2GaK7iZ/view>`__ containing *high-resolution* images of resolution 512.
-Real-world EM *high-low-resolution* image pairs for testing can be found `here <https://drive.google.com/file/d/1BI6K5r65ubn3Vj866ikUUj8VVqHT0j-4/view>`__.
+`here <https://drive.google.com/file/d/1Sirrh180WrkHgPR0S8_43-f0S2GaK7iZ/view>`__ containing *high-resolution* 512x512 images (``hr_res=512``) with a pixel size of 2nm.
+Real-world EM *high-low-resolution* image pairs for testing can be found `here <https://drive.google.com/file/d/1BI6K5r65ubn3Vj866ikUUj8VVqHT0j-4/view>`__ of the same resolution.
 Larger datasets and all data used in the **PSSR** paper can also be found on `3Dem.org <https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/>`_.
 If your dataset have different resolution data, ``hr_res`` and ``scale`` can be changed correspondingly.
 

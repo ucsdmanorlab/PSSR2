@@ -1,7 +1,7 @@
 import torch, os, tifffile
 import torch.nn as nn
 import numpy as np
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 from skimage.transform import resize
 from tqdm import tqdm

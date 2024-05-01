@@ -19,8 +19,8 @@ Before diving into the code, we will first specify our imports.
     from pssr.crappifiers import Poisson
     from pssr.models import ResUNet
     from pssr.loss import SSIMLoss
-    from torch.optim.lr_scheduler import ReduceLROnPlateau
     from pssr.train import train_paired
+    from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 |
 
@@ -51,7 +51,7 @@ The *high-resolution* images are specified to have a horizontal and vertical res
 If the images provided are not square or are of the wrong resolution, they will be cropped and/or rescaled to fit.
 
 We provide the :doc:`../reference/crappifiers/Crappifier` we defined earlier as an argument that will
-generate *low-resolution* images ``lr_scale=4`` times smaller than the *high-resolution* images, for a resolution of 128.
+generate *low-resolution* images ``lr_scale=4`` times smaller than the *high-resolution* images, for a horizontal and vertical resolution of 128.
 
 .. note::
 

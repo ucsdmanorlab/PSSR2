@@ -1,6 +1,9 @@
-import torch, argparse, sys
+import sys
+sys.path.append("..")
+
+import torch, argparse
 from torch.nn import MSELoss
-from pssr.models import ResUNet, ResUNetA
+from pssr.models import ResUNet, ResUNetA, RDResUNet, RDResUNetA
 from pssr.data import ImageDataset, SlidingDataset, PairedImageDataset, PairedSlidingDataset
 from pssr.crappifiers import MultiCrappifier, Poisson, AdditiveGaussian, SaltPepper
 from pssr.loss import SSIMLoss
@@ -25,7 +28,7 @@ def parse():
     parser.add_argument("-dp", "--data-path", type=str, help="specify dataset path")
     parser.add_argument("-dt", "--data-type", type=str, default="ImageDataset", help="specify dataset type")
     parser.add_argument("-mt", "--model-type", type=str, default="ResUNet", help="specify model type")
-    parser.add_argument("-mp", "--model-path", type=str, default="model.pth", help="specify model path")
+    parser.add_argument("-mp", "--model-path", type=str, help="specify model path")
 
     parser.add_argument("-e", "--epochs", type=int, default=10, help="specify number of training epochs")
     parser.add_argument("-b", "--batch-size", type=int, default=16, help="specify batch size")
@@ -46,10 +49,17 @@ def run():
     if "Paired" not in args.data_type and args.data_path is None:
         print("--data-path(-dp) must be provided for semi-synthetic datasets")
         return
+    
+    if args.model_path is None and not args.train:
+        print("--model-path(-mp) must be provided in predict mode")
+        return
 
-    model = _handle_declaration(args.model_type, ["ResUNet", "ResUNetA"])
+    model = _handle_declaration(args.model_type, ["ResUNet", "RDResUNet"])
     dataset = _handle_declaration(args.data_type, ["ImageDataset", "SlidingDataset"], 
         req=[f"'{args.data_path}'"] if args.train else [f'''{f"'{args.data_path}', " if "Paired" not in args.data_type else ""}val_split=1'''])
+    
+    print(f"\nModel:\n{_tab_string(model.extra_repr())}")
+    print(f"\nDataset:\n{_tab_string(str(dataset))}")
 
     if torch.cuda.is_available():
         device = "cuda"
@@ -83,8 +93,9 @@ def run():
         )
         print("\nTraining complete!")
 
-        torch.save(model, args.model_path)
-        print(f"Saved trained model to {args.model_path}")
+        model_path = args.model_path if args.model_path else f"{model.__class__.__name__}_{losses[-1]:.3f}.pth"
+        torch.save(model.state_dict(), model_path)
+        print(f"Saved trained model to {model_path}")
 
         if args.save_losses:
             with open("train_loss.txt", "w") as file:
@@ -106,6 +117,11 @@ def run():
                 print(f"{metric}: {metrics[metric]}")
     
     print("\n")
+
+def _tab_string(text):
+    lines = text.split("\n")
+    indented_lines = ["\t" + line for line in lines]
+    return "\n".join(indented_lines)
 
 if __name__ == "__main__":
     run()

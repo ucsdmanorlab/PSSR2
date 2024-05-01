@@ -87,7 +87,7 @@ def train_paired(
                 losses.append(loss.item())
 
                 mse = nn.functional.mse_loss(hr_hat/image_range, hr/image_range)
-                progress.set_description(f"pixel[{pixel_metric(mse, image_range):.2f}], psnr[{_psnr_metric(mse, hr.max()/image_range):.2f}], ssim[{ssim(hr_hat, hr, data_range=image_range):.3f}]")
+                progress.set_description(f"pixel[{pixel_metric(mse, image_range):.2f}], psnr[{_psnr_metric(mse):.2f}], ssim[{ssim(hr_hat, hr, data_range=image_range):.3f}]")
 
         # Validation
         model.eval()

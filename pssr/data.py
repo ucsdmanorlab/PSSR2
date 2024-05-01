@@ -42,7 +42,7 @@ class ImageDataset(Dataset):
         self.path = Path(path) if type(path) is str else path
         if not self.path.exists(): raise FileNotFoundError(f'Path "{self.path}" does not exist.')
 
-        self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.path))
+        self.hr_files = sorted(glob.glob(Path(self.path, f"*.{extension}")))
         if not len(self.hr_files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{self.path}".')
 
         self.mode = mode.upper()
@@ -130,7 +130,7 @@ class SlidingDataset(Dataset):
         self.path = Path(path) if type(path) is str else path
         if not self.path.exists(): raise FileNotFoundError(f'Path "{self.path}" does not exist.')
         
-        self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.path))
+        self.hr_files = sorted(glob.glob(Path(self.path, f"*.{extension}")))
         if not len(self.hr_files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{self.path}".')
 
         if not hr_res > overlap: raise ValueError(f"hr_res must be greater than overlap. Given values are {hr_res} and {overlap} respectively.")
@@ -216,8 +216,8 @@ class PairedImageDataset(Dataset):
             if not path.exists(): raise FileNotFoundError(f'Path "{path}" does not exist.')
         if self.hr_path == self.lr_path: warnings.warn("hr_path is equal to lr_path! Consider using ImageDataset instead.", stacklevel=2)
 
-        self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.hr_path))
-        self.lr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.lr_path))
+        self.hr_files = sorted(glob.glob(Path(self.hr_path, f"*.{extension}")))
+        self.lr_files = sorted(glob.glob(Path(self.lr_path, f"*.{extension}")))
         for files, path in zip([self.hr_files, self.lr_files], [self.hr_path, self.lr_path]):
             if not len(files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{path}".')
         if len(self.hr_files) != len(self.lr_files): raise FileNotFoundError(f"Mismatch between amounts of high-low-resolution images. Found {len(self.hr_files)} high-resolution and {len(self.lr_files)} low-resolution images.")
@@ -303,8 +303,8 @@ class PairedSlidingDataset(Dataset):
             if not path.exists(): raise FileNotFoundError(f'Path "{path}" does not exist.')
         if self.hr_path == self.lr_path: warnings.warn("hr_path is equal to lr_path! Consider using SlidingDataset instead.", stacklevel=2)
         
-        self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.hr_path))
-        self.lr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.lr_path))
+        self.hr_files = sorted(glob.glob(Path(self.hr_path, f"*.{extension}")))
+        self.lr_files = sorted(glob.glob(Path(self.lr_path, f"*.{extension}")))
         for files, path in zip([self.hr_files, self.lr_files], [self.hr_path, self.lr_path]):
             if not len(files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{path}".')
         if len(self.hr_files) != len(self.lr_files): raise FileNotFoundError(f"Mismatch between amounts of high-low-resolution images. Found {len(self.hr_files)} high-resolution and {len(self.lr_files)} low-resolution images.")
@@ -499,17 +499,16 @@ def _load_sheet(path, file, stack, mode):
         # Disregard additional channels and/or reorder
         if mode == "L":
             image = np.mean(image, axis=2)
-        match stack:
-            case "T":
-                image = image[:,0]
-            case "Z":
-                image = image[0]
-            case "ZT":
-                image = np.moveaxis(image, 0, 1)
-            case "TZ":
-                pass
-            case _:
-                raise ValueError(f"Stack type {stack} is not valid.")
+        if stack == "T":
+            image = image[:,0]
+        elif stack == "Z":
+            image = image[0]
+        elif stack == "ZT":
+            image = np.moveaxis(image, 0, 1)
+        elif stack == "TZ":
+            pass
+        else:
+            raise ValueError(f"Stack type {stack} is not valid.")
         
         # Flatten channel dimensions
         image = np.reshape(image, [-1, image.shape[-2], image.shape[-1]])
