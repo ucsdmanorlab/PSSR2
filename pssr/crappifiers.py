@@ -23,17 +23,22 @@ class Crappifier(ABC):
         return self.crappify(image)
 
 class MultiCrappifier(Crappifier):
-    def __init__(self, crappifiers : list[Crappifier]):
+    def __init__(self, *args : Crappifier, clip : bool = True):
         r"""Chains multiple crappifiers sequentially for degrading low resolution images.
 
         Args:
-            crappifiers (list[Crappifier]) : Crappifiers to be applied in order from first to last.
+            args (Crappifier) : Crappifiers to be applied in order from first to last.
+
+            clip (bool) : Clip values to image range between each crappifier step. Default is True.
         """
-        self.crappifiers = list(crappifiers) if type(crappifiers) is not list else crappifiers
+        self.crappifiers = args
+        self.clip = clip
     
     def crappify(self, image : np.ndarray):
         for crappifier in self.crappifiers:
             image = crappifier.crappify(image)
+            if self.clip:
+                image = np.clip(image, 0, 255)
         return image
 
 class AdditiveGaussian(Crappifier):
@@ -73,7 +78,7 @@ class Poisson(Crappifier):
         self.spread = spread
         
     def crappify(self, image : np.ndarray):
-        return self._interpolate(image, np.random.poisson(image)) + self.gain
+        return self._interpolate(image, np.random.poisson(np.clip(image, 0, np.inf))) + self.gain
     
     def _interpolate(self, x, y):
         intensity = max(np.random.normal(self.intensity, self.spread), 0) if self.spread > 0 else self.intensity
@@ -96,4 +101,4 @@ class SaltPepper(Crappifier):
         
     def crappify(self, image : np.ndarray):
         intensity = max(np.random.normal(self.intensity, self.spread), 0) if self.spread > 0 else self.intensity
-        return random_noise(image/255, mode="s&p", amount=intensity) * 255 + self.gain
+        return random_noise(np.clip(image, 0, 255)/255, mode="s&p", amount=intensity) * 255 + self.gain

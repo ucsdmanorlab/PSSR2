@@ -109,7 +109,7 @@ class RDResUNetA():
             hidden : list[int] = [1024, 1024, 512, 256],
             scale : int = 4,
             depth : int = 3,
-            dilations : list[list[int]] = [[1,3,15],[1,3],[1],[1]],
+            dilations : list[list[int]] = [[1],[1],[1,3],[1,3,15]],
             pool_sizes : list[int] = [1, 2, 4, 8],
             encoder_pool : bool = False,
             rdnet_kwargs = None

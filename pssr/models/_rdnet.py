@@ -8,10 +8,8 @@ Source code of RDNet has been modified for use in PSSR.
 
 import torch
 import torch.nn as nn
-from timm.layers.squeeze_excite import EffectiveSEModule
+from timm.layers import DropPath, LayerNorm2d, EffectiveSEModule
 from timm.models import named_apply
-from timm.models.layers import DropPath
-from timm.models.layers import LayerNorm2d
 from functools import partial
 
 class RDNet(nn.Module):

@@ -174,9 +174,9 @@ def normalize_preds(hr : np.ndarray, hr_hat : np.ndarray, pmin : float = 0.1, pm
 
         hr_hat_norm (ndarray) : Normalized high-resolution prediction image.
     """
+    hr, hr_hat = np.asarray(hr), np.asarray(hr_hat)
     if len(hr.shape) != len(hr_hat.shape): raise ValueError(f"hr and hr_hat must have the same number of dimensions. Dimension lengths are {hr.shape} and {hr_hat.shape} respectively.")
-    hr_shape = hr.shape
-    hr_hat_shape = hr_hat.shape
+    hr_shape, hr_hat_shape = hr.shape, hr_hat.shape
 
     if len(hr.shape) < 3:
         hr, hr_hat = hr[np.newaxis, ...], hr_hat[np.newaxis, ...]

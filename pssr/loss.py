@@ -43,7 +43,8 @@ class SSIMLoss(nn.Module):
         x = 1 - self.ssim(input, target)
         if self.mix < 1:
             # Combine SSIM with L1 loss with applied Gaussian window for elementwise multiplication against non-reduced L1 loss
-            l1 = F.conv2d(F.l1_loss(input, target, reduction="none"), self.gaussian.to(input.get_device()), groups=self.channels, padding=(self.win_size-1)//2).mean()  # F.conv2d with Gaussian filter
+            device = "cpu" if input.get_device() == -1 else input.get_device()
+            l1 = F.conv2d(F.l1_loss(input, target, reduction="none"), self.gaussian.to(device), groups=self.channels, padding=(self.win_size-1)//2).mean()  # F.conv2d with Gaussian filter
             x = self.mix*x + (1-self.mix)*l1
         return x
 

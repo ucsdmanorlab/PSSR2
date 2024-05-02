@@ -6,3 +6,4 @@ imports/
 
 *.pth
 *.lock
+*.txt

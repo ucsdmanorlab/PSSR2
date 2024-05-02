@@ -59,9 +59,11 @@ class ResBlockA(nn.Module):
 
         self.respass = nn.Conv2d(in_channels, out_channels, kernel_size=1)
 
+        self.min_size = max(dilations) * 2 + 1
         self.depth = depth
 
     def forward(self, x):
+        if x.shape[-1] < self.min_size: raise ValueError(f"Tensor size {x.shape} is smaller than than dilation kernel size {self.min_size}.")
         x = F.relu(sum([conv(x) for conv in self.dilations]) + self.respass(x))
         return x
 

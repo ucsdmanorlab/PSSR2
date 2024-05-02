@@ -42,7 +42,7 @@ class ImageDataset(Dataset):
         self.path = Path(path) if type(path) is str else path
         if not self.path.exists(): raise FileNotFoundError(f'Path "{self.path}" does not exist.')
 
-        self.hr_files = sorted(glob.glob(Path(self.path, f"*.{extension}")))
+        self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.path))
         if not len(self.hr_files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{self.path}".')
 
         self.mode = mode.upper()
@@ -130,9 +130,10 @@ class SlidingDataset(Dataset):
         self.path = Path(path) if type(path) is str else path
         if not self.path.exists(): raise FileNotFoundError(f'Path "{self.path}" does not exist.')
         
-        self.hr_files = sorted(glob.glob(Path(self.path, f"*.{extension}")))
+        self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.path))
         if not len(self.hr_files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{self.path}".')
 
+        overlap = 0 if overlap is None else overlap
         if not hr_res > overlap: raise ValueError(f"hr_res must be greater than overlap. Given values are {hr_res} and {overlap} respectively.")
         self.stride = hr_res - overlap
         self.stack = stack.upper()
@@ -165,7 +166,7 @@ class SlidingDataset(Dataset):
         is_val = idx in self.val_idx or pp
         image_idx, idx = _get_image_idx(idx, self.slices, self.tiles)
 
-        hr = _sliding_window(self.preload[image_idx] if self.preload else _load_sheet(self.path, self.hr_files[image_idx], self.stack, self.mode), self.hr_res, self.stride, self.n_frames[0], self.slices[image_idx], idx)
+        hr = _sliding_window(self.preload[image_idx] if self.preload else _load_sheet(self.path, self.hr_files[image_idx], self.stack, self.mode), self.hr_res, self.stride, self.n_frames[0] if self.n_frames is not None else None, self.slices[image_idx], idx)
 
         if self.is_lr:
             return _ready_lr(hr, self.hr_res, self.transforms)
@@ -216,8 +217,8 @@ class PairedImageDataset(Dataset):
             if not path.exists(): raise FileNotFoundError(f'Path "{path}" does not exist.')
         if self.hr_path == self.lr_path: warnings.warn("hr_path is equal to lr_path! Consider using ImageDataset instead.", stacklevel=2)
 
-        self.hr_files = sorted(glob.glob(Path(self.hr_path, f"*.{extension}")))
-        self.lr_files = sorted(glob.glob(Path(self.lr_path, f"*.{extension}")))
+        self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.hr_path))
+        self.lr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.lr_path))
         for files, path in zip([self.hr_files, self.lr_files], [self.hr_path, self.lr_path]):
             if not len(files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{path}".')
         if len(self.hr_files) != len(self.lr_files): raise FileNotFoundError(f"Mismatch between amounts of high-low-resolution images. Found {len(self.hr_files)} high-resolution and {len(self.lr_files)} low-resolution images.")
@@ -303,12 +304,13 @@ class PairedSlidingDataset(Dataset):
             if not path.exists(): raise FileNotFoundError(f'Path "{path}" does not exist.')
         if self.hr_path == self.lr_path: warnings.warn("hr_path is equal to lr_path! Consider using SlidingDataset instead.", stacklevel=2)
         
-        self.hr_files = sorted(glob.glob(Path(self.hr_path, f"*.{extension}")))
-        self.lr_files = sorted(glob.glob(Path(self.lr_path, f"*.{extension}")))
+        self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.hr_path))
+        self.lr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.lr_path))
         for files, path in zip([self.hr_files, self.lr_files], [self.hr_path, self.lr_path]):
             if not len(files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{path}".')
         if len(self.hr_files) != len(self.lr_files): raise FileNotFoundError(f"Mismatch between amounts of high-low-resolution images. Found {len(self.hr_files)} high-resolution and {len(self.lr_files)} low-resolution images.")
 
+        overlap = 0 if overlap is None else overlap
         if not hr_res > overlap: raise ValueError(f"hr_res must be greater than overlap. Given values are {hr_res} and {overlap} respectively.")
         self.stride = hr_res - overlap
         self.stack = stack.upper()
@@ -339,8 +341,8 @@ class PairedSlidingDataset(Dataset):
         is_val = idx in self.val_idx or pp
         image_idx, idx = _get_image_idx(idx, self.slices, self.tiles)
 
-        hr = _sliding_window(self.preload[0][image_idx] if self.preload else _load_sheet(self.hr_path, self.hr_files[image_idx], self.stack, self.mode), self.hr_res, self.stride, self.n_frames[0], self.slices[image_idx], idx)
-        lr = _sliding_window(self.preload[1][image_idx] if self.preload else _load_sheet(self.lr_path, self.lr_files[image_idx], self.stack, self.mode), self.hr_res//self.lr_scale, self.stride//self.lr_scale, self.n_frames[0], self.slices[image_idx], idx)
+        hr = _sliding_window(self.preload[0][image_idx] if self.preload else _load_sheet(self.hr_path, self.hr_files[image_idx], self.stack, self.mode), self.hr_res, self.stride, self.n_frames[0] if self.n_frames is not None else None, self.slices[image_idx], idx)
+        lr = _sliding_window(self.preload[1][image_idx] if self.preload else _load_sheet(self.lr_path, self.lr_files[image_idx], self.stack, self.mode), self.hr_res//self.lr_scale, self.stride//self.lr_scale, self.n_frames[0] if self.n_frames is not None else None, self.slices[image_idx], idx)
 
         return _transform_pair(hr, lr, self.hr_res, self.hr_res//self.lr_scale, False if is_val else self.rotation, self.transforms, self.n_frames)
     

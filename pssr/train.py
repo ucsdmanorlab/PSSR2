@@ -18,15 +18,16 @@ Image.MAX_IMAGE_PIXELS = None
 
 def train_paired(
         model : nn.Module,
-        dataset : Dataset, 
-        batch_size : int, 
-        loss_fn : nn.Module, 
-        optim : torch.optim.Optimizer, 
-        epochs : int, 
-        device : str = "cpu", 
-        scheduler : torch.optim.lr_scheduler.LRScheduler = None, 
-        clamp : bool = False, 
-        log_frequency : int = 50, 
+        dataset : Dataset,
+        batch_size : int,
+        loss_fn : nn.Module,
+        optim : torch.optim.Optimizer,
+        epochs : int,
+        device : str = "cpu",
+        scheduler : torch.optim.lr_scheduler = None,
+        clamp : bool = False,
+        log_frequency : int = 50,
+        collage_dir : str = "preds",
         dataloader_kwargs = None
     ):
     r"""Trains model on paired high-low-resolution crappified data.
@@ -52,6 +53,8 @@ def train_paired(
 
         log_frequency (int) : Frequency to log losses and recalculate metrics in steps. Default is 50.
 
+        collage_dir (str) : Directory to save validation collages. A value of None skips the collage. Default is "preds".
+
         dataloader_kwargs (dict[str, Any]) : Keyword arguments for pytorch ``Dataloader``. Default is None.
 
     Returns:
@@ -69,6 +72,7 @@ def train_paired(
     for epoch in range(epochs):
         # Train
         model.train()
+        print(f"Epoch {epoch}:")
 
         progress = tqdm(train_dataloader)
         for batch_idx, (hr, lr) in enumerate(progress):
@@ -115,25 +119,27 @@ def train_paired(
                 scheduler.step(val_loss)
             else:
                 scheduler.step()
-  
-        collage = _collage_preds(lr, hr_hat, hr, crop_res=dataset.crop_res)
-        os.makedirs("preds", exist_ok=True)
-        collage.save(f"preds/epoch{epoch}_loss{val_loss:.3f}.png")
+        
+        if collage_dir:
+            collage = _collage_preds(lr, hr_hat, hr, crop_res=dataset.crop_res)
+            os.makedirs(collage_dir, exist_ok=True)
+            collage.save(f"{collage_dir}/epoch{epoch}_loss{val_loss:.3f}.png")
 
     return losses
 
 def train_crappifier(
-        model : nn.Module, 
-        dataset : Dataset, 
-        batch_size : int, 
-        optim : torch.optim.Optimizer, 
-        epochs : int, 
-        sigma : int = 5, 
-        clip : float = 3, 
-        device : str = "cpu", 
-        scheduler : torch.optim.lr_scheduler.LRScheduler = None, 
-        clamp : bool = False, 
-        log_frequency : int = 50, 
+        model : nn.Module,
+        dataset : Dataset,
+        batch_size : int,
+        optim : torch.optim.Optimizer,
+        epochs : int,
+        sigma : int = 5,
+        clip : float = 3,
+        device : str = "cpu",
+        scheduler : torch.optim.lr_scheduler = None,
+        clamp : bool = False,
+        log_frequency : int = 50,
+        collage_dir : str = "preds",
         dataloader_kwargs = None
     ):
     r"""EXPERIMENTAL, NOT CURRENTLY RECOMMENDED FOR MOST WORKFLOWS!
@@ -165,6 +171,8 @@ def train_crappifier(
 
         log_frequency (int) : Frequency to log losses and recalculate metrics in steps. Default is 50.
 
+        collage_dir (str) : Directory to save validation collages. A value of None skips the collage. Default is "preds".
+
         dataloader_kwargs (dict[str, Any]) : Keyword arguments for pytorch ``Dataloader``. Default is None.
 
     Returns:
@@ -186,6 +194,7 @@ def train_crappifier(
     for epoch in range(epochs):
         # Train
         model.train()
+        print(f"Epoch {epoch}:")
 
         progress = tqdm(train_dataloader)
         for batch_idx, (hr, lr) in enumerate(progress):
@@ -240,9 +249,11 @@ def train_crappifier(
             else:
                 scheduler.step()
 
-        collage = _collage_preds(lr, lr_hat, hr, crop_res=dataset.crop_res)
-        os.makedirs("preds", exist_ok=True)
-        collage.save(f"preds/pred{epoch}_loss{val_loss:.3f}.png")
+        if collage_dir:
+            collage = _collage_preds(lr, lr_hat, hr, crop_res=dataset.crop_res)
+            os.makedirs(collage_dir, exist_ok=True)
+            collage.save(f"{collage_dir}/pred{epoch}_loss{val_loss:.3f}.png")
+
     return losses
 
 def approximate_crappifier(crappifier : Crappifier, space : list[Dimension], dataset : Dataset, max_images = None, opt_kwargs = None):
