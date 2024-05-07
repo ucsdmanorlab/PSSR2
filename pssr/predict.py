@@ -48,7 +48,8 @@ def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", n
             if norm:
                 _, hr_hat = normalize_preds(_pred_array(dataset[idx][0]), hr_hat)
 
-            hr_hat = hr_hat[:,:dataset.crop_res,:dataset.crop_res]
+            crop_res = dataset.crop_res if not dataset.is_lr else dataset.crop_res * (hr_hat.shape[-1]//lr.shape[-1])
+            hr_hat = hr_hat[:,:crop_res,:crop_res]
             outs.append(hr_hat)
 
     if out_dir:
@@ -79,6 +80,8 @@ def predict_collage(model : nn.Module, dataset : Dataset, device : str = "cpu", 
 
         out_dir (str) : Directory to save collage. Default is "preds".
     """
+    if dataset.is_lr: raise ValueError("Dataset cannot be in LR mode when creating a collage.")
+
     n_images = min(50, len(dataset)) if n_images is None else n_images
 
     model.to(device)
@@ -92,9 +95,9 @@ def predict_collage(model : nn.Module, dataset : Dataset, device : str = "cpu", 
 
             hr_hat = model(lr)
 
-            collage.paste(_collage_preds(lr, hr_hat, hr, norm, 1, dataset.crop_res), (0, dataset.crop_res*idx))
+            collage.paste(_collage_preds(lr, hr_hat, hr, norm, 1, dataset.crop_res, dataset.lr_scale), (0, dataset.crop_res*idx))
 
-            if idx >= n_images:
+            if idx >= n_images - 1:
                 break
 
     os.makedirs(out_dir, exist_ok=True)
@@ -138,7 +141,10 @@ def test_metrics(model : nn.Module, dataset : Dataset, device : str = "cpu", met
 
             hr_hat = model(lr)
 
-            hr, hr_hat = _pred_array(hr)[:,:,:dataset.crop_res,:dataset.crop_res], _pred_array(hr_hat)[:,:,:dataset.crop_res,:dataset.crop_res]
+            hr, hr_hat = _pred_array(hr), _pred_array(hr_hat)
+
+            crop_res = dataset.crop_res if not dataset.is_lr else dataset.crop_res * (hr_hat.shape[-1]//lr.shape[-1])
+            hr, hr_hat = hr[:,:,:crop_res,:crop_res], hr_hat[:,:,:crop_res,:crop_res]
 
             if norm:
                 hr, hr_hat = normalize_preds(hr, hr_hat)
@@ -211,9 +217,9 @@ def normalize_preds(hr : np.ndarray, hr_hat : np.ndarray, pmin : float = 0.1, pm
     hr, hr_hat = np.asarray(hr_norms).clip(0, 255), np.asarray(hr_hat_norms).clip(0, 255)
     return hr.reshape(hr_shape).astype(np.uint8), hr_hat.reshape(hr_hat_shape).astype(np.uint8)
 
-def _collage_preds(lr, hr_hat, hr, norm : bool = True, max_images : int = 5, crop_res : int = None):
+def _collage_preds(lr, hr_hat, hr, norm : bool = True, max_images : int = 5, crop_res : int = None, lr_scale : int = 4):
     crop_res = hr.shape[-1] if crop_res is None else crop_res
-    lr, hr_hat, hr = _pred_array(lr)[:,:,:crop_res//4,:crop_res//4], _pred_array(hr_hat)[:,:,:crop_res,:crop_res], _pred_array(hr)[:,:,:crop_res,:crop_res]
+    lr, hr_hat, hr = _pred_array(lr)[:,:,:crop_res//lr_scale,:crop_res//lr_scale], _pred_array(hr_hat)[:,:,:crop_res,:crop_res], _pred_array(hr)[:,:,:crop_res,:crop_res]
 
     if norm:
         hr, hr_hat = normalize_preds(hr, hr_hat)

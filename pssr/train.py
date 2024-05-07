@@ -25,9 +25,10 @@ def train_paired(
         epochs : int,
         device : str = "cpu",
         scheduler : torch.optim.lr_scheduler = None,
-        clamp : bool = False,
         log_frequency : int = 50,
-        collage_dir : str = "preds",
+        checkpoint_dir : str = None,
+        collage_dir : str = None,
+        clamp : bool = False,
         dataloader_kwargs = None
     ):
     r"""Trains model on paired high-low-resolution crappified data.
@@ -49,16 +50,20 @@ def train_paired(
 
         scheduler (LRScheduler) : Optional learning rate scheduler for training. Default is None.
 
-        clamp (bool) : Whether to clamp model image output before weight calculation. Default is False.
-
         log_frequency (int) : Frequency to log losses and recalculate metrics in steps. Default is 50.
 
-        collage_dir (str) : Directory to save validation collages. A value of None skips the collage. Default is "preds".
+        checkpoint_dir (str) : Directory to save model checkpoints each epoch. A value of None skips checkpointing. Default is None.
+
+        collage_dir (str) : Directory to save validation collages each epoch. A value of None skips the collage. Default is None.
+
+        clamp (bool) : Whether to clamp model image output before weight calculation. Default is False.
 
         dataloader_kwargs (dict[str, Any]) : Keyword arguments for pytorch ``Dataloader``. Default is None.
 
     Returns:
-        losses (list[float]) : List of losses during training.
+        train_losses (list[float]) : List of losses during training.
+
+        val_losses (list[float]) : Validation losses per epoch.
     """
     dataloader_kwargs = {} if dataloader_kwargs is None else dataloader_kwargs
     train_dataloader = DataLoader(dataset, batch_size, sampler=_RandomIterIdx(_invert_idx(dataset.val_idx, len(dataset))), **dataloader_kwargs)
@@ -68,7 +73,7 @@ def train_paired(
 
     model.to(device)
 
-    losses = []
+    train_losses, val_losses = [], []
     for epoch in range(epochs):
         # Train
         model.train()
@@ -88,7 +93,7 @@ def train_paired(
             optim.zero_grad()
 
             if batch_idx % log_frequency == 0 or batch_idx == len(progress) - 1:
-                losses.append(loss.item())
+                train_losses.append(loss.item())
 
                 mse = nn.functional.mse_loss(hr_hat/image_range, hr/image_range)
                 progress.set_description(f"pixel[{pixel_metric(mse, image_range):.2f}], psnr[{_psnr_metric(mse):.2f}], ssim[{ssim(hr_hat, hr, data_range=image_range):.3f}]")
@@ -110,22 +115,27 @@ def train_paired(
 
                 loss = loss_fn(hr_hat/image_range, hr/image_range)
                 val_loss.append(loss.item())
-        val_loss = sum(val_loss) / len(val_loss)
 
+        val_loss = sum(val_loss) / len(val_loss)
+        val_losses.append(val_loss)
         print(f"Epoch {epoch} validation loss: {val_loss:4f}\n")
+
+        if checkpoint_dir and epoch < epochs - 1:
+            os.makedirs(checkpoint_dir, exist_ok=True)
+            torch.save(model.state_dict(), f"{checkpoint_dir}/checkpoint{epoch}_{model.__class__.__name__}_{val_loss:.4f}.pth")
+
+        if collage_dir:
+            collage = _collage_preds(lr, hr_hat, hr, crop_res=dataset.crop_res, lr_scale=dataset.lr_scale)
+            os.makedirs(collage_dir, exist_ok=True)
+            collage.save(f"{collage_dir}/epoch{epoch}_loss{val_loss:.4f}.png")
 
         if scheduler:
             if include_metric:
                 scheduler.step(val_loss)
             else:
                 scheduler.step()
-        
-        if collage_dir:
-            collage = _collage_preds(lr, hr_hat, hr, crop_res=dataset.crop_res)
-            os.makedirs(collage_dir, exist_ok=True)
-            collage.save(f"{collage_dir}/epoch{epoch}_loss{val_loss:.3f}.png")
 
-    return losses
+    return train_losses, val_losses
 
 def train_crappifier(
         model : nn.Module,
@@ -137,9 +147,10 @@ def train_crappifier(
         clip : float = 3,
         device : str = "cpu",
         scheduler : torch.optim.lr_scheduler = None,
-        clamp : bool = False,
         log_frequency : int = 50,
-        collage_dir : str = "preds",
+        checkpoint_dir : str = None,
+        collage_dir : str = None,
+        clamp : bool = False,
         dataloader_kwargs = None
     ):
     r"""EXPERIMENTAL, NOT CURRENTLY RECOMMENDED FOR MOST WORKFLOWS!
@@ -167,16 +178,20 @@ def train_crappifier(
 
         scheduler (LRScheduler) : Optional learning rate scheduler for training. Default is None.
 
-        clamp (bool) : Whether to clamp model image output before weight calculation. Default is False.
-
         log_frequency (int) : Frequency to log losses and recalculate metrics in steps. Default is 50.
 
-        collage_dir (str) : Directory to save validation collages. A value of None skips the collage. Default is "preds".
+        checkpoint_dir (str) : Directory to save model checkpoints each epoch. A value of None skips checkpointing. Default is None.
+
+        collage_dir (str) : Directory to save validation collages each epoch. A value of None skips the collage. Default is None.
+
+        clamp (bool) : Whether to clamp model image output before weight calculation. Default is False.
 
         dataloader_kwargs (dict[str, Any]) : Keyword arguments for pytorch ``Dataloader``. Default is None.
 
     Returns:
-        losses (list[float]) : List of losses during training.
+        train_losses (list[float]) : List of losses during training.
+
+        val_losses (list[float]) : Validation losses per epoch.
     """
     dataloader_kwargs = {} if dataloader_kwargs is None else dataloader_kwargs
     train_dataloader = DataLoader(dataset, batch_size, sampler=_RandomIterIdx(_invert_idx(dataset.val_idx, len(dataset))), **dataloader_kwargs)
@@ -190,7 +205,7 @@ def train_crappifier(
     hist_fn = GradHist(sigma=sigma)
     ssim_loss = SSIMLoss(ms=False)
 
-    losses = []
+    train_losses, val_losses = [], []
     for epoch in range(epochs):
         # Train
         model.train()
@@ -216,9 +231,9 @@ def train_crappifier(
             optim.zero_grad()
 
             if batch_idx % log_frequency == 0 or batch_idx == len(progress) - 1:
-                losses.append(loss.item())
+                train_losses.append(loss.item())
 
-                progress.set_description(f"loss[{loss.item():.5f}]")
+                progress.set_description(f"loss[{loss.item():.4f}]")
 
         # Validation
         model.eval()
@@ -239,9 +254,19 @@ def train_crappifier(
 
                 loss = _crappifier_loss(lr.to(device), lr_hat, ds_hr, hist_fn, ssim_loss)
                 val_loss.append(loss.item())
-        val_loss = sum(val_loss) / len(val_loss)
 
+        val_loss = sum(val_loss) / len(val_loss)
+        val_losses.append(val_loss)
         print(f"Epoch {epoch} validation loss: {val_loss:4f}\n")
+
+        if checkpoint_dir and epoch < epochs - 1:
+            os.makedirs(checkpoint_dir, exist_ok=True)
+            torch.save(model.state_dict(), f"{checkpoint_dir}/checkpoint{epoch}_{model.__class__.__name__}_{val_loss:.4f}.pth")
+
+        if collage_dir:
+            collage = _collage_preds(lr, lr_hat, hr, crop_res=dataset.crop_res, lr_scale=dataset.lr_scale)
+            os.makedirs(collage_dir, exist_ok=True)
+            collage.save(f"{collage_dir}/epoch{epoch}_loss{val_loss:.4f}.png")
 
         if scheduler:
             if include_metric:
@@ -249,12 +274,7 @@ def train_crappifier(
             else:
                 scheduler.step()
 
-        if collage_dir:
-            collage = _collage_preds(lr, lr_hat, hr, crop_res=dataset.crop_res)
-            os.makedirs(collage_dir, exist_ok=True)
-            collage.save(f"{collage_dir}/pred{epoch}_loss{val_loss:.3f}.png")
-
-    return losses
+    return train_losses, val_losses
 
 def approximate_crappifier(crappifier : Crappifier, space : list[Dimension], dataset : Dataset, max_images = None, opt_kwargs = None):
     r"""Approximates :class:`Crappifier` parameters from ground truth paired images. Uses Bayesian optimization because Crappifier functions are not differentiable.

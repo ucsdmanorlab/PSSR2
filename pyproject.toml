@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pssr"
-version = "1.2.1"
+version = "1.2.2"
 description = "Point-Scanning Super-Resolution"
 authors = ["Hayden Stites"]
 readme = "README.md"
@@ -34,7 +34,7 @@ psutil = ">=5.0.0"
 timm = ">=0.8.0"
 
 [tool.poetry.scripts]
-pssr = "pssr.__main__:run"
+pssr = "pssr.__main__:main"
 
 [build-system]
 requires = ["poetry-core"]

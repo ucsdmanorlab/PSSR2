@@ -72,6 +72,8 @@ class RDResUNet(nn.Module):
 
         self.reconstruction = Reconstruction(channels[0], channels[1], hidden[-1]//self.ratios[-1]**2, scale)
 
+        self.skips = skips
+
     def forward(self, x):
         x = x / 128 - 1 # Scale input approx from [0, 255] to [-1, 1]
         if self.norm is not None:
@@ -101,7 +103,7 @@ class RDResUNet(nn.Module):
         return x
 
     def extra_repr(self):
-        return f"{'Atrous ' if self.norm is None else ''}RDResUNet with {self.reconstruction.scale}x upscaling\n{len(self.decoder)} residual blocks with {self.decoder[0].depth} hidden layers each\nPSP pooling {'enabled' if self.reconstruction_pool else 'disabled'}"
+        return f"{'Atrous ' if self.norm is None else ''}RDResUNet with {self.reconstruction.scale}x upscaling\nSkip connection sizes: {self.skips}\n{len(self.decoder)} residual blocks with {self.decoder[0].depth} hidden layers each\nPSP pooling {'enabled' if self.reconstruction_pool else 'disabled'}"
 
 class RDResUNetA():
     def __new__(cls,

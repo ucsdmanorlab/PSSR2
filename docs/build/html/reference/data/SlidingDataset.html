@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="PairedImageDataset" href="PairedImageDataset.html" /><link rel="prev" title="ImageDataset" href="ImageDataset.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>SlidingDataset - PSSR 1.2.1 documentation</title>
+        <title>SlidingDataset - PSSR 1.2.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">PSSR 1.2.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">PSSR 1.2.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 1.2.1 documentation</span>
+  <span class="sidebar-brand-text">PSSR 1.2.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -196,6 +196,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../models/ResUNet.html">ResUNet</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../models/RDResUNet.html">RDResUNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/SwinIR.html">SwinIR</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -250,7 +251,7 @@
 <span class="sig-prename descclassname"><span class="pre">pssr.data.SlidingDataset.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">~pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hr_res:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scale:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crappifier:</span> <span class="pre">~pssr.crappifiers.Crappifier</span> <span class="pre">=</span> <span class="pre">&lt;pssr.crappifiers.Poisson</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'TZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'L'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'czi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preload:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_seed:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms:</span> <span class="pre">list[~torch.nn.modules.module.Module]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.data.SlidingDataset.__init__" title="Link to this definition">#</a></dt>
 <dd><p>Training dataset for loading high-resolution image tiles from image sheets and returning high-low-resolution pairs, the latter receiving crappification.</p>
 <p>Dataset used for image sheets (e.g. .czi files). For pre-tiled image files, use <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageDataset</span></code>.</p>
-<p>LR mode (dataset loads only unmodified low-resolution images for prediction) can be enabled by setting <code class="docutils literal notranslate"><span class="pre">lr_scale</span></code> = 1 and <code class="docutils literal notranslate"><span class="pre">hr_res</span></code> = LR resolution.</p>
+<p>LR mode (dataset loads only unmodified low-resolution images for prediction) can be enabled by setting <code class="docutils literal notranslate"><span class="pre">lr_scale</span></code> = None and <code class="docutils literal notranslate"><span class="pre">hr_res</span></code> = LR resolution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -343,7 +344,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=ca842793"></script>
+</div><script src="../../_static/documentation_options.js?v=fd7cadf9"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>

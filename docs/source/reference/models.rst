@@ -22,3 +22,4 @@ Modules
 
    models/ResUNet
    models/RDResUNet
+   models/SwinIR

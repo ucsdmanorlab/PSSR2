@@ -3,7 +3,7 @@ sys.path.append("..")
 
 import torch, argparse
 from torch.nn import MSELoss
-from pssr.models import ResUNet, ResUNetA, RDResUNet, RDResUNetA
+from pssr.models import ResUNet, ResUNetA, RDResUNet, RDResUNetA, SwinIR
 from pssr.data import ImageDataset, SlidingDataset, PairedImageDataset, PairedSlidingDataset
 from pssr.crappifiers import MultiCrappifier, Poisson, AdditiveGaussian, SaltPepper
 from pssr.loss import SSIMLoss
@@ -35,11 +35,13 @@ def parse():
     parser.add_argument("-lr", "--lr", type=float, default=1e-3, help="specify learning rate")
     parser.add_argument("-p", "--patience", type=int, default=3, help="specify learning rate decay patience")
     parser.add_argument("-mse", "--mse", action="store_true", help="use MSE loss instead of SSIM loss")
+
+    parser.add_argument("-cp", "--checkpoint", action="store_true", help="save model checkpoints during training")
     parser.add_argument("-sl", "--save-losses", action="store_true", help="save training losses")
 
     return parser
 
-def run():
+def main():
     parser = parse()
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -54,7 +56,7 @@ def run():
         print("--model-path(-mp) must be provided in predict mode")
         return
 
-    model = _handle_declaration(args.model_type, ["ResUNet", "RDResUNet"])
+    model = _handle_declaration(args.model_type, ["ResUNet", "ResUNetA", "RDResUNet", "RDResUNetA", "SwinIR"])
     dataset = _handle_declaration(args.data_type, ["ImageDataset", "SlidingDataset"], 
         req=[f"'{args.data_path}'"] if args.train else [f'''{f"'{args.data_path}', " if "Paired" not in args.data_type else ""}val_split=1'''])
     
@@ -77,9 +79,14 @@ def run():
         loss_fn = MSELoss() if args.mse else SSIMLoss(mix=.8, ms=True)
         optim = torch.optim.AdamW(model.parameters(), lr=args.lr)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, factor=0.1, patience=args.patience, threshold=5e-3, verbose=True)
+        checkpoint_dir = "checkpoints" if args.checkpoint else None
+
+        if args.model_path:
+            print(f"Loading {model.__class__.__name__} model from {args.model_path}")
+            model.load_state_dict(torch.load(args.model_path))
 
         print("\nTraining model...")
-        losses = train_paired(
+        train_losses, val_losses = train_paired(
             model=model,
             dataset=dataset,
             batch_size=args.batch_size,
@@ -89,18 +96,22 @@ def run():
             device=device,
             scheduler=scheduler,
             log_frequency=50,
+            checkpoint_dir=checkpoint_dir,
             dataloader_kwargs=kwargs,
         )
         print("\nTraining complete!")
 
-        model_path = args.model_path if args.model_path else f"{model.__class__.__name__}_{losses[-1]:.3f}.pth"
-        torch.save(model.state_dict(), model_path)
-        print(f"Saved trained model to {model_path}")
+        save_path = f"{model.__class__.__name__}_{val_losses[-1]:.4f}.pth"
+        torch.save(model.state_dict(), save_path)
+        print(f"Saved trained model to {save_path}")
 
         if args.save_losses:
-            with open("train_loss.txt", "w") as file:
-                for loss in losses:
-                    file.write(f"{loss}\n")
+            with open(f"{model.__class__.__name__}_train_losses.txt", "w") as file:
+                for loss in train_losses:
+                    file.write(f"{loss:.6f}\n")
+            with open(f"{model.__class__.__name__}_val_losses.txt", "w") as file:
+                for loss in val_losses:
+                    file.write(f"{loss:.6f}\n")
 
     else:
         model.load_state_dict(torch.load(args.model_path))
@@ -124,4 +135,4 @@ def _tab_string(text):
     return "\n".join(indented_lines)
 
 if __name__ == "__main__":
-    run()
+    main()

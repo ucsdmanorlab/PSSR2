@@ -3,6 +3,7 @@ testdata/
 preds/
 trained/
 imports/
+model_testing/
 
 *.pth
 *.lock

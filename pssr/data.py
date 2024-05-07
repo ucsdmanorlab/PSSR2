@@ -13,7 +13,7 @@ class ImageDataset(Dataset):
         Dataset used for pre-tiled image files. For image sheets (e.g. .czi files), use :class:`SlidingDataset`.
 
         LR mode (dataset loads only unmodified low-resolution images for prediction) can be enabled by
-        either inputting images less than or equal to LR size (``hr_res``/``lr_scale``) or by setting ``lr_scale`` = 1 and ``hr_res`` = LR resolution.
+        either inputting images less than or equal to LR size (``hr_res``/``lr_scale``) or by setting ``lr_scale`` = None and ``hr_res`` = LR resolution.
 
         Args:
             path (Path) : Path to folder containing high-resolution images. Can also be a str.
@@ -55,9 +55,9 @@ class ImageDataset(Dataset):
             max_size = max(max(image.size), max_size)
 
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed)
-        self.is_lr = max_size <= hr_res//lr_scale or (lr_scale == 1)
+        self.is_lr = max_size <= hr_res//lr_scale or (lr_scale == None)
         if self.is_lr: print("LR mode is enabled, dataset will load only unmodified low-resolution images.")
-        self.crop_res = min(hr_res, max_size) * (lr_scale if self.is_lr else 1)
+        self.crop_res = min(hr_res, max_size)
 
         self.hr_res = hr_res
         self.lr_scale = lr_scale
@@ -95,7 +95,7 @@ class SlidingDataset(Dataset):
 
         Dataset used for image sheets (e.g. .czi files). For pre-tiled image files, use :class:`ImageDataset`.
 
-        LR mode (dataset loads only unmodified low-resolution images for prediction) can be enabled by setting ``lr_scale`` = 1 and ``hr_res`` = LR resolution.
+        LR mode (dataset loads only unmodified low-resolution images for prediction) can be enabled by setting ``lr_scale`` = None and ``hr_res`` = LR resolution.
 
         Args:
             path (Path) : Path to folder containing high-resolution images. Can also be a str.
@@ -150,9 +150,9 @@ class SlidingDataset(Dataset):
             self.slices.append(1 if self.n_frames is None else image.shape[0] // self.n_frames[0])
 
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed, self.tiles)
-        self.is_lr = (lr_scale == 1)
+        self.is_lr = (lr_scale == None)
         if self.is_lr: print("LR mode is enabled, dataset will load only unmodified low-resolution images.")
-        self.crop_res = hr_res * (lr_scale if self.is_lr else 1)
+        self.crop_res = hr_res
 
         self.hr_res = hr_res
         self.lr_scale = lr_scale
@@ -256,7 +256,7 @@ class PairedImageDataset(Dataset):
         return sum(self.slices)
     
     def __repr__(self):
-        return f'PairedImageDataset from paths "{self.hr_path}" and "{self.lr_path}"\n{len(self.hr_files)+len(self.lr_files)} files with {len(self)} total frame slices'
+        return f'PairedImageDataset from paths "{self.hr_path}" and "{self.lr_path}"\n{len(self.hr_files)} paired files with {len(self)} total frame slices'
 
     def _get_name(self, idx):
         image_idx, idx = _get_image_idx(idx, self.slices)
@@ -350,7 +350,7 @@ class PairedSlidingDataset(Dataset):
         return sum([self.tiles[idx] * self.slices[idx] for idx in range(len(self.hr_files))])
     
     def __repr__(self):
-        return f'PairedSlidingDataset from paths "{self.hr_path}" and "{self.lr_path}"\n{len(self.hr_files)+len(self.lr_files)} files with {len(self)} total frame slices'
+        return f'PairedSlidingDataset from paths "{self.hr_path}" and "{self.lr_path}"\n{len(self.hr_files)} paired files with {len(self)} total frame slices'
     
     def _get_name(self, idx):
         image_idx, idx = _get_image_idx(idx, self.slices, self.tiles)

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="predict" href="../predict.html" /><link rel="prev" title="approximate_crappifier" href="approximate_crappifier.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>train_crappifier - PSSR 1.2.1 documentation</title>
+        <title>train_crappifier - PSSR 1.2.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">PSSR 1.2.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">PSSR 1.2.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 1.2.1 documentation</span>
+  <span class="sidebar-brand-text">PSSR 1.2.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -196,6 +196,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../models/ResUNet.html">ResUNet</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../models/RDResUNet.html">RDResUNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/SwinIR.html">SwinIR</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -247,7 +248,7 @@
 </div>
 <dl class="py function">
 <dt class="sig sig-object py" id="pssr.train.train_crappifier">
-<span class="sig-prename descclassname"><span class="pre">pssr.train.</span></span><span class="sig-name descname"><span class="pre">train_crappifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model:</span> <span class="pre">~torch.nn.modules.module.Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset:</span> <span class="pre">~torch.utils.data.dataset.Dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optim:</span> <span class="pre">~torch.optim.optimizer.Optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler:</span> <span class="pre">&lt;module</span> <span class="pre">'torch.optim.lr_scheduler'</span> <span class="pre">from</span> <span class="pre">'/home/haydenstites/anaconda3/lib/python3.11/site-packages/torch/optim/lr_scheduler.py'&gt;</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clamp:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_frequency:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collage_dir:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'preds'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_kwargs=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.train.train_crappifier" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pssr.train.</span></span><span class="sig-name descname"><span class="pre">train_crappifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model:</span> <span class="pre">~torch.nn.modules.module.Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset:</span> <span class="pre">~torch.utils.data.dataset.Dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optim:</span> <span class="pre">~torch.optim.optimizer.Optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler:</span> <span class="pre">&lt;module</span> <span class="pre">'torch.optim.lr_scheduler'</span> <span class="pre">from</span> <span class="pre">'/home/haydenstites/anaconda3/lib/python3.11/site-packages/torch/optim/lr_scheduler.py'&gt;</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_frequency:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint_dir:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collage_dir:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clamp:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader_kwargs=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.train.train_crappifier" title="Link to this definition">#</a></dt>
 <dd><p>EXPERIMENTAL, NOT CURRENTLY RECOMMENDED FOR MOST WORKFLOWS!</p>
 <p>Trains an <code class="xref py py-class docutils literal notranslate"><span class="pre">nn.Module</span></code> model as a crappifier on high-low-resolution paired data.
 The model must output an image the same size as the input/have a <cite>scale</cite> value of 1.
@@ -264,17 +265,20 @@ This is not necessary if you are using a <code class="xref py py-class docutils 
 <li><p><strong>clip</strong> – (float) : Max gradient for gradient clipping. Use None for no clipping. Default is 3.</p></li>
 <li><p><strong>device</strong> (<em>str</em>) – Device to train model on. Default is “cpu”.</p></li>
 <li><p><strong>scheduler</strong> (<em>LRScheduler</em>) – Optional learning rate scheduler for training. Default is None.</p></li>
-<li><p><strong>clamp</strong> (<em>bool</em>) – Whether to clamp model image output before weight calculation. Default is False.</p></li>
 <li><p><strong>log_frequency</strong> (<em>int</em>) – Frequency to log losses and recalculate metrics in steps. Default is 50.</p></li>
-<li><p><strong>collage_dir</strong> (<em>str</em>) – Directory to save validation collages. A value of None skips the collage. Default is “preds”.</p></li>
+<li><p><strong>checkpoint_dir</strong> (<em>str</em>) – Directory to save model checkpoints each epoch. A value of None skips checkpointing. Default is None.</p></li>
+<li><p><strong>collage_dir</strong> (<em>str</em>) – Directory to save validation collages each epoch. A value of None skips the collage. Default is None.</p></li>
+<li><p><strong>clamp</strong> (<em>bool</em>) – Whether to clamp model image output before weight calculation. Default is False.</p></li>
 <li><p><strong>dataloader_kwargs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Keyword arguments for pytorch <code class="docutils literal notranslate"><span class="pre">Dataloader</span></code>. Default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>List of losses during training.</p>
+<dd class="field-even"><p><p>List of losses during training.</p>
+<p>val_losses (list[float]) : Validation losses per epoch.</p>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>losses (list[float])</p>
+<dd class="field-odd"><p>train_losses (list[float])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -349,7 +353,7 @@ This is not necessary if you are using a <code class="xref py py-class docutils 
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=ca842793"></script>
+</div><script src="../../_static/documentation_options.js?v=fd7cadf9"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>

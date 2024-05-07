@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="train_crappifier" href="train_crappifier.html" /><link rel="prev" title="train_paired" href="train_paired.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="loss" href="../loss.html" /><link rel="prev" title="RDResUNet" href="RDResUNet.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>approximate_crappifier - PSSR 1.2.2 documentation</title>
+        <title>SwinIR - PSSR 1.2.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -164,10 +164,10 @@
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">pssr</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of pssr</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current has-children"><a class="reference internal" href="../train.html">train</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of train</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="train_paired.html">train_paired</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">approximate_crappifier</a></li>
-<li class="toctree-l3"><a class="reference internal" href="train_crappifier.html">train_crappifier</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../train.html">train</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of train</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../train/train_paired.html">train_paired</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../train/approximate_crappifier.html">approximate_crappifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../train/train_crappifier.html">train_crappifier</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../predict.html">predict</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of predict</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -193,10 +193,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../crappifiers/SaltPepper.html">SaltPepper</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../models/ResUNet.html">ResUNet</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/RDResUNet.html">RDResUNet</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/SwinIR.html">SwinIR</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../models.html">models</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ResUNet.html">ResUNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="RDResUNet.html">RDResUNet</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">SwinIR</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -241,23 +241,39 @@
           </label>
         </div>
         <article role="main">
-          <section id="approximate-crappifier">
-<h1>approximate_crappifier<a class="headerlink" href="#approximate-crappifier" title="Link to this heading">#</a></h1>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.train</span> <span class="kn">import</span> <span class="n">approximate_crappifier</span>
+          <section id="swinir">
+<h1>SwinIR<a class="headerlink" href="#swinir" title="Link to this heading">#</a></h1>
+<p>SwinIR derived from <a class="reference external" href="https://arxiv.org/abs/2108.10257">Liang et al., 2021.</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.models</span> <span class="kn">import</span> <span class="n">SwinIR</span>
 </pre></div>
 </div>
 <dl class="py function">
-<dt class="sig sig-object py" id="pssr.train.approximate_crappifier">
-<span class="sig-prename descclassname"><span class="pre">pssr.train.</span></span><span class="sig-name descname"><span class="pre">approximate_crappifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">crappifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../crappifiers/Crappifier.html#pssr.crappifiers.Crappifier" title="pssr.crappifiers.Crappifier"><span class="pre">Crappifier</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Dimension</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.train.approximate_crappifier" title="Link to this definition">#</a></dt>
-<dd><p>Approximates <code class="xref py py-class docutils literal notranslate"><span class="pre">Crappifier</span></code> parameters from ground truth paired images. Uses Bayesian optimization because Crappifier functions are not differentiable.</p>
+<dt class="sig sig-object py" id="pssr.models.SwinIR.__init__">
+<span class="sig-prename descclassname"><span class="pre">pssr.models.SwinIR.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self,</span> <span class="pre">img_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">128,</span> <span class="pre">channels:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">scale:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4,</span> <span class="pre">embed_dim:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">96,</span> <span class="pre">mlp_ratio:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">2,</span> <span class="pre">depths:</span> <span class="pre">list[int]</span> <span class="pre">=</span> <span class="pre">[4,</span> <span class="pre">4,</span> <span class="pre">4,</span> <span class="pre">4],</span> <span class="pre">num_heads:</span> <span class="pre">list[int]</span> <span class="pre">=</span> <span class="pre">[6,</span> <span class="pre">6,</span> <span class="pre">6,</span> <span class="pre">6],</span> <span class="pre">window_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">8,</span> <span class="pre">patch_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">upsampler:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'pixelshuffle',</span> <span class="pre">qkv_bias:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">qk_scale:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">drop_rate:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0,</span> <span class="pre">attn_drop_rate:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0,</span> <span class="pre">drop_path_rate:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.1,</span> <span class="pre">norm_layer:</span> <span class="pre">~torch.nn.modules.module.Module</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'torch.nn.modules.normalization.LayerNorm'&gt;,</span> <span class="pre">ape:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">patch_norm:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">use_checkpoint:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">resi_connection:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'1conv'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.models.SwinIR.__init__" title="Link to this definition">#</a></dt>
+<dd><p>SwinIR as detailed in Liang et al., 2021.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>crappifier</strong> (<a class="reference internal" href="../crappifiers/Crappifier.html#pssr.crappifiers.Crappifier" title="pssr.crappifiers.Crappifier"><em>Crappifier</em></a>) – Crappifier whose parameter space will be optimized.</p></li>
-<li><p><strong>space</strong> (<em>list</em><em>[</em><em>Dimension</em><em>]</em>) – List of parameter spaces for each crappifier parameter.</p></li>
-<li><p><strong>dataset</strong> (<em>Dataset</em>) – Paired image dataset to load data from.</p></li>
-<li><p><strong>max_images</strong> (<em>int</em>) – Number of image samples to average computations over for each optimization step. Default is None, using all images in dataset.</p></li>
-<li><p><strong>opt_kwargs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Keyword arguments for skopt <code class="docutils literal notranslate"><span class="pre">gp_minimize</span></code>. Default is None</p></li>
+<li><p><strong>img_size</strong> (<em>int</em>) – Input image size.</p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – Number of channels in image data. Can also be a list of in channels and out channels respectively.</p></li>
+<li><p><strong>scale</strong> (<em>int</em>) – Upscaling factor for predictions. Choose a power of 2 for best results. Default is 4.</p></li>
+<li><p><strong>embed_dim</strong> (<em>int</em>) – Number of channels in patch embedding dimension. Default is 96.</p></li>
+<li><p><strong>mlp_ratio</strong> (<em>int</em>) – Ratio of hidden channels to embedding channels. Default is 2.</p></li>
+<li><p><strong>depths</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Depths for each Swin Transformer layer. Default is 4 by 4 blocks.</p></li>
+<li><p><strong>num_heads</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Number of attention heads for each Swin Transformer layer. Default is 6 by 4 blocks.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em>) – Window size for Swin Transformer layers. Default is 8.</p></li>
+<li><p><strong>patch_size</strong> (<em>int</em>) – Patch size for embedding and Swin Transformer layers. Default is 1.</p></li>
+<li><p><strong>upsampler</strong> (<em>str</em>) – Upsamling algorithm for outputs. Options are “pixelshuffle”, “pixelshuffledirect”, “nearest+conv”, and None. Default is “pixelshuffle”.</p></li>
+<li><p><strong>qkv_bias</strong> (<em>bool</em>) – Whether to add learnable bias to query. Default is True.</p></li>
+<li><p><strong>qk_scale</strong> (<em>float</em>) – Override default qk scale of head_dim ** -0.5 if set. Default is None.</p></li>
+<li><p><strong>drop_rate</strong> (<em>float</em>) – Dropout rate during training. Default is 0.</p></li>
+<li><p><strong>attn_drop_rate</strong> (<em>float</em>) – Attention dropout rate during training. Default is 0.</p></li>
+<li><p><strong>drop_path_rate</strong> (<em>float</em>) – Stochastic depth rate. Default is 0.1.</p></li>
+<li><p><strong>norm_layer</strong> (<em>nn.Module</em>) – Normalization layer. Default is nn.LayerNorm.</p></li>
+<li><p><strong>ape</strong> (<em>bool</em>) – Whether to add absolute position embedding to patch embedding. Default is False.</p></li>
+<li><p><strong>patch_norm</strong> (<em>bool</em>) – Whether to use normalization after patch embedding. Default is False.</p></li>
+<li><p><strong>use_checkpoint</strong> (<em>bool</em>) – Whether to use checkpointing to save memory. Default is False.</p></li>
+<li><p><strong>resi_connection</strong> (<em>str</em>) – Which convolutional block to use before residual connection. Options are “1conv” or “3conv”. Default is “1conv”.</p></li>
 </ul>
 </dd>
 </dl>
@@ -270,23 +286,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="train_crappifier.html">
+          <a class="next-page" href="../loss.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">train_crappifier</div>
+                <div class="title">loss</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="train_paired.html">
+          <a class="prev-page" href="RDResUNet.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">train_paired</div>
+                <div class="title">RDResUNet</div>
                 
               </div>
             </a>
@@ -320,8 +336,8 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">approximate_crappifier</a><ul>
-<li><a class="reference internal" href="#pssr.train.approximate_crappifier"><code class="docutils literal notranslate"><span class="pre">approximate_crappifier()</span></code></a></li>
+<li><a class="reference internal" href="#">SwinIR</a><ul>
+<li><a class="reference internal" href="#pssr.models.SwinIR.__init__"><code class="docutils literal notranslate"><span class="pre">__init__()</span></code></a></li>
 </ul>
 </li>
 </ul>
