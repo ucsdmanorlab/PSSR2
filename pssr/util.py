@@ -1,4 +1,4 @@
-import torch, math
+import torch, math, inspect
 import torch.nn.functional as F
 import torch.nn as nn
 import numpy as np
@@ -60,3 +60,21 @@ def pixel_metric(mse : float, image_range : int = 255):
 
 def _psnr_metric(mse : float):
     return 20 * torch.log10(1 / torch.sqrt(mse))
+
+def _force_list(item):
+    if type(item) is not list:
+        try:
+            return list(item)
+        except:
+            return [item]
+    return item
+
+def _get_callbacks(raw):
+    callbacks = [] if raw is None else _force_list(raw)
+    callback_locals = [len([arg for arg in inspect.getfullargspec(callback).args if arg != "self"]) == 1 for callback in callbacks]
+    return callbacks, callback_locals
+
+def _tab_string(text):
+    lines = text.split("\n")
+    indented_lines = ["\t" + line for line in lines]
+    return "\n".join(indented_lines)

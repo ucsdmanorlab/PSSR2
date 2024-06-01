@@ -18,7 +18,7 @@ Before diving into the code, we will first specify our imports.
     from pssr.data import ImageDataset
     from pssr.crappifiers import Poisson
     from pssr.models import ResUNet
-    from pssr.loss import SSIMLoss
+    from pssr.util import SSIMLoss
     from pssr.train import train_paired
     from torch.optim.lr_scheduler import ReduceLROnPlateau
 
@@ -91,7 +91,7 @@ We will first define our loss function.
 
     loss_fn = SSIMLoss(mix=.8, ms=True)
 
-While MSE loss can also be used to good results, we will instead use :doc:`../reference/loss/SSIMLoss` here, which will optimize visually significant elements our predictions.
+While MSE loss can also be used to good results, we will instead use :doc:`../reference/util/SSIMLoss` here, which will optimize visually significant elements our predictions.
 The ``mix`` argument controls the inverse contribution of corrected L1 loss, while the ``ms`` argument enables MS-SSIM, a more robust version of SSIM.
 
 |

@@ -1,0 +1,15 @@
+name: pssr
+contributions:
+  commands:
+    - id: pssr.napari.train
+      title: Open Train Widget
+      python_name: pssr.napari:TrainWidget
+    - id: pssr.napari.predict
+      title: Open Predict Widget
+      python_name: pssr.napari:PredictWidget
+
+  widgets:
+    - command: pssr.napari.train
+      display_name: Train Model
+    - command: pssr.napari.predict
+      display_name: Predict Images

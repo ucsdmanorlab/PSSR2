@@ -9,5 +9,5 @@ The **PSSR** User Guide and full API Reference is available in the [PSSR Documen
 If you have never used **PSSR** before, [Getting Started](https://ucsdmanorlab.github.io/PSSR/guide/start.html) outlines installation and basic usage.
 Full reference and explanations of all **PSSR** tools is available in [API Reference](https://ucsdmanorlab.github.io/PSSR/reference/api.html).
 
-The package is still in development. All code can be found at [https://github.com/ucsdmanorlab/PSSR](https://github.com/ucsdmanorlab/PSSR).
+This package is under continuous development. All code can be found at [https://github.com/ucsdmanorlab/PSSR](https://github.com/ucsdmanorlab/PSSR).
 If you experience any bugs, unexpected behaviors, or have any suggestions, make sure to [open a ticket](https://github.com/ucsdmanorlab/PSSR/issues).

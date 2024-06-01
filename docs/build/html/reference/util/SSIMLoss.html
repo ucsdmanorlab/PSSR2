@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="CLI" href="../CLI.html" /><link rel="prev" title="SSIMLoss" href="SSIMLoss.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="pixel_metric" href="pixel_metric.html" /><link rel="prev" title="util" href="../util.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>pixel_metric - PSSR 1.2.2 documentation</title>
+        <title>SSIMLoss - PSSR 2.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">PSSR 1.2.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">PSSR 2.0.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 1.2.2 documentation</span>
+  <span class="sidebar-brand-text">PSSR 2.0.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -199,9 +199,9 @@
 <li class="toctree-l3"><a class="reference internal" href="../models/SwinIR.html">SwinIR</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="../loss.html">loss</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">pixel_metric</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../util.html">util</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of util</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">SSIMLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../CLI.html">CLI</a></li>
@@ -241,20 +241,25 @@
           </label>
         </div>
         <article role="main">
-          <section id="pixel-metric">
-<h1>pixel_metric<a class="headerlink" href="#pixel-metric" title="Link to this heading">#</a></h1>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.loss</span> <span class="kn">import</span> <span class="n">pixel_metric</span>
+          <section id="ssimloss">
+<h1>SSIMLoss<a class="headerlink" href="#ssimloss" title="Link to this heading">#</a></h1>
+<p>Using any <code class="docutils literal notranslate"><span class="pre">mix</span></code> value less than 1 applies corrected L1 loss in addition to SSIM loss, as derived from <a class="reference external" href="https://arxiv.org/pdf/1511.08861.pdf">Zhao et al., 2018</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.util</span> <span class="kn">import</span> <span class="n">SSIMLoss</span>
 </pre></div>
 </div>
 <dl class="py function">
-<dt class="sig sig-object py" id="pssr.loss.pixel_metric">
-<span class="sig-prename descclassname"><span class="pre">pssr.loss.</span></span><span class="sig-name descname"><span class="pre">pixel_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">255</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.loss.pixel_metric" title="Link to this definition">#</a></dt>
-<dd><p>Simple metric for calculating average pixel error.</p>
+<dt class="sig sig-object py" id="pssr.util.SSIMLoss.__init__">
+<span class="sig-prename descclassname"><span class="pre">pssr.util.SSIMLoss.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win_sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.util.SSIMLoss.__init__" title="Link to this definition">#</a></dt>
+<dd><p>SSIM and MS-SSIM loss with Mix as detailed in Zhao et al., 2018.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mse</strong> (<em>float</em>) – Mean squared error between predicted and ground truth images.</p></li>
-<li><p><strong>image_range</strong> (<em>int</em>) – Value range of image. Default is 255.</p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – Number of channels in image. Default is 1.</p></li>
+<li><p><strong>mix</strong> (<em>float</em>) – Mix of SSIM loss in loss calculation. 1 is entirely SSIM, 0 is entirely L1 with Gaussian correction. Default is 0.8.</p></li>
+<li><p><strong>win_size</strong> (<em>int</em>) – Size of Gaussian window. Must be odd. Default is 11.</p></li>
+<li><p><strong>win_sigma</strong> (<em>float</em>) – Sigma for distribution of Gaussian window. Default is 1.5.</p></li>
+<li><p><strong>ms</strong> (<em>bool</em>) – Whether to use MS-SSIM over basic SSIM. Default is True.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Keyword arguments for <code class="docutils literal notranslate"><span class="pre">pytorch_msssim</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -267,23 +272,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../CLI.html">
+          <a class="next-page" href="pixel_metric.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">CLI</div>
+                <div class="title">pixel_metric</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="SSIMLoss.html">
+          <a class="prev-page" href="../util.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">SSIMLoss</div>
+                <div class="title">util</div>
                 
               </div>
             </a>
@@ -317,8 +322,8 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">pixel_metric</a><ul>
-<li><a class="reference internal" href="#pssr.loss.pixel_metric"><code class="docutils literal notranslate"><span class="pre">pixel_metric()</span></code></a></li>
+<li><a class="reference internal" href="#">SSIMLoss</a><ul>
+<li><a class="reference internal" href="#pssr.util.SSIMLoss.__init__"><code class="docutils literal notranslate"><span class="pre">__init__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -330,7 +335,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=fd7cadf9"></script>
+</div><script src="../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>

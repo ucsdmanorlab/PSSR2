@@ -23,7 +23,7 @@ class Crappifier(ABC):
         return self.crappify(image)
 
 class MultiCrappifier(Crappifier):
-    def __init__(self, *args : Crappifier, clip : bool = True):
+    def __init__(self, *args : list[Crappifier], clip : bool = True):
         r"""Chains multiple crappifiers sequentially for degrading low resolution images.
 
         Args:

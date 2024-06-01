@@ -2,12 +2,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from ._blocks import PSP_Pooling, Reconstruction, get_resblock
-from ..data import _force_list
+from ..util import _force_list
 
 class ResUNet(nn.Module):
     def __init__(
             self,
-            channels : int = 1,
+            channels : list[int] = 1,
             hidden : list[int] = [64, 128, 256, 512, 1024],
             scale : int = 4,
             depth : int = 3,
@@ -18,10 +18,10 @@ class ResUNet(nn.Module):
         r"""A Residual UNet as detailed in Zhang et al., 2017 with an additional image upscaling block.
         If ``dilations`` is provided, instead use a Atrous Residual UNet as detailed in Diakogiannis et al., 2019.
 
-        Channel sizes hidden[0] (and hidden[-1] if encoder_pool is True) must be divisible by pool_sizes.
+        Channel sizes hidden[0] (and hidden[-1] if encoder_pool is True) must be divisible by pool_sizes if provided.
 
         Args:
-            channels (int) : Number of channels in image data. Can also be a list of in channels and out channels respectively.
+            channels (list[int]) : Number of channels in image data. Can also be a list of in channels (low-resolution) and out channels (high-resolution) respectively.
 
             hidden (list[int]) : Elementwise list of channels per residual block controlling width and length of model.
 

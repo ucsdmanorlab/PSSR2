@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="PairedImageDataset" href="PairedImageDataset.html" /><link rel="prev" title="ImageDataset" href="ImageDataset.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>SlidingDataset - PSSR 1.2.2 documentation</title>
+        <title>SlidingDataset - PSSR 2.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">PSSR 1.2.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">PSSR 2.0.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 1.2.2 documentation</span>
+  <span class="sidebar-brand-text">PSSR 2.0.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -199,9 +199,9 @@
 <li class="toctree-l3"><a class="reference internal" href="../models/SwinIR.html">SwinIR</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../loss/SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../loss/pixel_metric.html">pixel_metric</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../util.html">util</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of util</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../util/SSIMLoss.html">SSIMLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../util/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../CLI.html">CLI</a></li>
@@ -248,7 +248,7 @@
 </div>
 <dl class="py function">
 <dt class="sig sig-object py" id="pssr.data.SlidingDataset.__init__">
-<span class="sig-prename descclassname"><span class="pre">pssr.data.SlidingDataset.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">~pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hr_res:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scale:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crappifier:</span> <span class="pre">~pssr.crappifiers.Crappifier</span> <span class="pre">=</span> <span class="pre">&lt;pssr.crappifiers.Poisson</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'TZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'L'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'czi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preload:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_seed:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms:</span> <span class="pre">list[~torch.nn.modules.module.Module]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.data.SlidingDataset.__init__" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pssr.data.SlidingDataset.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path:</span> <span class="pre">~pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hr_res:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scale:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crappifier:</span> <span class="pre">~pssr.crappifiers.Crappifier</span> <span class="pre">=</span> <span class="pre">&lt;pssr.crappifiers.Poisson</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames:</span> <span class="pre">list[int]</span> <span class="pre">=</span> <span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'TZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'czi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preload:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_split:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_seed:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms:</span> <span class="pre">list[~torch.nn.modules.module.Module]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.data.SlidingDataset.__init__" title="Link to this definition">#</a></dt>
 <dd><p>Training dataset for loading high-resolution image tiles from image sheets and returning high-low-resolution pairs, the latter receiving crappification.</p>
 <p>Dataset used for image sheets (e.g. .czi files). For pre-tiled image files, use <code class="xref py py-class docutils literal notranslate"><span class="pre">ImageDataset</span></code>.</p>
 <p>LR mode (dataset loads only unmodified low-resolution images for prediction) can be enabled by setting <code class="docutils literal notranslate"><span class="pre">lr_scale</span></code> = None and <code class="docutils literal notranslate"><span class="pre">hr_res</span></code> = LR resolution.</p>
@@ -260,9 +260,8 @@
 <li><p><strong>lr_scale</strong> (<em>int</em>) – Downscaling factor for low-resolution images to simulate undersampling. Choose a power of 2 for best results. Default is 4.</p></li>
 <li><p><strong>crappifier</strong> (<a class="reference internal" href="../crappifiers/Crappifier.html#pssr.crappifiers.Crappifier" title="pssr.crappifiers.Crappifier"><em>Crappifier</em></a>) – Crappifier for degrading low-resolution images to simulate undersampling. Not used in LR mode. Default is <code class="xref py py-class docutils literal notranslate"><span class="pre">Poisson</span></code>.</p></li>
 <li><p><strong>overlap</strong> (<em>int</em>) – Overlapping pixels between neighboring tiles to increase effective dataset size. Default is 128.</p></li>
-<li><p><strong>n_frames</strong> (<em>int</em>) – Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of None uses all stacked image frames. Default is None.</p></li>
+<li><p><strong>n_frames</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.</p></li>
 <li><p><strong>stack</strong> (<em>str</em>) – Multiframe stack handling mode, e.g “T” for time stack, “Z” for z dimension stack, “TZ” or “ZT” for both, determining flattenting order. Only applicable if loading from czi. Default is “TZ”.</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – Color mode for loading images, e.g. “L” for grayscale, “RGB” for color. Default is “L”.</p></li>
 <li><p><strong>extension</strong> (<em>str</em>) – File extension of images. Default is “czi”.</p></li>
 <li><p><strong>preload</strong> (<em>bool</em>) – Whether to preload images in memory (not VRAM) for faster dataloading. Default is True.</p></li>
 <li><p><strong>val_split</strong> (<em>float</em>) – Proportion of images to be held out for evaluation/prediction. Default is 0.1.</p></li>
@@ -344,7 +343,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=fd7cadf9"></script>
+</div><script src="../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>

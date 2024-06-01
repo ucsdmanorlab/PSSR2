@@ -8,7 +8,7 @@ containing various improvements and new features.
 If you have never used **PSSR** before, :doc:`guide/start` outlines installation and basic usage.
 Full reference and explanations of all **PSSR** tools is available in :doc:`API Reference <reference/api>`.
 
-The package is still in development. All code can be found at `https://github.com/ucsdmanorlab/PSSR <https://github.com/ucsdmanorlab/PSSR>`_.
+This package is under continuous development. All code can be found at `https://github.com/ucsdmanorlab/PSSR <https://github.com/ucsdmanorlab/PSSR>`_.
 If you experience any bugs, unexpected behaviors, or have any suggestions, make sure to `open a ticket <https://github.com/ucsdmanorlab/PSSR/issues>`_.
 
 

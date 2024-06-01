@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="loss" href="../loss.html" /><link rel="prev" title="RDResUNet" href="RDResUNet.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="util" href="../util.html" /><link rel="prev" title="RDResUNet" href="RDResUNet.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>SwinIR - PSSR 1.2.2 documentation</title>
+        <title>SwinIR - PSSR 2.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">PSSR 1.2.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">PSSR 2.0.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 1.2.2 documentation</span>
+  <span class="sidebar-brand-text">PSSR 2.0.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -199,9 +199,9 @@
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">SwinIR</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../loss/SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../loss/pixel_metric.html">pixel_metric</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../util.html">util</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of util</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../util/SSIMLoss.html">SSIMLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../util/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../CLI.html">CLI</a></li>
@@ -249,13 +249,13 @@
 </div>
 <dl class="py function">
 <dt class="sig sig-object py" id="pssr.models.SwinIR.__init__">
-<span class="sig-prename descclassname"><span class="pre">pssr.models.SwinIR.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self,</span> <span class="pre">img_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">128,</span> <span class="pre">channels:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">scale:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4,</span> <span class="pre">embed_dim:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">96,</span> <span class="pre">mlp_ratio:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">2,</span> <span class="pre">depths:</span> <span class="pre">list[int]</span> <span class="pre">=</span> <span class="pre">[4,</span> <span class="pre">4,</span> <span class="pre">4,</span> <span class="pre">4],</span> <span class="pre">num_heads:</span> <span class="pre">list[int]</span> <span class="pre">=</span> <span class="pre">[6,</span> <span class="pre">6,</span> <span class="pre">6,</span> <span class="pre">6],</span> <span class="pre">window_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">8,</span> <span class="pre">patch_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">upsampler:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'pixelshuffle',</span> <span class="pre">qkv_bias:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">qk_scale:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">drop_rate:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0,</span> <span class="pre">attn_drop_rate:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0,</span> <span class="pre">drop_path_rate:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.1,</span> <span class="pre">norm_layer:</span> <span class="pre">~torch.nn.modules.module.Module</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'torch.nn.modules.normalization.LayerNorm'&gt;,</span> <span class="pre">ape:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">patch_norm:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">use_checkpoint:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">resi_connection:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'1conv'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.models.SwinIR.__init__" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pssr.models.SwinIR.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self,</span> <span class="pre">image_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">128,</span> <span class="pre">channels:</span> <span class="pre">list[int]</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">scale:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4,</span> <span class="pre">embed_dim:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">96,</span> <span class="pre">mlp_ratio:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">2,</span> <span class="pre">depths:</span> <span class="pre">list[int]</span> <span class="pre">=</span> <span class="pre">[4,</span> <span class="pre">4,</span> <span class="pre">4,</span> <span class="pre">4],</span> <span class="pre">num_heads:</span> <span class="pre">list[int]</span> <span class="pre">=</span> <span class="pre">[6,</span> <span class="pre">6,</span> <span class="pre">6,</span> <span class="pre">6],</span> <span class="pre">window_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">8,</span> <span class="pre">patch_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">upsampler:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'pixelshuffle',</span> <span class="pre">qkv_bias:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">qk_scale:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">drop_rate:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0,</span> <span class="pre">attn_drop_rate:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0,</span> <span class="pre">drop_path_rate:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.1,</span> <span class="pre">norm_layer:</span> <span class="pre">~torch.nn.modules.module.Module</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'torch.nn.modules.normalization.LayerNorm'&gt;,</span> <span class="pre">ape:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">patch_norm:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">use_checkpoint:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">resi_connection:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'1conv'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.models.SwinIR.__init__" title="Link to this definition">#</a></dt>
 <dd><p>SwinIR as detailed in Liang et al., 2021.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>img_size</strong> (<em>int</em>) – Input image size.</p></li>
-<li><p><strong>channels</strong> (<em>int</em>) – Number of channels in image data. Can also be a list of in channels and out channels respectively.</p></li>
+<li><p><strong>image_size</strong> (<em>int</em>) – Input image size.</p></li>
+<li><p><strong>channels</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – Number of channels in image data. Can also be a list of in channels (low-resolution) and out channels (high-resolution) respectively.</p></li>
 <li><p><strong>scale</strong> (<em>int</em>) – Upscaling factor for predictions. Choose a power of 2 for best results. Default is 4.</p></li>
 <li><p><strong>embed_dim</strong> (<em>int</em>) – Number of channels in patch embedding dimension. Default is 96.</p></li>
 <li><p><strong>mlp_ratio</strong> (<em>int</em>) – Ratio of hidden channels to embedding channels. Default is 2.</p></li>
@@ -269,7 +269,7 @@
 <li><p><strong>drop_rate</strong> (<em>float</em>) – Dropout rate during training. Default is 0.</p></li>
 <li><p><strong>attn_drop_rate</strong> (<em>float</em>) – Attention dropout rate during training. Default is 0.</p></li>
 <li><p><strong>drop_path_rate</strong> (<em>float</em>) – Stochastic depth rate. Default is 0.1.</p></li>
-<li><p><strong>norm_layer</strong> (<em>nn.Module</em>) – Normalization layer. Default is nn.LayerNorm.</p></li>
+<li><p><strong>norm_layer</strong> (<em>nn.Module</em>) – Data normalization layer. Default is <code class="xref py py-class docutils literal notranslate"><span class="pre">nn.LayerNorm</span></code>.</p></li>
 <li><p><strong>ape</strong> (<em>bool</em>) – Whether to add absolute position embedding to patch embedding. Default is False.</p></li>
 <li><p><strong>patch_norm</strong> (<em>bool</em>) – Whether to use normalization after patch embedding. Default is False.</p></li>
 <li><p><strong>use_checkpoint</strong> (<em>bool</em>) – Whether to use checkpointing to save memory. Default is False.</p></li>
@@ -286,12 +286,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../loss.html">
+          <a class="next-page" href="../util.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">loss</div>
+                <div class="title">util</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -349,7 +349,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=fd7cadf9"></script>
+</div><script src="../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>

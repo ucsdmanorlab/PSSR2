@@ -19,11 +19,10 @@ class RDNet(nn.Module):
         n_init_features=128,
         patch_size=2,
         growth_rates=(64, 104, 128, 128, 128, 128, 224),
-        ds_blocks=(None, True, True, False, False, False, True),
+        ds_blocks=(False, True, True, False, False, False, True),
         block_type=["Block", "Block", "BlockESE", "BlockESE", "BlockESE", "BlockESE", "BlockESE"],
         n_blocks=(3, 3, 3, 3, 3, 3, 3),
         bottleneck_width_ratio=4,
-        drop_rate=0.0,
         drop_path_rate=0.0,
         transition_compression_ratio=0.5,
         ls_init_value=1e-6,
@@ -31,6 +30,8 @@ class RDNet(nn.Module):
         super().__init__()
 
         block_type = [block_type] * len(growth_rates) if type(block_type) is str else block_type
+        block_type = ["BlockESE" if block else "Block" for block in block_type]
+            
         n_blocks = [n_blocks] * len(growth_rates) if type(n_blocks) is int else n_blocks
 
         if not len(growth_rates) == len(ds_blocks): raise ValueError(f"growth_rates and ds_blocks must have the same length. Given values are {len(growth_rates)} and {len(ds_blocks)} respectively.")
@@ -67,7 +68,6 @@ class RDNet(nn.Module):
                 num_input_features=num_features,
                 growth_rate=growth_rates[i],
                 bottleneck_width_ratio=bottleneck_width_ratio,
-                drop_rate=drop_rate,
                 drop_path_rates=dp_rates[i],
                 ls_init_value=ls_init_value,
                 block_type=block_type[i],
@@ -144,14 +144,12 @@ class DenseBlock(nn.Module):
         growth_rate,
         bottleneck_width_ratio,
         drop_path_rate,
-        drop_rate=0.0,
         rand_gather_step_prob=0.0,
         block_idx=0,
         block_type="Block",
         ls_init_value=1e-6,
     ):
         super().__init__()
-        self.drop_rate = drop_rate
         self.drop_path_rate = drop_path_rate
         self.rand_gather_step_prob = rand_gather_step_prob
         self.block_idx = block_idx

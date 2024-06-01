@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="pssr" href="../reference/api.html" /><link rel="prev" title="Principles of PSSR" href="principles.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>Workflow - PSSR 1.2.2 documentation</title>
+        <title>Workflow - PSSR 2.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">PSSR 1.2.2 documentation</div></a>
+      <a href="../index.html"><div class="brand">PSSR 2.0.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 1.2.2 documentation</span>
+  <span class="sidebar-brand-text">PSSR 2.0.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -199,9 +199,9 @@
 <li class="toctree-l3"><a class="reference internal" href="../reference/models/SwinIR.html">SwinIR</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/loss.html">loss</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of loss</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../reference/loss/SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../reference/loss/pixel_metric.html">pixel_metric</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/util.html">util</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of util</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/util/SSIMLoss.html">SSIMLoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/util/pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/CLI.html">CLI</a></li>
@@ -255,7 +255,7 @@ It does not necessarily apply to all use cases and is meant to be expanded upon.
 <span class="kn">from</span> <span class="nn">pssr.data</span> <span class="kn">import</span> <span class="n">ImageDataset</span>
 <span class="kn">from</span> <span class="nn">pssr.crappifiers</span> <span class="kn">import</span> <span class="n">Poisson</span>
 <span class="kn">from</span> <span class="nn">pssr.models</span> <span class="kn">import</span> <span class="n">ResUNet</span>
-<span class="kn">from</span> <span class="nn">pssr.loss</span> <span class="kn">import</span> <span class="n">SSIMLoss</span>
+<span class="kn">from</span> <span class="nn">pssr.util</span> <span class="kn">import</span> <span class="n">SSIMLoss</span>
 <span class="kn">from</span> <span class="nn">pssr.train</span> <span class="kn">import</span> <span class="n">train_paired</span>
 <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">ReduceLROnPlateau</span>
 </pre></div>
@@ -318,7 +318,7 @@ The other arguments specify the number of channels per hidden layer, and the dep
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">SSIMLoss</span><span class="p">(</span><span class="n">mix</span><span class="o">=</span><span class="mf">.8</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>While MSE loss can also be used to good results, we will instead use <a class="reference internal" href="../reference/loss/SSIMLoss.html"><span class="doc">SSIMLoss</span></a> here, which will optimize visually significant elements our predictions.
+<p>While MSE loss can also be used to good results, we will instead use <a class="reference internal" href="../reference/util/SSIMLoss.html"><span class="doc">SSIMLoss</span></a> here, which will optimize visually significant elements our predictions.
 The <code class="docutils literal notranslate"><span class="pre">mix</span></code> argument controls the inverse contribution of corrected L1 loss, while the <code class="docutils literal notranslate"><span class="pre">ms</span></code> argument enables MS-SSIM, a more robust version of SSIM.</p>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -537,7 +537,7 @@ but they will only represent training performance on crappified data and may not
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=fd7cadf9"></script>
+</div><script src="../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=32e29ea5"></script>

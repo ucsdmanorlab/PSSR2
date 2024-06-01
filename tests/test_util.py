@@ -1,4 +1,4 @@
-from pssr.loss import SSIMLoss
+from pssr.util import SSIMLoss
 from _util import get_shape, get_image, HR_RES
 
 HR_SHAPE = get_shape(HR_RES)

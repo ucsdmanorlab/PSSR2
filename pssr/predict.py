@@ -7,9 +7,9 @@ from skimage.transform import resize
 from tqdm import tqdm
 from PIL import Image
 from .data import _RandomIterIdx, _slice_center
-from .loss import pixel_metric
+from .util import _get_callbacks, pixel_metric
 
-def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", norm : bool = False, prefix : str = None, out_dir : str = "preds"):
+def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", norm : bool = False, prefix : str = None, out_dir : str = "preds", callbacks = None):
     r"""Predicts high-resolution images from low-resolution images using a given model.
     
     Only uses evaluation images if applicable. Set ``val_split=1`` in dataset to use all images.
@@ -26,11 +26,15 @@ def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", n
         prefix (str) : Prefix to append at the beginning the output file name. Default is None.
 
         out_dir (str) : Directory to save images. A value of None returns images. Default is "preds".
+
+        callbacks (list[Callable]) : Callbacks after each prediction. Can optionally specify an argument for locals to be passed. Default is None.
     
     Returns:
         images (list[np.ndarray]) : Returns predicted images if ``out_dir`` is None.
     """
     if norm and dataset.is_lr: raise ValueError("Dataset must be paired with high-low-resolution images for normalization.")
+
+    callbacks, callback_locals = _get_callbacks(callbacks)
 
     model.to(device)
     model.eval()
@@ -52,6 +56,12 @@ def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", n
             hr_hat = hr_hat[:,:crop_res,:crop_res]
             outs.append(hr_hat)
 
+            for idx, callback in enumerate(callbacks):
+                if callback_locals[idx]:
+                    callback(locals())
+                else:
+                    callback()
+
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
         for idx, hr_hat in enumerate(outs):
@@ -59,7 +69,7 @@ def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", n
     else:
         return outs
 
-def predict_collage(model : nn.Module, dataset : Dataset, device : str = "cpu", norm : bool = True, n_images : int = None, prefix : str = None, out_dir : str = "preds"):
+def predict_collage(model : nn.Module, dataset : Dataset, device : str = "cpu", norm : bool = True, n_images : int = None, prefix : str = None, out_dir : str = "preds", callbacks = None):
     r"""Saves to file an image collage of vertically stacked instances of horizontally aligned low-resolution, PSSR upscaled, and high-resolution images in that order.
     Only the center frame of each slice is displayed.
 
@@ -79,9 +89,12 @@ def predict_collage(model : nn.Module, dataset : Dataset, device : str = "cpu", 
         prefix (str) : Prefix to append at the beginning the output file name. Default is None.
 
         out_dir (str) : Directory to save collage. Default is "preds".
+
+        callbacks (list[Callable]) : Callbacks after each prediction. Can optionally specify an argument for locals to be passed. Default is None.
     """
     if dataset.is_lr: raise ValueError("Dataset cannot be in LR mode when creating a collage.")
 
+    callbacks, callback_locals = _get_callbacks(callbacks)
     n_images = min(50, len(dataset)) if n_images is None else n_images
 
     model.to(device)
@@ -89,7 +102,8 @@ def predict_collage(model : nn.Module, dataset : Dataset, device : str = "cpu", 
 
     collage = Image.new("L", (dataset.crop_res*3, dataset.crop_res*n_images))
     with torch.no_grad():
-        for idx, data_idx in enumerate(_RandomIterIdx(dataset.val_idx, seed=True)):
+        # Only shuffle if val_split < 1
+        for idx, data_idx in enumerate(_RandomIterIdx(dataset.val_idx, seed=True) if len(dataset.val_idx) < len(dataset) else dataset.val_idx):
             hr, lr = dataset[data_idx]
             hr, lr = hr.to(device).unsqueeze(0), lr.to(device).unsqueeze(0)
 
@@ -97,13 +111,19 @@ def predict_collage(model : nn.Module, dataset : Dataset, device : str = "cpu", 
 
             collage.paste(_collage_preds(lr, hr_hat, hr, norm, 1, dataset.crop_res, dataset.lr_scale), (0, dataset.crop_res*idx))
 
+            for idx, callback in enumerate(callbacks):
+                if callback_locals[idx]:
+                    callback(locals())
+                else:
+                    callback()
+
             if idx >= n_images - 1:
                 break
 
     os.makedirs(out_dir, exist_ok=True)
     collage.save(f"{out_dir}/{prefix+'_' if prefix else ''}collage_{n_images}.png")
 
-def test_metrics(model : nn.Module, dataset : Dataset, device : str = "cpu", metrics : list[str] = ["mse", "pixel", "psnr", "ssim"], avg : bool = True, norm : bool = True):
+def test_metrics(model : nn.Module, dataset : Dataset, device : str = "cpu", metrics : list[str] = ["mse", "pixel", "psnr", "ssim"], avg : bool = True, norm : bool = True, callbacks = None):
     r"""Computes image restoration metrics of predicted vs ground truth images.
 
     Only uses evaluation images if applicable. Set ``val_split=1`` in dataset to use all images.
@@ -120,10 +140,13 @@ def test_metrics(model : nn.Module, dataset : Dataset, device : str = "cpu", met
         avg (bool) : Whether to return a single averaged value per metric. Default is True.
 
         norm (bool) : Whether to normalize prediction image intensities to ground truth. Default is True.
+
+        callbacks (list[Callable]) : Callbacks after each prediction. Can optionally specify an argument for locals to be passed. Default is None.
     
     Returns:
         metrics (dict[str, Any]) : Dictionary of metric names and outputs.
     """
+    callbacks, callback_locals = _get_callbacks(callbacks)
     image_range = 255
 
     metrics = [metrics] if type(metrics) is str else metrics
@@ -160,6 +183,12 @@ def test_metrics(model : nn.Module, dataset : Dataset, device : str = "cpu", met
                     metrics["psnr"].append(peak_signal_noise_ratio(hr[idx], hr_hat[idx], data_range=image_range))
                 if "ssim" in metrics:
                     metrics["ssim"].append(structural_similarity(hr[idx].squeeze(), hr_hat[idx].squeeze(), data_range=image_range))
+            
+            for idx, callback in enumerate(callbacks):
+                if callback_locals[idx]:
+                    callback(locals())
+                else:
+                    callback()
 
     return {metric:(sum(values)/len(values) if avg else values) for metric, values in metrics.items()}
 

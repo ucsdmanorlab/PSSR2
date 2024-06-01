@@ -5,9 +5,10 @@ from pathlib import Path
 from tqdm import tqdm
 from PIL import Image
 from .crappifiers import Crappifier, Poisson
+from .util import _force_list
 
 class ImageDataset(Dataset):
-    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), n_frames : int = None, mode : str = "L", extension : str = "tif", val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, transforms : list[torch.nn.Module] = None):
+    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), n_frames : list[int] = -1, extension : str = "tif", val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, transforms : list[torch.nn.Module] = None):
         r"""Training dataset for loading high-resolution images from individual files and returning high-low-resolution pairs, the latter receiving crappification.
 
         Dataset used for pre-tiled image files. For image sheets (e.g. .czi files), use :class:`SlidingDataset`.
@@ -24,9 +25,7 @@ class ImageDataset(Dataset):
 
             crappifier (Crappifier) : Crappifier for degrading low-resolution images to simulate undersampling. Not used in LR mode. Default is :class:`Poisson`.
 
-            n_frames (int) : Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of None uses all stacked image frames. Default is None.
-
-            mode (str) : Color mode for loading images, e.g. "L" for grayscale, "RGB" for color. Default is "L".
+            n_frames (list[int]) : Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
 
             extension (str) : File extension of images. Default is "tif".
 
@@ -40,13 +39,13 @@ class ImageDataset(Dataset):
         """
         super().__init__()
         self.path = Path(path) if type(path) is str else path
-        if not self.path.exists(): raise FileNotFoundError(f'Path "{self.path}" does not exist.')
+        if not path or not self.path.exists(): raise FileNotFoundError(f'Path "{self.path}" does not exist.')
 
-        self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.path))
+        self.hr_files = _root_glob(f"*.{extension}", root_dir=self.path)
         if not len(self.hr_files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{self.path}".')
 
-        self.mode = mode.upper()
-        self.n_frames = _get_n_frames(n_frames, self.mode)
+        self.mode = "L"
+        self.n_frames = _get_n_frames(n_frames)
 
         self.slices, max_size = [], 0
         for image_idx in range(len(self.hr_files)):
@@ -90,7 +89,7 @@ class ImageDataset(Dataset):
         return self.hr_files[image_idx].split('.')[0] + (f"_{idx}" if self.n_frames is not None else "")
 
 class SlidingDataset(Dataset):
-    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), overlap : int = 128, n_frames : int = None, stack : str = "TZ", mode : str = "L", extension : str = "czi", preload : bool = True, val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, transforms : list[torch.nn.Module] = None):
+    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), overlap : int = 128, n_frames : list[int] = -1, stack : str = "TZ", extension : str = "czi", preload : bool = True, val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, transforms : list[torch.nn.Module] = None):
         r"""Training dataset for loading high-resolution image tiles from image sheets and returning high-low-resolution pairs, the latter receiving crappification.
 
         Dataset used for image sheets (e.g. .czi files). For pre-tiled image files, use :class:`ImageDataset`.
@@ -108,11 +107,9 @@ class SlidingDataset(Dataset):
 
             overlap (int) : Overlapping pixels between neighboring tiles to increase effective dataset size. Default is 128.
 
-            n_frames (int) : Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of None uses all stacked image frames. Default is None.
+            n_frames (list[int]) : Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
 
             stack (str) : Multiframe stack handling mode, e.g "T" for time stack, "Z" for z dimension stack, "TZ" or "ZT" for both, determining flattenting order. Only applicable if loading from czi. Default is "TZ".
-
-            mode (str) : Color mode for loading images, e.g. "L" for grayscale, "RGB" for color. Default is "L".
 
             extension (str) : File extension of images. Default is "czi".
 
@@ -128,17 +125,17 @@ class SlidingDataset(Dataset):
         """
         super().__init__()
         self.path = Path(path) if type(path) is str else path
-        if not self.path.exists(): raise FileNotFoundError(f'Path "{self.path}" does not exist.')
+        if not path or not self.path.exists(): raise FileNotFoundError(f'Path "{self.path}" does not exist.')
         
-        self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.path))
+        self.hr_files = _root_glob(f"*.{extension}", root_dir=self.path)
         if not len(self.hr_files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{self.path}".')
 
         overlap = 0 if overlap is None else overlap
         if not hr_res > overlap: raise ValueError(f"hr_res must be greater than overlap. Given values are {hr_res} and {overlap} respectively.")
         self.stride = hr_res - overlap
         self.stack = stack.upper()
-        self.mode = mode.upper()
-        self.n_frames = _get_n_frames(n_frames, self.mode)
+        self.mode = "L"
+        self.n_frames = _get_n_frames(n_frames)
         
         self.preload = _preload(preload, [self.path], [self.hr_files], self.mode, self.stack)
 
@@ -184,7 +181,7 @@ class SlidingDataset(Dataset):
         return f"{self.hr_files[image_idx].split('.')[0]}_{idx}"
 
 class PairedImageDataset(Dataset):
-    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, n_frames : int = None, mode : str = "L", extension : str = "tif", val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None):
+    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, n_frames : list[int] = -1, extension : str = "tif", val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None):
         r"""Testing dataset for loading paired high-low-resolution images without using crappification. Can also be used for approximating :class:`Crappifier` parameters.
 
         Args:
@@ -196,9 +193,7 @@ class PairedImageDataset(Dataset):
 
             lr_scale (int) : Downscaling factor for low-resolution images to simulate undersampling. Choose a power of 2 for best results. Default is 4.
 
-            n_frames (int) : Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of None uses all stacked image frames. Default is None.
-
-            mode (str) : Color mode for loading images, e.g. "L" for grayscale, "RGB" for color. Default is "L".
+            n_frames (list[int]) : Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
 
             extension (str) : File extension of images. Default is "tif".
 
@@ -214,17 +209,17 @@ class PairedImageDataset(Dataset):
         self.hr_path = Path(hr_path) if type(hr_path) is str else hr_path
         self.lr_path = Path(lr_path) if type(lr_path) is str else lr_path
         for path in [self.hr_path, self.lr_path]:
-            if not path.exists(): raise FileNotFoundError(f'Path "{path}" does not exist.')
+            if not path or not path.exists(): raise FileNotFoundError(f'Path "{path}" does not exist.')
         if self.hr_path == self.lr_path: warnings.warn("hr_path is equal to lr_path! Consider using ImageDataset instead.", stacklevel=2)
 
-        self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.hr_path))
-        self.lr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.lr_path))
+        self.hr_files = _root_glob(f"*.{extension}", root_dir=self.hr_path)
+        self.lr_files = _root_glob(f"*.{extension}", root_dir=self.lr_path)
         for files, path in zip([self.hr_files, self.lr_files], [self.hr_path, self.lr_path]):
             if not len(files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{path}".')
         if len(self.hr_files) != len(self.lr_files): raise FileNotFoundError(f"Mismatch between amounts of high-low-resolution images. Found {len(self.hr_files)} high-resolution and {len(self.lr_files)} low-resolution images.")
 
-        self.mode = mode.upper()
-        self.n_frames = _get_n_frames(n_frames, self.mode)
+        self.mode = "L"
+        self.n_frames = _get_n_frames(n_frames)
 
         self.slices, max_size = [], 0
         for image_idx in range(len(self.hr_files)):
@@ -263,7 +258,7 @@ class PairedImageDataset(Dataset):
         return self.lr_files[image_idx].split('.')[0] + (f"_{idx}" if self.n_frames is not None else "")
 
 class PairedSlidingDataset(Dataset):
-    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, overlap : int = 128, n_frames : int = None, stack : str = "TZ", mode : str = "L", extension : str = "czi", preload : bool = True, val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None):
+    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, overlap : int = 128, n_frames : list[int] = -1, stack : str = "TZ", extension : str = "czi", preload : bool = True, val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None):
         r"""Testing dataset for loading high-low-resolution image tiles from image sheets without crappification. Can also be used for approximating :class:`Crappifier` parameters.
 
         Dataset used for image sheets (e.g. .czi files). For pre-tiled image files, use :class:`ImageDataset`.
@@ -279,11 +274,9 @@ class PairedSlidingDataset(Dataset):
 
             overlap (int) : Overlapping pixels between neighboring tiles to increase effective dataset size. Default is 128.
 
-            n_frames (int) : Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of None uses all stacked image frames. Default is None.
+            n_frames (list[int]) : Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
 
             stack (str) : Multiframe stack handling mode, e.g "T" for time stack, "Z" for z dimension stack, "TZ" or "ZT" for both, determining flattenting order. Only applicable if loading from czi. Default is "TZ".
-
-            mode (str) : Color mode for loading images, e.g. "L" for grayscale, "RGB" for color. Default is "L".
 
             extension (str) : File extension of images. Default is "czi".
 
@@ -301,11 +294,11 @@ class PairedSlidingDataset(Dataset):
         self.hr_path = Path(hr_path) if type(hr_path) is str else hr_path
         self.lr_path = Path(lr_path) if type(lr_path) is str else lr_path
         for path in [self.hr_path, self.lr_path]:
-            if not path.exists(): raise FileNotFoundError(f'Path "{path}" does not exist.')
+            if not path or not path.exists(): raise FileNotFoundError(f'Path "{path}" does not exist.')
         if self.hr_path == self.lr_path: warnings.warn("hr_path is equal to lr_path! Consider using SlidingDataset instead.", stacklevel=2)
         
-        self.hr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.hr_path))
-        self.lr_files = sorted(glob.glob(f"*.{extension}", root_dir=self.lr_path))
+        self.hr_files = _root_glob(f"*.{extension}", root_dir=self.hr_path)
+        self.lr_files = _root_glob(f"*.{extension}", root_dir=self.lr_path)
         for files, path in zip([self.hr_files, self.lr_files], [self.hr_path, self.lr_path]):
             if not len(files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{path}".')
         if len(self.hr_files) != len(self.lr_files): raise FileNotFoundError(f"Mismatch between amounts of high-low-resolution images. Found {len(self.hr_files)} high-resolution and {len(self.lr_files)} low-resolution images.")
@@ -314,8 +307,8 @@ class PairedSlidingDataset(Dataset):
         if not hr_res > overlap: raise ValueError(f"hr_res must be greater than overlap. Given values are {hr_res} and {overlap} respectively.")
         self.stride = hr_res - overlap
         self.stack = stack.upper()
-        self.mode = mode.upper()
-        self.n_frames = _get_n_frames(n_frames, self.mode)
+        self.mode = "L"
+        self.n_frames = _get_n_frames(n_frames)
 
         self.preload = _preload(preload, [self.hr_path, self.lr_path], [self.hr_files, self.lr_files], self.mode, self.stack)
 
@@ -566,6 +559,10 @@ def _seek_channel(image, idx):
     image.seek(idx)
     return image
 
+def _root_glob(search, root_dir):
+    files = glob.glob(f"{root_dir}/{search}")
+    return sorted([item.split("/")[-1] for item in files])
+
 def _n_tiles(image, size, stride):
     x, y = image.shape[-2:]
 
@@ -573,22 +570,13 @@ def _n_tiles(image, size, stride):
     tiles_y = max(0, (y - size) // stride + 1)
     return tiles_x, tiles_y
 
-def _get_n_frames(n_frames, mode):
-    if n_frames is None:
-        return n_frames
+def _get_n_frames(n_frames):
+    if n_frames in [None, -1, [-1]]:
+        return None
     
     n_frames = _force_list(n_frames)
     n_frames = n_frames*2 if len(n_frames) == 1 else n_frames
-    n_frames = [item*3 for item in n_frames] if mode == "RGB" else n_frames
     return n_frames # [in (low-resolution), out (high-resolution)]
-
-def _force_list(item):
-    # Because we still can't have nice things...
-    if type(item) is int:
-        return [item]
-    elif type(item) is not list:
-        return list(item)
-    return item
 
 def _get_image_idx(idx, slices, tiles=None):
     tiles = [1]*len(slices) if tiles is None else tiles

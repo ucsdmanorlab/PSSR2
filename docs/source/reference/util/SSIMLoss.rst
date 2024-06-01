@@ -5,7 +5,7 @@ Using any ``mix`` value less than 1 applies corrected L1 loss in addition to SSI
 
 .. code-block:: python
 
-   from pssr.loss import SSIMLoss
+   from pssr.util import SSIMLoss
 
-.. autofunction:: pssr.loss.SSIMLoss.__init__
+.. autofunction:: pssr.util.SSIMLoss.__init__
    

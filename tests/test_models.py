@@ -44,3 +44,5 @@ def test_rdresunet():
     
     model = RDResUNetA()
     assert model is not None
+
+# TODO: test_swinir

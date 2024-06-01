@@ -11,13 +11,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.checkpoint as checkpoint
 from timm.layers import DropPath, to_2tuple, trunc_normal_
-from ..data import _force_list
+from ..util import _force_list
 
 class SwinIR(nn.Module):
     def __init__(
             self,
-            img_size : int = 128,
-            channels : int = 1,
+            image_size : int = 128,
+            channels : list[int] = 1,
             scale : int = 4,
             embed_dim : int = 96,
             mlp_ratio : int = 2,
@@ -40,9 +40,9 @@ class SwinIR(nn.Module):
         """SwinIR as detailed in Liang et al., 2021.
         
         Args:
-            img_size (int) : Input image size. 
+            image_size (int) : Input image size. 
 
-            channels (int) : Number of channels in image data. Can also be a list of in channels and out channels respectively.
+            channels (list[int]) : Number of channels in image data. Can also be a list of in channels (low-resolution) and out channels (high-resolution) respectively.
 
             scale (int) : Upscaling factor for predictions. Choose a power of 2 for best results. Default is 4.
 
@@ -70,7 +70,7 @@ class SwinIR(nn.Module):
 
             drop_path_rate (float) : Stochastic depth rate. Default is 0.1.
 
-            norm_layer (nn.Module) : Normalization layer. Default is nn.LayerNorm.
+            norm_layer (nn.Module) : Data normalization layer. Default is :class:`nn.LayerNorm`.
 
             ape (bool) : Whether to add absolute position embedding to patch embedding. Default is False.
 
@@ -112,7 +112,7 @@ class SwinIR(nn.Module):
 
         # split image into non-overlapping patches
         self.patch_embed = PatchEmbed(
-            img_size=img_size, patch_size=patch_size, in_chans=embed_dim, embed_dim=embed_dim,
+            img_size=image_size, patch_size=patch_size, in_chans=embed_dim, embed_dim=embed_dim,
             norm_layer=norm_layer if self.patch_norm else None)
         num_patches = self.patch_embed.num_patches
         patches_resolution = self.patch_embed.patches_resolution
@@ -120,7 +120,7 @@ class SwinIR(nn.Module):
 
         # merge non-overlapping patches into image
         self.patch_unembed = PatchUnEmbed(
-            img_size=img_size, patch_size=patch_size, in_chans=embed_dim, embed_dim=embed_dim,
+            img_size=image_size, patch_size=patch_size, in_chans=embed_dim, embed_dim=embed_dim,
             norm_layer=norm_layer if self.patch_norm else None)
 
         # absolute position embedding

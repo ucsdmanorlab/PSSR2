@@ -4,6 +4,7 @@ preds/
 trained/
 imports/
 model_testing/
+testnapari/
 
 *.pth
 *.lock

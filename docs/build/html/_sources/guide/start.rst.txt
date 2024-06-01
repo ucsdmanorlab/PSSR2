@@ -23,7 +23,7 @@ You can easily install **PSSR** via the ``pip`` package manager:
 
    $ pip install pssr
 
-However, specific versions can also be installed directly from the `GitHub <https://github.com/ucsdmanorlab/PSSR>`_ repository:
+All package versions are also available on the `GitHub <https://github.com/ucsdmanorlab/PSSR>`_ repository:
 
 .. code-block:: console
 
