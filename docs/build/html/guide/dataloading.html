@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Principles of PSSR" href="principles.html" /><link rel="prev" title="PSSR Documentation" href="../index.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="pssr" href="../reference/api.html" /><link rel="prev" title="Workflow" href="workflow.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>Getting Started - PSSR 2.0.1 documentation</title>
+        <title>Advanced Dataloading - PSSR 2.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -157,10 +157,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="principles.html">Principles of PSSR</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflow.html">Workflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dataloading.html">Advanced Dataloading</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Advanced Dataloading</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -242,164 +242,63 @@
           </label>
         </div>
         <article role="main">
-          <section id="getting-started">
-<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
-<p>It is required that <a class="reference external" href="https://www.python.org">Python</a> is installed to use <strong>PSSR</strong>.
-If you have not already, download it <a class="reference external" href="https://www.python.org/downloads">here</a>.</p>
-<p>Before installing <strong>PSSR</strong>, you may want to create an environment for it with</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>pssr
-</pre></div>
-</div>
-<p>or the equivalent for any other environment manager if you chose to do so.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p>You can easily install <strong>PSSR</strong> via the <code class="docutils literal notranslate"><span class="pre">pip</span></code> package manager:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>pssr
-</pre></div>
-</div>
-<p>All package versions are also available on the <a class="reference external" href="https://github.com/ucsdmanorlab/PSSR">GitHub</a> repository:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/ucsdmanorlab/PSSR/dist/pssr-x.x.x-py3-none-any.whl
-</pre></div>
-</div>
-</section>
-<section id="running-the-cli">
-<h2>Running the CLI<a class="headerlink" href="#running-the-cli" title="Link to this heading">#</a></h2>
-<p>The <strong>PSSR</strong> CLI is included with package installation and can be run with the <code class="docutils literal notranslate"><span class="pre">pssr</span></code> command in the command line.
-It provides a simple interface for using <strong>PSSR</strong> without having to write any code, and covers most basic use cases.</p>
-<p>The CLI can run in either <em>train</em> or <em>predict</em> mode. It takes in a number of arugments, described below.</p>
-<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
-<summary class="sd-summary-title sd-card-header">
-CLI Arguments<div class="sd-summary-down docutils">
-<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-down" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.72a.75.75 0 000 1.06l6.25 6.25a.75.75 0 001.06 0l6.25-6.25a.75.75 0 00-1.06-1.06L12 14.44 6.28 8.72a.75.75 0 00-1.06 0z"></path></svg></div>
-<div class="sd-summary-up docutils">
-<svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
-</summary><div class="sd-summary-content sd-card-body docutils">
-<p class="sd-card-text"><p class="sd-card-text">PSSR CLI for basic usage</p>
-</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pssr</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dp</span> <span class="n">DATA_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dt</span> <span class="n">DATA_TYPE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">mt</span> <span class="n">MODEL_TYPE</span><span class="p">]</span>
-            <span class="p">[</span><span class="o">-</span><span class="n">mp</span> <span class="n">MODEL_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">e</span> <span class="n">EPOCHS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">b</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">lr</span> <span class="n">LR</span><span class="p">]</span>
-            <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="n">PATIENCE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">mse</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">cp</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">sl</span><span class="p">]</span>
-</pre></div>
-</div>
-<section id="named-arguments">
-<h3>Named Arguments<a class="headerlink" href="#named-arguments" title="Link to this heading">#</a></h3>
-<dl class="option-list">
-<dt><kbd>-t, --train</kbd></dt>
-<dd><p class="sd-card-text">enable train mode</p>
-<p class="sd-card-text">Default: False</p>
-</dd>
-<dt><kbd>-dp, --data-path</kbd></dt>
-<dd><p class="sd-card-text">specify dataset path</p>
-</dd>
-<dt><kbd>-dt, --data-type</kbd></dt>
-<dd><p class="sd-card-text">specify dataset type</p>
-<p class="sd-card-text">Default: “ImageDataset”</p>
-</dd>
-<dt><kbd>-mt, --model-type</kbd></dt>
-<dd><p class="sd-card-text">specify model type</p>
-<p class="sd-card-text">Default: “ResUNet”</p>
-</dd>
-<dt><kbd>-mp, --model-path</kbd></dt>
-<dd><p class="sd-card-text">specify model path</p>
-</dd>
-<dt><kbd>-e, --epochs</kbd></dt>
-<dd><p class="sd-card-text">specify number of training epochs</p>
-<p class="sd-card-text">Default: 10</p>
-</dd>
-<dt><kbd>-b, --batch-size</kbd></dt>
-<dd><p class="sd-card-text">specify batch size</p>
-<p class="sd-card-text">Default: 16</p>
-</dd>
-<dt><kbd>-lr, --lr</kbd></dt>
-<dd><p class="sd-card-text">specify learning rate</p>
-<p class="sd-card-text">Default: 0.001</p>
-</dd>
-<dt><kbd>-p, --patience</kbd></dt>
-<dd><p class="sd-card-text">specify learning rate decay patience</p>
-<p class="sd-card-text">Default: 3</p>
-</dd>
-<dt><kbd>-mse, --mse</kbd></dt>
-<dd><p class="sd-card-text">use MSE loss instead of MS-SSIM loss</p>
-<p class="sd-card-text">Default: False</p>
-</dd>
-<dt><kbd>-cp, --checkpoint</kbd></dt>
-<dd><p class="sd-card-text">save model checkpoints during training</p>
-<p class="sd-card-text">Default: False</p>
-</dd>
-<dt><kbd>-sl, --save-losses</kbd></dt>
-<dd><p class="sd-card-text">save training losses</p>
-<p class="sd-card-text">Default: False</p>
-</dd>
-</dl>
-</section>
-</div>
-</details><p>Keep in mind that arguments representing an object such as a dataset or model can be defined as a class declaration with additonal arguments in Python syntax as a string.
-For example <code class="docutils literal notranslate"><span class="pre">--model-type</span></code> could be given as <code class="docutils literal notranslate"><span class="pre">-mt</span> <span class="pre">&quot;ResUNet(hidden=[128,</span> <span class="pre">256],</span> <span class="pre">scale=4)&quot;</span></code>.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p>If you do not have access to a microscopy dataset, a sample EM training dataset can be found
-<a class="reference external" href="https://drive.google.com/file/d/1Sirrh180WrkHgPR0S8_43-f0S2GaK7iZ/view">here</a> containing <em>high-resolution</em> 512x512 images (<code class="docutils literal notranslate"><span class="pre">hr_res=512</span></code>) with a pixel size of 2nm.
-Real-world EM <em>high-low-resolution</em> image pairs for testing can be found <a class="reference external" href="https://drive.google.com/file/d/1BI6K5r65ubn3Vj866ikUUj8VVqHT0j-4/view">here</a> of the same resolution.
-Larger datasets and all data used in the <strong>PSSR</strong> paper can also be found on <a class="reference external" href="https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/">3Dem.org</a>.
-If your dataset have different resolution data, <code class="docutils literal notranslate"><span class="pre">hr_res</span></code> and <code class="docutils literal notranslate"><span class="pre">scale</span></code> can be changed correspondingly.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<section id="training">
-<h3>Training<a class="headerlink" href="#training" title="Link to this heading">#</a></h3>
-<p>A model can be trained by running</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pssr<span class="w"> </span>-t<span class="w"> </span>-dp<span class="w"> </span>your/path
-</pre></div>
-</div>
-<p>where <code class="docutils literal notranslate"><span class="pre">your/path</span></code> is replaced with the path of your training dataset (folder containing <em>high-resolution</em> images/image sheets).</p>
-<p>The <em>low-resolution</em> images will generated via <a class="reference internal" href="../reference/crappifiers/Crappifier.html"><span class="doc">Crappifier</span></a>, which is explained in <a class="reference internal" href="principles.html"><span class="doc">Principles of PSSR</span></a>.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p>The trained model will be saved in your current directory.</p>
-<p>By default the dataset used is <a class="reference internal" href="../reference/data/ImageDataset.html"><span class="doc">ImageDataset</span></a>.
-If your dataset contains image sheets (e.g. .czi files) rather than many images, you can use <a class="reference internal" href="../reference/data/SlidingDataset.html"><span class="doc">SlidingDataset</span></a> by adding the argument <code class="docutils literal notranslate"><span class="pre">-dt</span> <span class="pre">SlidingDataset</span></code>.
-The batch size can also be changed with the <code class="docutils literal notranslate"><span class="pre">-b</span></code> argument.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-</section>
-<section id="predicting">
-<h3>Predicting<a class="headerlink" href="#predicting" title="Link to this heading">#</a></h3>
-<p>A pretrained <strong>PSSR</strong> model for EM data can be found <a class="reference external" href="https://drive.google.com/file/d/1upypaukRFSgBF4pma2X-GaRln9xYULBh/view">here</a>,
-a <a class="reference internal" href="../reference/models/ResUNet.html"><span class="doc">ResUNet</span></a> with default arguments.</p>
-<p>To run the demo in predict mode, omit the <code class="docutils literal notranslate"><span class="pre">-t</span></code> argument. The dataset path should be changed to the path containing the <em>low-resolution</em> images to be upscaled.
-The <cite>-mp</cite> argument must be set to the path of your trained model. The predicted upscaled images will be saved to the <code class="docutils literal notranslate"><span class="pre">preds</span></code> folder.</p>
+          <section id="advanced-dataloading">
+<h1>Advanced Dataloading<a class="headerlink" href="#advanced-dataloading" title="Link to this heading">#</a></h1>
+<section id="multidimensional-images">
+<h2>Multidimensional Images<a class="headerlink" href="#multidimensional-images" title="Link to this heading">#</a></h2>
+<p><strong>PSSR</strong> supports the use of multidimensional images.</p>
+<p>By default the dataset will provide all frames of each image/tile in a single array.
+For example, a single image with a horizontal and vertical resolution of 512 and a Z resolution of 20 will be treated as a single 20x512x512 array.</p>
+<p>However, it is often preferred that a model is trained using a lower number of frames.
+In all <strong>PSSR</strong> datasets, the <code class="docutils literal notranslate"><span class="pre">n_frames</span></code> argument can be specified as the number of image frames to use at once.
+For example, with <code class="docutils literal notranslate"><span class="pre">n_frames=5</span></code>, the same image that was previously treated as a single 20x512x512 array would now be treated as 4 different 5x512x512 arrays.</p>
+<p>The value of <code class="docutils literal notranslate"><span class="pre">n_frames</span></code> in the dataset should correspond the value of <code class="docutils literal notranslate"><span class="pre">channels</span></code> in the model.
+That is, the number of output frames in the dataset should correspond to the amount of input channels in the model.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><a class="reference internal" href="../reference/data/SlidingDataset.html"><span class="doc">SlidingDataset</span></a> does not automatically detect <em>low-resolution</em> inputs.
-<code class="docutils literal notranslate"><span class="pre">hr_res</span></code> must be lowered to the size of the <em>low-resolution</em> image and <code class="docutils literal notranslate"><span class="pre">lr_scale</span></code> must be set to -1.</p>
+<p>Images are separated into training/validation sets by tile (x and y position), disregarding additional dimensions.
+This prevents overfitting as different frames from the same tile may be overly similar to one another.</p>
 </div>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<p>If a <a class="reference internal" href="../reference/data/PairedImageDataset.html"><span class="doc">PairedImageDataset</span></a> instance with <em>high-low-resolution</em> image pairs is given as the dataset, additional performance metrics will be calculated.
-To define both <em>high-resolution</em> and <em>low-resolution</em> data paths, provide both paths in order separated by a comma for the <code class="docutils literal notranslate"><span class="pre">-dp</span></code> argument</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pssr<span class="w"> </span>-dp<span class="w"> </span>your/hr,your/lr<span class="w"> </span>-dt<span class="w"> </span>PairedImageDataset
-</pre></div>
-</div>
-<p>where <code class="docutils literal notranslate"><span class="pre">your/hr</span></code> and <code class="docutils literal notranslate"><span class="pre">your/lr</span></code> are repleaced by your <em>high-resolution</em> and <em>low-resolution</em> data paths respectively.</p>
+<section id="images-with-many-dimensions">
+<h3>Images with Many Dimensions<a class="headerlink" href="#images-with-many-dimensions" title="Link to this heading">#</a></h3>
+<p>Typically, images are passed to a neural network with 2 spacial dimensions and a channel dimension.
+For simplicity, all additional non-horizontal/vertical image dimensions are flattened to a single channel dimension by the dataset.
+For example, an image with a T (time) resolution of 10 and a Z resolution of 5 would have 50 frames (10 T frames x 5 Z frames).</p>
+<p>The order of the dimensions being combined has an effect on how the frames are handled.
+In all <strong>PSSR</strong> datasets, the <code class="docutils literal notranslate"><span class="pre">stack</span></code> argument determines this order:</p>
+<ul class="simple">
+<li><p>By default, <code class="docutils literal notranslate"><span class="pre">stack=&quot;TZ&quot;</span></code>, meaning the Z dimension is flattened after the T dimension and changes more often.
+For the previous example of the 10 T frame x 5 Z frame image, <code class="docutils literal notranslate"><span class="pre">n_frames=10</span></code> would make the dataset load 5 Z frames at 2 different points in T.</p></li>
+<li><p>Setting <code class="docutils literal notranslate"><span class="pre">stack=&quot;ZT&quot;</span></code> reverses this behavior, so the T dimension is flattened after the Z dimension and changes more often.
+The image would therefore be treated as a 5 Z frame x 10 T frame image, and <code class="docutils literal notranslate"><span class="pre">n_frames=20</span></code> would make the dataset load 10 different T frames at 2 different points in Z.</p></li>
+</ul>
+<p>Color channels are also considered an additional dimension that are flattened after all other dimensions if present.</p>
+<p>The dimensions that are flattened last are essentially “bound”, meaning that as long as the value of <code class="docutils literal notranslate"><span class="pre">n_frames</span></code> is a multiple of the sizes of every non-first dimension,
+the channels will all stay together in proper order.</p>
+<p>For example, consider a single 512x512 image with 10 T channels x 5 Z channels x 3 C (color) channels.
+With <code class="docutils literal notranslate"><span class="pre">n_frames=30</span></code> (5 Z frames x 3 C frames x 2 T frames) would be treated as 5 different 30x512x512 arrays at different points in T.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<p>If <em>high-resolution</em> images are given using an <a class="reference internal" href="../reference/data/ImageDataset.html"><span class="doc">ImageDataset</span></a>,
-then <em>low-resolution</em> images will be generated via <a class="reference internal" href="../reference/crappifiers/Crappifier.html"><span class="doc">Crappifier</span></a> and performance metrics will still be calculated.</p>
+</section>
+<section id="dimensional-data">
+<h3>2.5-Dimensional Data<a class="headerlink" href="#dimensional-data" title="Link to this heading">#</a></h3>
+<p>The number of frames in the low-resolution image does not necessarily have to correspond to that of the high-resolution image.
+Consider temporal super-resolution, where multiple images at different points in time are used to produce a higher quality image at a central point in time.</p>
+<p>To do this, <code class="docutils literal notranslate"><span class="pre">n_frames</span></code> can be specified as a list with 2 elements, corresponding to the number frames in both high-resolution and low-resolution images.
+For example, with a high-resolution training image with 20 T frames, a value of <code class="docutils literal notranslate"><span class="pre">n_frames=[5,1]</span></code> would process data equivalently to <code class="docutils literal notranslate"><span class="pre">n_frames=5</span></code>,
+but only return the central T frame for the high-resolution image while returning all 5 T frames for the low-resolution image.</p>
 </section>
 </section>
-<section id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">#</a></h2>
-<p>If you are not familar with <strong>PSSR</strong> or super-resolution, understand the <a class="reference internal" href="principles.html"><span class="doc">Principles of PSSR</span></a>.</p>
-<p>For usage of <strong>PSSR</strong> beyond the extents of the demo, learn how to implement your own <a class="reference internal" href="workflow.html"><span class="doc">Workflow</span></a>.</p>
-<p>Full reference and explanations of all <strong>PSSR</strong> tools is available in <a class="reference internal" href="../reference/api.html"><span class="doc">API Reference</span></a>.</p>
+<section id="image-denoising">
+<h2>Image Denoising<a class="headerlink" href="#image-denoising" title="Link to this heading">#</a></h2>
+<p>While the <strong>PSSR</strong> package is mainly used for image super-resolution, it can be used for image denoising as well.
+Set the <code class="docutils literal notranslate"><span class="pre">lr_scale=1</span></code> with an equivalent <code class="docutils literal notranslate"><span class="pre">scale</span></code> value in the model, and <code class="docutils literal notranslate"><span class="pre">hr_res</span></code> equal to the denoising image resolution.</p>
+<p>Multidimensional and 2.5-dimensional images can be used with this approach as well,
+meaning that <strong>PSSR</strong> can be used for things such as temporal super-resolution without necessarily needing to be used for image super-resolution as well.</p>
 </section>
 </section>
 
@@ -408,23 +307,23 @@ then <em>low-resolution</em> images will be generated via <a class="reference in
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="principles.html">
+          <a class="next-page" href="../reference/api.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Principles of PSSR</div>
+                <div class="title">pssr</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../index.html">
+          <a class="prev-page" href="workflow.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Home</div>
+                <div class="title">Workflow</div>
                 
               </div>
             </a>
@@ -458,14 +357,13 @@ then <em>low-resolution</em> images will be generated via <a class="reference in
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Getting Started</a><ul>
-<li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#running-the-cli">Running the CLI</a><ul>
-<li><a class="reference internal" href="#training">Training</a></li>
-<li><a class="reference internal" href="#predicting">Predicting</a></li>
+<li><a class="reference internal" href="#">Advanced Dataloading</a><ul>
+<li><a class="reference internal" href="#multidimensional-images">Multidimensional Images</a><ul>
+<li><a class="reference internal" href="#images-with-many-dimensions">Images with Many Dimensions</a></li>
+<li><a class="reference internal" href="#dimensional-data">2.5-Dimensional Data</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+<li><a class="reference internal" href="#image-denoising">Image Denoising</a></li>
 </ul>
 </li>
 </ul>

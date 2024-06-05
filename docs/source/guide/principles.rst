@@ -3,8 +3,8 @@ Principles of PSSR
 
 .. note::
 
-    This section can be considered an abbreviation of important concepts covered in the full **PSSR** paper,
-    `Deep learning-based point-scanning super-resolution imaging <https://www.nature.com/articles/s41592-021-01080-z>`_.
+   This section can be considered an abbreviation of important concepts covered in the full **PSSR** paper,
+   `Deep learning-based point-scanning super-resolution imaging <https://www.nature.com/articles/s41592-021-01080-z>`_.
 
 
 Why Use PSSR

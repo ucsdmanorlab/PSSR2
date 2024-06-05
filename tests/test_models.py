@@ -13,6 +13,7 @@ def test_resunet():
 
     for kwargs in kwargs_list:
         model = ResUNet(**kwargs)
+        assert str(model)
 
         channels = kwargs.get("channels", [1,1])
         lr_shape, hr_shape = get_shape(LR_RES, channels[0]), get_shape(HR_RES, channels[1])
@@ -21,6 +22,7 @@ def test_resunet():
         assert tuple(out.shape) == hr_shape
     
     model = ResUNetA()
+    assert str(model)
     assert model is not None
 
 def test_rdresunet():
@@ -35,6 +37,7 @@ def test_rdresunet():
 
     for kwargs in kwargs_list:
         model = RDResUNet(**kwargs)
+        assert str(model)
 
         channels = kwargs.get("channels", [1,1])
         lr_shape, hr_shape = get_shape(LR_RES, channels[0]), get_shape(HR_RES, channels[1])
@@ -43,6 +46,7 @@ def test_rdresunet():
         assert tuple(out.shape) == hr_shape
     
     model = RDResUNetA()
+    assert str(model)
     assert model is not None
 
 # TODO: test_swinir

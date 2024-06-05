@@ -91,7 +91,7 @@ class SaltPepper(Crappifier):
         Args:
             intensity (float) : Percent of values to replace with salt and pepper noise. Default is 0.5.
 
-            gain (float) : Value gain added to the output. Default is 0.
+            gain (float) : Value gain added to the image BEFORE noise. Default is 0.
 
             spread (float) : Standard deviation of crappifier intensity for training on a range of crappifications. Default is 0.
         """
@@ -101,4 +101,4 @@ class SaltPepper(Crappifier):
         
     def crappify(self, image : np.ndarray):
         intensity = max(np.random.normal(self.intensity, self.spread), 0) if self.spread > 0 else self.intensity
-        return random_noise(np.clip(image, 0, 255)/255, mode="s&p", amount=intensity) * 255 + self.gain
+        return random_noise(np.clip(image + self.gain, 0, 255)/255, mode="s&p", amount=intensity) * 255

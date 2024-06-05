@@ -13,6 +13,7 @@ from ..models import ResUNet, RDResUNet, SwinIR
 from ..data import ImageDataset, SlidingDataset, PairedImageDataset, PairedSlidingDataset
 from ..util import SSIMLoss
 
+# Matplotlib elements are only defined if installed, not a dependency
 try:
     from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
     from matplotlib.figure import Figure
@@ -29,9 +30,9 @@ class Status(Enum):
     PROGRESS_PREDICT = "Cancel Predicting"
 
 class PSSRWidget(QWidget):
-    def __init__(self, is_train : bool):
+    def __init__(self, is_train : bool, viewer : napari.Viewer):
         super().__init__()
-        self.viewer = napari.current_viewer()
+        self.viewer = viewer
 
         self.model = ObjectEdit("Model", [ResUNet, RDResUNet, SwinIR])
         self.dataset = ObjectEdit("Dataset", [ImageDataset, SlidingDataset, PairedImageDataset, PairedSlidingDataset], hide_crappifier=not is_train)
@@ -192,7 +193,6 @@ class PSSRWidget(QWidget):
 class TrainProcess(QObject):
 
     stage = Signal(str)
-
     monitor = Signal(list)
 
     finished = Signal(bool)
@@ -295,7 +295,6 @@ class TrainProcess(QObject):
 class PredictProcess(QObject):
 
     stage = Signal(str)
-
     monitor = Signal(list)
 
     finished = Signal(bool)
@@ -338,7 +337,6 @@ class PredictProcess(QObject):
         except Exception as error:
             self.error.emit(error)
 
-        # Triggers before exception
         finally:
             self.stage.emit(Status.IDLE_PREDICT.value)
     
@@ -399,10 +397,11 @@ if USE_PLOT:
             x = np.random.normal(1, 0.02, size=len(data))
             ax.plot(x, data, ".", alpha=0.5)
 
+# Instances accessed by napari
 class TrainWidget(PSSRWidget):
-    def __init__(self):
-        super().__init__(is_train=True)
+    def __init__(self, viewer : napari.Viewer):
+        super().__init__(is_train=True, viewer=viewer)
 
 class PredictWidget(PSSRWidget):
-    def __init__(self):
-        super().__init__(is_train=False)
+    def __init__(self, viewer : napari.Viewer):
+        super().__init__(is_train=False, viewer=viewer)

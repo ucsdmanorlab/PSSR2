@@ -143,15 +143,15 @@ def _train_meta(model, dataset, device, epochs, batch_size, lr, patience, loss_f
     )
     print("\nTraining complete!")
 
-    save_path = f"{model.__class__.__name__}_{val_losses[-1]:.4f}.pth"
+    save_path = f"{model.__class__.__name__}_{dataset.hr_res//dataset.lr_scale}-{dataset.hr_res}_{val_losses[-1]:.4f}.pth"
     torch.save(model.state_dict(), save_path)
     print(f"Saved trained model to {save_path}")
 
     if losses:
-        with open(f"{model.__class__.__name__}_train_losses.txt", "w") as file:
+        with open(f"{model.__class__.__name__}_train_losses_{val_losses[-1]:.4f}.txt", "w") as file:
             for loss in train_losses:
                 file.write(f"{loss:.6f}\n")
-        with open(f"{model.__class__.__name__}_val_losses.txt", "w") as file:
+        with open(f"{model.__class__.__name__}_val_losses_{val_losses[-1]:.4f}.txt", "w") as file:
             for loss in val_losses:
                 file.write(f"{loss:.6f}\n")
 
@@ -164,15 +164,15 @@ def _predict_meta(model, dataset, device, callbacks = None, stage = None, plotte
 
     if not dataset.is_lr:
         print("\nCalculating metrics...")
-        if not IS_NAPARI:
-            metrics = test_metrics(model, dataset, device, callbacks=callbacks)
+        metrics = test_metrics(model, dataset, device, avg=not IS_NAPARI, callbacks=callbacks)
 
-            print("\nMetrics:")
-            for metric in metrics:
-                print(f"{metric}: {metrics[metric]}")
-        else:
-            metrics = test_metrics(model, dataset, device, metrics=["psnr", "ssim"], avg=False, callbacks=callbacks)
+        if IS_NAPARI:
             plotter.emit([metrics["psnr"], metrics["ssim"]])
+            metrics = {metric:(sum(values)/len(values)) for metric, values in metrics.items()}
+
+        print("\nMetrics:")
+        for metric in metrics:
+            print(f"{metric}: {metrics[metric]}")
 
 def _cpu_wrapper(func, model):
     try:

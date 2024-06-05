@@ -14,7 +14,7 @@ class ImageDataset(Dataset):
         Dataset used for pre-tiled image files. For image sheets (e.g. .czi files), use :class:`SlidingDataset`.
 
         LR mode (dataset loads only unmodified low-resolution images for prediction) can be enabled by
-        either inputting images less than or equal to LR size (``hr_res``/``lr_scale``) or by setting ``lr_scale`` = None and ``hr_res`` = LR resolution.
+        either inputting images less than or equal to LR size (``hr_res``/``lr_scale``) or by setting ``lr_scale`` = -1 and ``hr_res`` = LR resolution.
 
         Args:
             path (Path) : Path to folder containing high-resolution images. Can also be a str.
@@ -25,13 +25,13 @@ class ImageDataset(Dataset):
 
             crappifier (Crappifier) : Crappifier for degrading low-resolution images to simulate undersampling. Not used in LR mode. Default is :class:`Poisson`.
 
-            n_frames (list[int]) : Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
+            n_frames (list[int]) : Amount of stacked frames per image. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
 
             extension (str) : File extension of images. Default is "tif".
 
             val_split (float) : Proportion of images to be held out for evaluation/prediction. Default is 0.1.
 
-            rotation (bool) : Whether to randomly rotate and/or flip images when loading data. Only used during training if applicable. Default is True.
+            rotation (bool) : Whether to randomly rotate and/or flip images when loading data. Only applicable during training. Default is True.
 
             split_seed (int) : Seed for random train/evaluation data splitting. A value of None splits the last images as evaluation. Default is 0.
 
@@ -44,9 +44,11 @@ class ImageDataset(Dataset):
         self.hr_files = _root_glob(f"*.{extension}", root_dir=self.path)
         if not len(self.hr_files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{self.path}".')
 
+        lr_scale = None if lr_scale == -1 else lr_scale
         self.mode = "L"
         self.n_frames = _get_n_frames(n_frames)
 
+        # TODO: Decrease loading times for large datasets
         self.slices, max_size = [], 0
         for image_idx in range(len(self.hr_files)):
             image = Image.open(Path(self.path, self.hr_files[image_idx]))
@@ -54,12 +56,12 @@ class ImageDataset(Dataset):
             max_size = max(max(image.size), max_size)
 
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed)
-        self.is_lr = max_size <= hr_res//lr_scale or (lr_scale == None)
+        self.is_lr = lr_scale == None or max_size <= hr_res//lr_scale
         if self.is_lr: print("LR mode is enabled, dataset will load only unmodified low-resolution images.")
         self.crop_res = min(hr_res, max_size)
 
         self.hr_res = hr_res
-        self.lr_scale = lr_scale
+        self.lr_scale = lr_scale if lr_scale is not None else 1
         self.crappifier = crappifier
         self.rotation = rotation
         self.transforms = transforms
@@ -82,7 +84,7 @@ class ImageDataset(Dataset):
         return sum(self.slices)
     
     def __repr__(self):
-        return f'ImageDataset from path "{self.path}"\n{len(self.hr_files)} files with {len(self)} total frame slices\nLR mode {"enabled" if self.is_lr else "disabled"}'
+        return f'ImageDataset from path "{self.path}"\n{len(self.hr_files)} files with {len(self)} total frame slices\n{f"low-res: {self.hr_res//self.lr_scale}" if self.is_lr else f"high-res: {self.hr_res}, low-res: {self.hr_res//self.lr_scale}"}'
 
     def _get_name(self, idx):
         image_idx, idx = _get_image_idx(idx, self.slices)
@@ -94,7 +96,7 @@ class SlidingDataset(Dataset):
 
         Dataset used for image sheets (e.g. .czi files). For pre-tiled image files, use :class:`ImageDataset`.
 
-        LR mode (dataset loads only unmodified low-resolution images for prediction) can be enabled by setting ``lr_scale`` = None and ``hr_res`` = LR resolution.
+        LR mode (dataset loads only unmodified low-resolution images for prediction) can be enabled by setting ``lr_scale`` = -1 and ``hr_res`` = LR resolution.
 
         Args:
             path (Path) : Path to folder containing high-resolution images. Can also be a str.
@@ -107,7 +109,7 @@ class SlidingDataset(Dataset):
 
             overlap (int) : Overlapping pixels between neighboring tiles to increase effective dataset size. Default is 128.
 
-            n_frames (list[int]) : Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
+            n_frames (list[int]) : Amount of stacked frames per image tile. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
 
             stack (str) : Multiframe stack handling mode, e.g "T" for time stack, "Z" for z dimension stack, "TZ" or "ZT" for both, determining flattenting order. Only applicable if loading from czi. Default is "TZ".
 
@@ -117,7 +119,7 @@ class SlidingDataset(Dataset):
 
             val_split (float) : Proportion of images to be held out for evaluation/prediction. Default is 0.1.
 
-            rotation (bool) : Whether to randomly rotate and/or flip images when loading data. Only used during training if applicable. Default is True.
+            rotation (bool) : Whether to randomly rotate and/or flip images when loading data. Only applicable during training. Default is True.
 
             split_seed (int) : Seed for random train/evaluation data splitting. A value of None splits the last images as evaluation. Default is 0.
 
@@ -134,6 +136,8 @@ class SlidingDataset(Dataset):
         if not hr_res > overlap: raise ValueError(f"hr_res must be greater than overlap. Given values are {hr_res} and {overlap} respectively.")
         self.stride = hr_res - overlap
         self.stack = stack.upper()
+        
+        lr_scale = None if lr_scale == -1 else lr_scale
         self.mode = "L"
         self.n_frames = _get_n_frames(n_frames)
         
@@ -174,7 +178,7 @@ class SlidingDataset(Dataset):
         return sum([self.tiles[idx] * self.slices[idx] for idx in range(len(self.hr_files))])
     
     def __repr__(self):
-        return f'SlidingDataset from path "{self.path}"\n{len(self.hr_files)} files with {len(self)} total frame slices\nLR mode {"enabled" if self.is_lr else "disabled"}'
+        return f'SlidingDataset from path "{self.path}"\n{len(self.hr_files)} files with {len(self)} total frame slices\n{f"low-res: {self.hr_res}" if self.is_lr else f"high-res: {self.hr_res}, low-res: {self.hr_res//self.lr_scale}"}'
     
     def _get_name(self, idx):
         image_idx, idx = _get_image_idx(idx, self.slices, self.tiles)
@@ -193,13 +197,13 @@ class PairedImageDataset(Dataset):
 
             lr_scale (int) : Downscaling factor for low-resolution images to simulate undersampling. Choose a power of 2 for best results. Default is 4.
 
-            n_frames (list[int]) : Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
+            n_frames (list[int]) : Amount of stacked frames per image. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
 
             extension (str) : File extension of images. Default is "tif".
 
             val_split (float) : Proportion of images to be held out for evaluation/prediction. Default is 1.
 
-            rotation (bool) : Whether to randomly rotate and/or flip images when loading data. Only used during training if applicable. Default is True.
+            rotation (bool) : Whether to randomly rotate and/or flip images when loading data. Only applicable during training. Default is True.
 
             split_seed (int) : Seed for random train/evaluation data splitting. A value of None splits the last images as evaluation. Default is None.
 
@@ -251,7 +255,7 @@ class PairedImageDataset(Dataset):
         return sum(self.slices)
     
     def __repr__(self):
-        return f'PairedImageDataset from paths "{self.hr_path}" and "{self.lr_path}"\n{len(self.hr_files)} paired files with {len(self)} total frame slices'
+        return f'PairedImageDataset from paths "{self.hr_path}" and "{self.lr_path}"\n{len(self.hr_files)} paired files with {len(self)} total frame slices\nhigh-res: {self.hr_res}, low-res: {self.hr_res//self.lr_scale}'
 
     def _get_name(self, idx):
         image_idx, idx = _get_image_idx(idx, self.slices)
@@ -274,7 +278,7 @@ class PairedSlidingDataset(Dataset):
 
             overlap (int) : Overlapping pixels between neighboring tiles to increase effective dataset size. Default is 128.
 
-            n_frames (list[int]) : Amount of stacked frames per image, disregarding color channels. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
+            n_frames (list[int]) : Amount of stacked frames per image tile. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
 
             stack (str) : Multiframe stack handling mode, e.g "T" for time stack, "Z" for z dimension stack, "TZ" or "ZT" for both, determining flattenting order. Only applicable if loading from czi. Default is "TZ".
 
@@ -284,7 +288,7 @@ class PairedSlidingDataset(Dataset):
 
             val_split (float) : Proportion of images to be held out for evaluation/prediction. Default is 1.
 
-            rotation (bool) : Whether to randomly rotate and/or flip images when loading data. Only used during training if applicable. Default is True.
+            rotation (bool) : Whether to randomly rotate and/or flip images when loading data. Only applicable during training. Default is True.
 
             split_seed (int) : Seed for random train/evaluation data splitting. A value of None splits the last images as evaluation. Default is None.
 
@@ -343,7 +347,7 @@ class PairedSlidingDataset(Dataset):
         return sum([self.tiles[idx] * self.slices[idx] for idx in range(len(self.hr_files))])
     
     def __repr__(self):
-        return f'PairedSlidingDataset from paths "{self.hr_path}" and "{self.lr_path}"\n{len(self.hr_files)} paired files with {len(self)} total frame slices'
+        return f'PairedSlidingDataset from paths "{self.hr_path}" and "{self.lr_path}"\n{len(self.hr_files)} paired files with {len(self)} total frame slices\nhigh-res: {self.hr_res}, low-res: {self.hr_res//self.lr_scale}'
     
     def _get_name(self, idx):
         image_idx, idx = _get_image_idx(idx, self.slices, self.tiles)

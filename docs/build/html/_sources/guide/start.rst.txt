@@ -45,8 +45,8 @@ The CLI can run in either *train* or *predict* mode. It takes in a number of aru
       :func: parse
       :prog: pssr
 
-Keep in mind that arguments representing an object such as a dataset or model can be defined as a class declaration with additonal arguments in Python syntax.
-For example ``--model-type`` could be given as ``-mt ResUNet(hidden=[128, 256], scale=4)``. 
+Keep in mind that arguments representing an object such as a dataset or model can be defined as a class declaration with additonal arguments in Python syntax as a string.
+For example ``--model-type`` could be given as ``-mt "ResUNet(hidden=[128, 256], scale=4)"``. 
 
 |
 
@@ -73,7 +73,7 @@ The *low-resolution* images will generated via :doc:`../reference/crappifiers/Cr
 
 |
 
-By default the trained model will be saved as ``model.pth``.
+The trained model will be saved in your current directory.
 
 By default the dataset used is :doc:`../reference/data/ImageDataset`.
 If your dataset contains image sheets (e.g. .czi files) rather than many images, you can use :doc:`../reference/data/SlidingDataset` by adding the argument ``-dt SlidingDataset``.
@@ -84,25 +84,25 @@ The batch size can also be changed with the ``-b`` argument.
 Predicting
 +++++++++++
 
-A pretrained **PSSR** model for EM data can be found `here <https://drive.google.com/file/d/1DIWlcjljG4fRNCoMSjkNdhtzSZJ4QXHg/view>`__,
+A pretrained **PSSR** model for EM data can be found `here <https://drive.google.com/file/d/1upypaukRFSgBF4pma2X-GaRln9xYULBh/view>`__,
 a :doc:`../reference/models/ResUNet` with default arguments.
 
 To run the demo in predict mode, omit the ``-t`` argument. The dataset path should be changed to the path containing the *low-resolution* images to be upscaled.
-The `-mp` argument can be set to your model path if its different than the default. The predicted upscaled images will be saved to the ``preds`` folder.
+The `-mp` argument must be set to the path of your trained model. The predicted upscaled images will be saved to the ``preds`` folder.
 
 .. note::
 
    :doc:`../reference/data/SlidingDataset` does not automatically detect *low-resolution* inputs.
-   ``hr_res`` must be lowered to the size of the *low-resolution* image and ``lr_scale`` must be lowered to 1.
+   ``hr_res`` must be lowered to the size of the *low-resolution* image and ``lr_scale`` must be set to -1.
 
 |
 
 If a :doc:`../reference/data/PairedImageDataset` instance with *high-low-resolution* image pairs is given as the dataset, additional performance metrics will be calculated.
-To define both *high-resolution* and *low-resolution* data paths, omit the ``-dp`` argument and instead use
+To define both *high-resolution* and *low-resolution* data paths, provide both paths in order separated by a comma for the ``-dp`` argument
 
 .. code-block:: console
 
-   $ pssr -dt "PairedImageDataset(hr_path='your/hr', lr_path='your/lr')"
+   $ pssr -dp your/hr,your/lr -dt PairedImageDataset
 
 where ``your/hr`` and ``your/lr`` are repleaced by your *high-resolution* and *low-resolution* data paths respectively.
 

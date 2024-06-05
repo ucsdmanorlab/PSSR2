@@ -24,6 +24,7 @@ The User Guide covers the installation, usage, and principles of **PSSR**.
    guide/start
    guide/principles
    guide/workflow
+   guide/dataloading
 
 
 API Reference

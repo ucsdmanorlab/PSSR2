@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="pssr" href="../reference/api.html" /><link rel="prev" title="Principles of PSSR" href="principles.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Advanced Dataloading" href="dataloading.html" /><link rel="prev" title="Principles of PSSR" href="principles.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>Workflow - PSSR 2.0.0 documentation</title>
+        <title>Workflow - PSSR 2.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">PSSR 2.0.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">PSSR 2.0.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 2.0.0 documentation</span>
+  <span class="sidebar-brand-text">PSSR 2.0.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -160,6 +160,7 @@
 <li class="toctree-l1"><a class="reference internal" href="start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="principles.html">Principles of PSSR</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataloading.html">Advanced Dataloading</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -266,7 +267,7 @@ It does not necessarily apply to all use cases and is meant to be expanded upon.
 <section id="defining-objects">
 <h3>Defining Objects<a class="headerlink" href="#defining-objects" title="Link to this heading">#</a></h3>
 <p>Before we define our dataset we must first define our <a class="reference internal" href="../reference/crappifiers/Crappifier.html"><span class="doc">Crappifier</span></a>, as it is utilized by our dataset.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">crappifier</span> <span class="o">=</span> <span class="n">Poisson</span><span class="p">(</span><span class="n">gain</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">intensity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">crappifier</span> <span class="o">=</span> <span class="n">Poisson</span><span class="p">(</span><span class="n">intensity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This sets the <code class="docutils literal notranslate"><span class="pre">crappifier</span></code> variable to an instance of the <a class="reference internal" href="../reference/crappifiers/Poisson.html"><span class="doc">Poisson</span></a> crappifier with default arguments.
@@ -274,7 +275,8 @@ It will be used to synthetically generate <em>low-resolution</em> images to trai
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<p>Which dataset to use depends on the format of your images.</p>
+<p>Which dataset to use depends on the format of your images.
+If you are using multidimensional or time series images, consider learning <a class="reference internal" href="dataloading.html"><span class="doc">Advanced Dataloading</span></a>.</p>
 <p>In this example, we will use <a class="reference internal" href="../reference/data/ImageDataset.html"><span class="doc">ImageDataset</span></a>, assuming that our images are already sliced.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">ImageDataset</span><span class="p">(</span><span class="s2">&quot;your/hr&quot;</span><span class="p">,</span> <span class="n">hr_res</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">lr_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">crappifier</span><span class="o">=</span><span class="n">crappifier</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;tif&quot;</span><span class="p">)</span>
 </pre></div>
@@ -294,9 +296,9 @@ This is elaborated in <a class="reference internal" href="../reference/models.ht
 </div>
 <p>The last thing we need to define before training is our model.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ResUNet</span><span class="p">(</span>
-    <span class="n">hidden</span><span class="o">=</span><span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">1024</span><span class="p">],</span>
-    <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">depth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+   <span class="n">hidden</span><span class="o">=</span><span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">1024</span><span class="p">],</span>
+   <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+   <span class="n">depth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -338,9 +340,8 @@ By defining a scheduler, the learning rate of the optimizer will decay by <code 
 <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
 
 <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="n">pin_memory</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+   <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+   <span class="n">pin_memory</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -354,15 +355,15 @@ The batch size can be adjusted depending on the amount of memory available for t
 <h3>Training<a class="headerlink" href="#training" title="Link to this heading">#</a></h3>
 <p>We can now train our model using the <a class="reference internal" href="../reference/train/train_paired.html"><span class="doc">train_paired</span></a> function.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">losses</span> <span class="o">=</span> <span class="n">train_paired</span><span class="p">(</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-    <span class="n">loss_fn</span><span class="o">=</span><span class="n">loss_fn</span><span class="p">,</span>
-    <span class="n">optim</span><span class="o">=</span><span class="n">optim</span><span class="p">,</span>
-    <span class="n">epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
-    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-    <span class="n">dataloader_kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+   <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+   <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+   <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+   <span class="n">loss_fn</span><span class="o">=</span><span class="n">loss_fn</span><span class="p">,</span>
+   <span class="n">optim</span><span class="o">=</span><span class="n">optim</span><span class="p">,</span>
+   <span class="n">epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+   <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+   <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+   <span class="n">dataloader_kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -464,12 +465,12 @@ but they will only represent training performance on crappified data and may not
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../reference/api.html">
+          <a class="next-page" href="dataloading.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">pssr</div>
+                <div class="title">Advanced Dataloading</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -537,7 +538,7 @@ but they will only represent training performance on crappified data and may not
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=51b770b3"></script>
+</div><script src="../_static/documentation_options.js?v=f5cff4aa"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=32e29ea5"></script>

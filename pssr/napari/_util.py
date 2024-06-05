@@ -1,4 +1,4 @@
-import inspect, io
+import inspect
 from qtpy.QtWidgets import QWidget, QVBoxLayout
 from qtpy.QtCore import QObject, Signal
 from superqt import QCollapsible
@@ -90,7 +90,7 @@ class ObjectEdit(QWidget):
 
             if widget_type is not ListEdit:
                 if widget_type not in [CheckBox, LineEdit, FileEdit]:
-                    options = dict(max=2**14)
+                    options = dict(max=2**14, min=-1)
                 if widget_type is FileEdit:
                     options = dict(mode="d")
                 else:
@@ -99,13 +99,13 @@ class ObjectEdit(QWidget):
             elif str(spec.annotations[arg]).count("list") == 1:
                 if type(default) is not list and default:
                     default = [default]
-                widget = ListEdit(value=default if default is not None else [0], name=arg, options=(dict(max=2**14, min=min(default[0] if default else 0, 0)) if any(item in str(spec.annotations[arg]) for item in ["int", "float"]) else {}))
+                widget = ListEdit(value=default if default is not None else [0], name=arg, options=(dict(max=2**14, min=-1) if any(item in str(spec.annotations[arg]) for item in ["int", "float"]) else {}))
                 if default is None:
                     widget._pop_value()
             else:
                 if type(default) is not list and default:
                     default = [default]
-                widget = _LargeList(value=default if default is not None else [[0]], name=arg, options=dict(max=2**14))
+                widget = _LargeList(value=default if default is not None else [[0]], name=arg, options=dict(max=2**14, min=-1))
                 widget._pop_value()
 
             widget.changed.connect(partial(self._set_arguments, arg))
@@ -178,5 +178,5 @@ class _SignalCapture():
         self.signal = signal
 
     def write(self, text):
-        # Called on every sys.stdout
+        # Called on every captured out
         self.signal.emit(text)

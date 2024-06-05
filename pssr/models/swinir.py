@@ -149,7 +149,7 @@ class SwinIR(nn.Module):
                          norm_layer=norm_layer,
                          downsample=None,
                          use_checkpoint=use_checkpoint,
-                         img_size=img_size,
+                         img_size=image_size,
                          patch_size=patch_size,
                          resi_connection=resi_connection
 

@@ -3,8 +3,8 @@ Workflow
 
 .. note::
 
-    This section explains how to use an example **PSSR** workflow, similar to that implemented in the CLI.
-    It does not necessarily apply to all use cases and is meant to be expanded upon.
+   This section explains how to use an example **PSSR** workflow, similar to that implemented in the CLI.
+   It does not necessarily apply to all use cases and is meant to be expanded upon.
 
 
 Training a Basic Model
@@ -14,13 +14,13 @@ Before diving into the code, we will first specify our imports.
 
 .. code-block:: python
 
-    import torch
-    from pssr.data import ImageDataset
-    from pssr.crappifiers import Poisson
-    from pssr.models import ResUNet
-    from pssr.util import SSIMLoss
-    from pssr.train import train_paired
-    from torch.optim.lr_scheduler import ReduceLROnPlateau
+   import torch
+   from pssr.data import ImageDataset
+   from pssr.crappifiers import Poisson
+   from pssr.models import ResUNet
+   from pssr.util import SSIMLoss
+   from pssr.train import train_paired
+   from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 |
 
@@ -31,7 +31,7 @@ Before we define our dataset we must first define our :doc:`../reference/crappif
 
 .. code-block:: python
 
-    crappifier = Poisson(gain=0, intensity=1)
+   crappifier = Poisson(intensity=1, gain=0)
 
 This sets the ``crappifier`` variable to an instance of the :doc:`../reference/crappifiers/Poisson` crappifier with default arguments.
 It will be used to synthetically generate *low-resolution* images to train on, given the *high-resolution* images in our dataset.
@@ -39,12 +39,13 @@ It will be used to synthetically generate *low-resolution* images to train on, g
 |
 
 Which dataset to use depends on the format of your images.
+If you are using multidimensional or time series images, consider learning :doc:`dataloading`.
 
 In this example, we will use :doc:`../reference/data/ImageDataset`, assuming that our images are already sliced.
 
 .. code-block:: python
 
-    dataset = ImageDataset("your/hr", hr_res=512, lr_scale=4, crappifier=crappifier, extension="tif")
+   dataset = ImageDataset("your/hr", hr_res=512, lr_scale=4, crappifier=crappifier, extension="tif")
 
 This sets the ``dataset`` variable to an instance of :doc:`../reference/data/ImageDataset`, loading *high-resolution* ``.tif`` images from ``your/hr``.
 The *high-resolution* images are specified to have a horizontal and vertical resolution of ``hr_res=512``.
@@ -55,8 +56,8 @@ generate *low-resolution* images ``lr_scale=4`` times smaller than the *high-res
 
 .. note::
 
-    Users are advised to keep image resolutions to a power of 2 even if the raw input images have a different size.
-    This is elaborated in :doc:`../reference/models`.
+   Users are advised to keep image resolutions to a power of 2 even if the raw input images have a different size.
+   This is elaborated in :doc:`../reference/models`.
 
 |
 
@@ -64,11 +65,11 @@ The last thing we need to define before training is our model.
 
 .. code-block:: python
 
-    model = ResUNet(
-        hidden=[64, 128, 256, 512, 1024],
-        scale=4,
-        depth=3,
-    )
+   model = ResUNet(
+      hidden=[64, 128, 256, 512, 1024],
+      scale=4,
+      depth=3,
+   )
 
 This sets the ``model`` variable to an instance of :doc:`../reference/models/ResUNet`.
 The ``scale`` argument sets the factor by which the input *low-resolution* images must be upscaled by, and should be equivalent to the ``lr_scale`` argument in our dataset.
@@ -89,7 +90,7 @@ We will first define our loss function.
 
 .. code-block:: python
 
-    loss_fn = SSIMLoss(mix=.8, ms=True)
+   loss_fn = SSIMLoss(mix=.8, ms=True)
 
 While MSE loss can also be used to good results, we will instead use :doc:`../reference/util/SSIMLoss` here, which will optimize visually significant elements our predictions.
 The ``mix`` argument controls the inverse contribution of corrected L1 loss, while the ``ms`` argument enables MS-SSIM, a more robust version of SSIM.
@@ -100,8 +101,8 @@ We also need to provide an optimizer.
 
 .. code-block:: python
 
-    optim = torch.optim.AdamW(model.parameters(), lr=1e-3)
-    scheduler = ReduceLROnPlateau(optim, factor=0.1, patience=5, verbose=True)
+   optim = torch.optim.AdamW(model.parameters(), lr=1e-3)
+   scheduler = ReduceLROnPlateau(optim, factor=0.1, patience=5, verbose=True)
 
 This defines the optimizer of our model with starting learning rate of 1e-3.
 By defining a scheduler, the learning rate of the optimizer will decay by ``factor=0.1`` after model performance doesn't improve for ``patience=5`` epochs.
@@ -112,14 +113,13 @@ And finally we define our miscellaneous arguments.
 
 .. code-block:: python
 
-    batch_size = 16
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+   batch_size = 16
+   device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    kwargs = dict(
-        shuffle = True,
-        num_workers = 4,
-        pin_memory = True,
-    )
+   kwargs = dict(
+      num_workers = 4,
+      pin_memory = True,
+   )
 
 This sets our batch size and training device, along with our torch `DataLoader <https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader>`_ arguments.
 The batch size can be adjusted depending on the amount of memory available for training.
@@ -133,17 +133,17 @@ We can now train our model using the :doc:`../reference/train/train_paired` func
 
 .. code-block:: python
 
-    losses = train_paired(
-        model=model,
-        dataset=dataset,
-        batch_size=batch_size,
-        loss_fn=loss_fn,
-        optim=optim,
-        epochs=20,
-        device=device,
-        scheduler=scheduler,
-        dataloader_kwargs=kwargs,
-    )
+   losses = train_paired(
+      model=model,
+      dataset=dataset,
+      batch_size=batch_size,
+      loss_fn=loss_fn,
+      optim=optim,
+      epochs=20,
+      device=device,
+      scheduler=scheduler,
+      dataloader_kwargs=kwargs,
+   )
 
 While training, various metrics will be provided along with the loss to easily monitor progress.
 
@@ -156,7 +156,7 @@ After training is over, we should save our model for future use.
 
 .. code-block:: python
 
-    torch.save(model.state_dict(), "model.pth")
+   torch.save(model.state_dict(), "model.pth")
 
 |
 
@@ -164,9 +164,9 @@ We can also plot the training losses returned by :doc:`../reference/train/train_
 
 .. code-block:: python
 
-    import matplotlib.pyplot as plt
+   import matplotlib.pyplot as plt
 
-    plt.plot(losses)
+   plt.plot(losses)
 
 
 Using the Model for Predictions
@@ -182,7 +182,7 @@ If you decide to run your model predictions in a separate file, you will want to
 
 .. code-block:: python
 
-    model.load_state_dict(torch.load("model.pth"))
+   model.load_state_dict(torch.load("model.pth"))
 
 where ``model`` is an instance of the same architecture you used previously.
 
@@ -195,7 +195,7 @@ To use our model, we will use the :doc:`../reference/predict/predict_images` fun
 
 .. code-block:: python
 
-    from pssr.predict import predict_images
+   from pssr.predict import predict_images
 
 |
 
@@ -206,7 +206,7 @@ We can do this by creating the same :doc:`../reference/data/ImageDataset`, only 
 
 .. code-block:: python
 
-    test_dataset = ImageDataset("your/lr", hr_res=512, lr_scale=4, extension="tif")
+   test_dataset = ImageDataset("your/lr", hr_res=512, lr_scale=4, extension="tif")
 
 The *low-resolution* images are implied to have a horizontal and vertical resolution of 128 (``hr_res=512`` / ``lr_scale=4``).
 A crappifier does not have to be specified, as it will not be used.
@@ -217,7 +217,7 @@ We can now use our model to upscale the *low-resolution* images.
 
 .. code-block:: python
 
-    predict_images(model, test_dataset, device)
+   predict_images(model, test_dataset, device)
 
 This will super-resolve *high-resolution* images from our *low-resolution* images and save them to the ``preds`` folder.
 
@@ -231,8 +231,8 @@ we can use :doc:`../reference/predict/test_metrics` to quantify the performance 
 
 .. note::
 
-    Metrics can still be acquired from training datasets with only *high-resolution* images,
-    but they will only represent training performance on crappified data and may not represent real world performance.
+   Metrics can still be acquired from training datasets with only *high-resolution* images,
+   but they will only represent training performance on crappified data and may not represent real world performance.
 
 |
 
@@ -240,7 +240,7 @@ We can do this by creating a new :doc:`../reference/data/PairedImageDataset` ins
 
 .. code-block:: python
 
-    paired_dataset = PairedImageDataset("your/hr", "your/lr", hr_res=512, lr_scale=4)
+   paired_dataset = PairedImageDataset("your/hr", "your/lr", hr_res=512, lr_scale=4)
 
 The images in each folder should be properly aligned and have a similar naming/ordering scheme so that they are returned in the same order when that dataset is iterated.
 
@@ -250,4 +250,4 @@ We can then compute metrics for all images.
 
 .. code-block:: python
 
-    test_metrics(model, paired_dataset, device=device)
+   test_metrics(model, paired_dataset, device=device)

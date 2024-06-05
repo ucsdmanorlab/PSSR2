@@ -145,7 +145,7 @@ class RDResUNetA():
             growth_rates : list[int] = [64, 104, 128, 128, 128, 128, 224],
             ds_blocks : list[bool] = [False, True, True, False, False, False, True],
             ese_blocks : list[bool] = [False, False, True, True, True, True, True],
-            n_blocks : list[int] = (3, 3, 3, 3, 3, 3, 3),
+            n_blocks : list[int] = [3, 3, 3, 3, 3, 3, 3],
             patch_size : int = 2,
             bottleneck : int = 4,
             compression : float = 0.5,
