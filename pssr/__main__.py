@@ -13,7 +13,7 @@ from pssr.predict import predict_images, test_metrics
 IS_NAPARI = False
 
 def _handle_declaration(arg, defaults, req=None):
-    req = ", ".join(req) if req is not None else ""
+    req = ", ".join(req)+", " if req is not None else ""
 
     if arg in defaults:
         expression = arg+f"({req})"
