@@ -1,4 +1,5 @@
 name: pssr
+display_name: PSSR2
 contributions:
   commands:
     - id: pssr.napari.train

@@ -1,7 +1,7 @@
 predict
 ========
 
-Various prediction and benchmarking functions for **PSSR** models.
+Various prediction and benchmarking functions for **PSSR2** models.
 
 
 Modules

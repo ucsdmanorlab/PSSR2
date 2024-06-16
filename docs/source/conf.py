@@ -19,12 +19,12 @@ sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 
-project = "PSSR"
+project = "PSSR2"
 copyright = "2024, Hayden Stites"
 author = "Hayden Stites"
 
 # The full version, including alpha/beta/rc tags
-release = "2.0.1"
+release = "2.0.2"
 
 
 # -- General configuration ---------------------------------------------------

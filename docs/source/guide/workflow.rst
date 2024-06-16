@@ -3,7 +3,7 @@ Workflow
 
 .. note::
 
-   This section explains how to use an example **PSSR** workflow, similar to that implemented in the CLI.
+   This section explains how to use an example **PSSR2** workflow, similar to that implemented in the CLI.
    It does not necessarily apply to all use cases and is meant to be expanded upon.
 
 

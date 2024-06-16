@@ -1,7 +1,7 @@
 util
 =====
 
-Various utility functions for **PSSR**.
+Various utility functions for **PSSR2**.
 
 
 Modules

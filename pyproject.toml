@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "pssr"
-version = "2.0.1-post1"
+version = "2.0.2"
 description = "Point-Scanning Super-Resolution"
 authors = ["Hayden Stites"]
 readme = "README.md"
 license = "MIT"
-repository = "https://github.com/ucsdmanorlab/PSSR"
-documentation = "https://ucsdmanorlab.github.io/PSSR/"
+repository = "https://github.com/ucsdmanorlab/PSSR2"
+documentation = "https://ucsdmanorlab.github.io/PSSR2"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",

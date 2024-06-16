@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Principles of PSSR" href="principles.html" /><link rel="prev" title="PSSR Documentation" href="../index.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Principles of PSSR" href="principles.html" /><link rel="prev" title="PSSR2 Documentation" href="../index.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>Getting Started - PSSR 2.0.1 documentation</title>
+        <title>Getting Started - PSSR2 2.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">PSSR 2.0.1 documentation</div></a>
+      <a href="../index.html"><div class="brand">PSSR2 2.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 2.0.1 documentation</span>
+  <span class="sidebar-brand-text">PSSR2 2.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -246,9 +246,9 @@
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
-<p>It is required that <a class="reference external" href="https://www.python.org">Python</a> is installed to use <strong>PSSR</strong>.
+<p>It is required that <a class="reference external" href="https://www.python.org">Python</a> is installed to use <strong>PSSR2</strong>.
 If you have not already, download it <a class="reference external" href="https://www.python.org/downloads">here</a>.</p>
-<p>Before installing <strong>PSSR</strong>, you may want to create an environment for it with</p>
+<p>Before installing <strong>PSSR2</strong>, you may want to create an environment for it with</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>pssr
 </pre></div>
 </div>
@@ -256,7 +256,11 @@ If you have not already, download it <a class="reference external" href="https:/
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<p>You can easily install <strong>PSSR</strong> via the <code class="docutils literal notranslate"><span class="pre">pip</span></code> package manager:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The package name of <strong>PSSR2</strong> is <code class="docutils literal notranslate"><span class="pre">pssr</span></code>! All modules are referenced as such.</p>
+</div>
+<p>You can easily install <strong>PSSR2</strong> via the <code class="docutils literal notranslate"><span class="pre">pip</span></code> package manager:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>pssr
 </pre></div>
 </div>
@@ -267,8 +271,8 @@ If you have not already, download it <a class="reference external" href="https:/
 </section>
 <section id="running-the-cli">
 <h2>Running the CLI<a class="headerlink" href="#running-the-cli" title="Link to this heading">#</a></h2>
-<p>The <strong>PSSR</strong> CLI is included with package installation and can be run with the <code class="docutils literal notranslate"><span class="pre">pssr</span></code> command in the command line.
-It provides a simple interface for using <strong>PSSR</strong> without having to write any code, and covers most basic use cases.</p>
+<p>The <strong>PSSR2</strong> CLI is included with package installation and can be run with the <code class="docutils literal notranslate"><span class="pre">pssr</span></code> command in the command line.
+It provides a simple interface for using <strong>PSSR2</strong> without having to write any code, and covers most basic use cases.</p>
 <p>The CLI can run in either <em>train</em> or <em>predict</em> mode. It takes in a number of arugments, described below.</p>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -277,7 +281,7 @@ CLI Arguments<div class="sd-summary-down docutils">
 <div class="sd-summary-up docutils">
 <svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-up" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M18.78 15.28a.75.75 0 000-1.06l-6.25-6.25a.75.75 0 00-1.06 0l-6.25 6.25a.75.75 0 101.06 1.06L12 9.56l5.72 5.72a.75.75 0 001.06 0z"></path></svg></div>
 </summary><div class="sd-summary-content sd-card-body docutils">
-<p class="sd-card-text"><p class="sd-card-text">PSSR CLI for basic usage</p>
+<p class="sd-card-text"><p class="sd-card-text">PSSR2 CLI for basic usage</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pssr</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dp</span> <span class="n">DATA_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">dt</span> <span class="n">DATA_TYPE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">mt</span> <span class="n">MODEL_TYPE</span><span class="p">]</span>
             <span class="p">[</span><span class="o">-</span><span class="n">mp</span> <span class="n">MODEL_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">e</span> <span class="n">EPOCHS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">b</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">lr</span> <span class="n">LR</span><span class="p">]</span>
@@ -344,7 +348,7 @@ For example <code class="docutils literal notranslate"><span class="pre">--model
 <p>If you do not have access to a microscopy dataset, a sample EM training dataset can be found
 <a class="reference external" href="https://drive.google.com/file/d/1Sirrh180WrkHgPR0S8_43-f0S2GaK7iZ/view">here</a> containing <em>high-resolution</em> 512x512 images (<code class="docutils literal notranslate"><span class="pre">hr_res=512</span></code>) with a pixel size of 2nm.
 Real-world EM <em>high-low-resolution</em> image pairs for testing can be found <a class="reference external" href="https://drive.google.com/file/d/1BI6K5r65ubn3Vj866ikUUj8VVqHT0j-4/view">here</a> of the same resolution.
-Larger datasets and all data used in the <strong>PSSR</strong> paper can also be found on <a class="reference external" href="https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/">3Dem.org</a>.
+Larger datasets and all data used in the <strong>PSSR2</strong> paper can also be found on <a class="reference external" href="https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/">3Dem.org</a>.
 If your dataset have different resolution data, <code class="docutils literal notranslate"><span class="pre">hr_res</span></code> and <code class="docutils literal notranslate"><span class="pre">scale</span></code> can be changed correspondingly.</p>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -370,7 +374,7 @@ The batch size can also be changed with the <code class="docutils literal notran
 </section>
 <section id="predicting">
 <h3>Predicting<a class="headerlink" href="#predicting" title="Link to this heading">#</a></h3>
-<p>A pretrained <strong>PSSR</strong> model for EM data can be found <a class="reference external" href="https://drive.google.com/file/d/1upypaukRFSgBF4pma2X-GaRln9xYULBh/view">here</a>,
+<p>A pretrained <strong>PSSR2</strong> model for EM data can be found <a class="reference external" href="https://drive.google.com/file/d/1upypaukRFSgBF4pma2X-GaRln9xYULBh/view">here</a>,
 a <a class="reference internal" href="../reference/models/ResUNet.html"><span class="doc">ResUNet</span></a> with default arguments.</p>
 <p>To run the demo in predict mode, omit the <code class="docutils literal notranslate"><span class="pre">-t</span></code> argument. The dataset path should be changed to the path containing the <em>low-resolution</em> images to be upscaled.
 The <cite>-mp</cite> argument must be set to the path of your trained model. The predicted upscaled images will be saved to the <code class="docutils literal notranslate"><span class="pre">preds</span></code> folder.</p>
@@ -397,9 +401,9 @@ then <em>low-resolution</em> images will be generated via <a class="reference in
 </section>
 <section id="next-steps">
 <h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">#</a></h2>
-<p>If you are not familar with <strong>PSSR</strong> or super-resolution, understand the <a class="reference internal" href="principles.html"><span class="doc">Principles of PSSR</span></a>.</p>
-<p>For usage of <strong>PSSR</strong> beyond the extents of the demo, learn how to implement your own <a class="reference internal" href="workflow.html"><span class="doc">Workflow</span></a>.</p>
-<p>Full reference and explanations of all <strong>PSSR</strong> tools is available in <a class="reference internal" href="../reference/api.html"><span class="doc">API Reference</span></a>.</p>
+<p>If you are not familar with <strong>PSSR2</strong> or super-resolution, understand the <a class="reference internal" href="principles.html"><span class="doc">Principles of PSSR</span></a>.</p>
+<p>For usage of <strong>PSSR2</strong> beyond the extents of the demo, learn how to implement your own <a class="reference internal" href="workflow.html"><span class="doc">Workflow</span></a>.</p>
+<p>Full reference and explanations of all <strong>PSSR2</strong> tools is available in <a class="reference internal" href="../reference/api.html"><span class="doc">API Reference</span></a>.</p>
 </section>
 </section>
 
@@ -477,7 +481,7 @@ then <em>low-resolution</em> images will be generated via <a class="reference in
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+</div><script src="../_static/documentation_options.js?v=c2377ec0"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=32e29ea5"></script>

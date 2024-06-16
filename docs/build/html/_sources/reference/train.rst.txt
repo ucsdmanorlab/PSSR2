@@ -1,7 +1,7 @@
 train
 ======
 
-Various training functions for **PSSR** models.
+Various training functions for **PSSR2** models.
 
 All functions take in paired high-low-resolution image pairs, when can be either true image pairs or semi-synthetic image pairs.
 

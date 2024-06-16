@@ -1,7 +1,7 @@
 models
 =======
 
-A repository of super-resolution models that conform to **PSSR** conventions.
+A repository of super-resolution models that conform to **PSSR2** conventions.
 
 Any `PyTorch <https://pytorch.org/>`_ based super-resolution model can be used in place of these if desired.
 

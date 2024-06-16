@@ -4,10 +4,10 @@ Getting Started
 Installation
 -------------
 
-It is required that `Python <https://www.python.org>`_ is installed to use **PSSR**.
+It is required that `Python <https://www.python.org>`_ is installed to use **PSSR2**.
 If you have not already, download it `here <https://www.python.org/downloads>`_.
 
-Before installing **PSSR**, you may want to create an environment for it with
+Before installing **PSSR2**, you may want to create an environment for it with
 
 .. code-block:: console
 
@@ -17,7 +17,11 @@ or the equivalent for any other environment manager if you chose to do so.
 
 |
 
-You can easily install **PSSR** via the ``pip`` package manager:
+.. note::
+
+   The package name of **PSSR2** is ``pssr``! All modules are referenced as such.
+
+You can easily install **PSSR2** via the ``pip`` package manager:
 
 .. code-block:: console
 
@@ -33,8 +37,8 @@ All package versions are also available on the `GitHub <https://github.com/ucsdm
 Running the CLI
 ----------------
 
-The **PSSR** CLI is included with package installation and can be run with the ``pssr`` command in the command line.
-It provides a simple interface for using **PSSR** without having to write any code, and covers most basic use cases.
+The **PSSR2** CLI is included with package installation and can be run with the ``pssr`` command in the command line.
+It provides a simple interface for using **PSSR2** without having to write any code, and covers most basic use cases.
 
 The CLI can run in either *train* or *predict* mode. It takes in a number of arugments, described below.
 
@@ -53,7 +57,7 @@ For example ``--model-type`` could be given as ``-mt "ResUNet(hidden=[128, 256],
 If you do not have access to a microscopy dataset, a sample EM training dataset can be found
 `here <https://drive.google.com/file/d/1Sirrh180WrkHgPR0S8_43-f0S2GaK7iZ/view>`__ containing *high-resolution* 512x512 images (``hr_res=512``) with a pixel size of 2nm.
 Real-world EM *high-low-resolution* image pairs for testing can be found `here <https://drive.google.com/file/d/1BI6K5r65ubn3Vj866ikUUj8VVqHT0j-4/view>`__ of the same resolution.
-Larger datasets and all data used in the **PSSR** paper can also be found on `3Dem.org <https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/>`_.
+Larger datasets and all data used in the **PSSR2** paper can also be found on `3Dem.org <https://3dem.org/public-data/tapis/public/3dem.storage.public/2021_Manor_PSSR/>`_.
 If your dataset have different resolution data, ``hr_res`` and ``scale`` can be changed correspondingly.
 
 |
@@ -84,7 +88,7 @@ The batch size can also be changed with the ``-b`` argument.
 Predicting
 +++++++++++
 
-A pretrained **PSSR** model for EM data can be found `here <https://drive.google.com/file/d/1upypaukRFSgBF4pma2X-GaRln9xYULBh/view>`__,
+A pretrained **PSSR2** model for EM data can be found `here <https://drive.google.com/file/d/1upypaukRFSgBF4pma2X-GaRln9xYULBh/view>`__,
 a :doc:`../reference/models/ResUNet` with default arguments.
 
 To run the demo in predict mode, omit the ``-t`` argument. The dataset path should be changed to the path containing the *low-resolution* images to be upscaled.
@@ -115,8 +119,8 @@ then *low-resolution* images will be generated via :doc:`../reference/crappifier
 Next Steps
 -----------
 
-If you are not familar with **PSSR** or super-resolution, understand the :doc:`principles`.
+If you are not familar with **PSSR2** or super-resolution, understand the :doc:`principles`.
 
-For usage of **PSSR** beyond the extents of the demo, learn how to implement your own :doc:`workflow`.
+For usage of **PSSR2** beyond the extents of the demo, learn how to implement your own :doc:`workflow`.
 
-Full reference and explanations of all **PSSR** tools is available in :doc:`API Reference <../reference/api>`.
+Full reference and explanations of all **PSSR2** tools is available in :doc:`API Reference <../reference/api>`.

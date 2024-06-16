@@ -23,7 +23,7 @@ def _handle_declaration(arg, defaults, req=None):
     return eval(expression)
 
 def parse():
-    parser = argparse.ArgumentParser(prog="pssr", description="PSSR CLI for basic usage", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(prog="pssr", description="PSSR2 CLI for basic usage", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument("-t", "--train", action="store_true", help="enable train mode")
 

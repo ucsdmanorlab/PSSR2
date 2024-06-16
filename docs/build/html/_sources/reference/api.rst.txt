@@ -1,7 +1,7 @@
 pssr
 =====
 
-*Point-Scanning Super-Resolution API Reference*
+*Point-Scanning Super-Resolution 2 API Reference*
 
 .. toctree::
    :titlesonly:

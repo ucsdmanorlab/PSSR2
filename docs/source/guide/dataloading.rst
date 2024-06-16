@@ -4,13 +4,13 @@ Advanced Dataloading
 Multidimensional Images
 ------------------------
 
-**PSSR** supports the use of multidimensional images.
+**PSSR2** supports the use of multidimensional images.
 
 By default the dataset will provide all frames of each image/tile in a single array.
 For example, a single image with a horizontal and vertical resolution of 512 and a Z resolution of 20 will be treated as a single 20x512x512 array.
 
 However, it is often preferred that a model is trained using a lower number of frames.
-In all **PSSR** datasets, the ``n_frames`` argument can be specified as the number of image frames to use at once.
+In all **PSSR2** datasets, the ``n_frames`` argument can be specified as the number of image frames to use at once.
 For example, with ``n_frames=5``, the same image that was previously treated as a single 20x512x512 array would now be treated as 4 different 5x512x512 arrays.
 
 The value of ``n_frames`` in the dataset should correspond the value of ``channels`` in the model.
@@ -31,7 +31,7 @@ For simplicity, all additional non-horizontal/vertical image dimensions are flat
 For example, an image with a T (time) resolution of 10 and a Z resolution of 5 would have 50 frames (10 T frames x 5 Z frames).
 
 The order of the dimensions being combined has an effect on how the frames are handled.
-In all **PSSR** datasets, the ``stack`` argument determines this order:
+In all **PSSR2** datasets, the ``stack`` argument determines this order:
 
 -  By default, ``stack="TZ"``, meaning the Z dimension is flattened after the T dimension and changes more often.
    For the previous example of the 10 T frame x 5 Z frame image, ``n_frames=10`` would make the dataset load 5 Z frames at 2 different points in T.
@@ -62,8 +62,8 @@ but only return the central T frame for the high-resolution image while returnin
 Image Denoising
 ----------------
 
-While the **PSSR** package is mainly used for image super-resolution, it can be used for image denoising as well.
+While the **PSSR2** package is mainly used for image super-resolution, it can be used for image denoising as well.
 Set the ``lr_scale=1`` with an equivalent ``scale`` value in the model, and ``hr_res`` equal to the denoising image resolution.
 
 Multidimensional and 2.5-dimensional images can be used with this approach as well,
-meaning that **PSSR** can be used for things such as temporal super-resolution without necessarily needing to be used for image super-resolution as well.
+meaning that **PSSR2** can be used for things such as temporal super-resolution without necessarily needing to be used for image super-resolution as well.

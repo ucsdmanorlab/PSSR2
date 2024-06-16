@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="pssr" href="../reference/api.html" /><link rel="prev" title="Workflow" href="workflow.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>Advanced Dataloading - PSSR 2.0.1 documentation</title>
+        <title>Advanced Dataloading - PSSR2 2.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">PSSR 2.0.1 documentation</div></a>
+      <a href="../index.html"><div class="brand">PSSR2 2.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR 2.0.1 documentation</span>
+  <span class="sidebar-brand-text">PSSR2 2.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -246,11 +246,11 @@
 <h1>Advanced Dataloading<a class="headerlink" href="#advanced-dataloading" title="Link to this heading">#</a></h1>
 <section id="multidimensional-images">
 <h2>Multidimensional Images<a class="headerlink" href="#multidimensional-images" title="Link to this heading">#</a></h2>
-<p><strong>PSSR</strong> supports the use of multidimensional images.</p>
+<p><strong>PSSR2</strong> supports the use of multidimensional images.</p>
 <p>By default the dataset will provide all frames of each image/tile in a single array.
 For example, a single image with a horizontal and vertical resolution of 512 and a Z resolution of 20 will be treated as a single 20x512x512 array.</p>
 <p>However, it is often preferred that a model is trained using a lower number of frames.
-In all <strong>PSSR</strong> datasets, the <code class="docutils literal notranslate"><span class="pre">n_frames</span></code> argument can be specified as the number of image frames to use at once.
+In all <strong>PSSR2</strong> datasets, the <code class="docutils literal notranslate"><span class="pre">n_frames</span></code> argument can be specified as the number of image frames to use at once.
 For example, with <code class="docutils literal notranslate"><span class="pre">n_frames=5</span></code>, the same image that was previously treated as a single 20x512x512 array would now be treated as 4 different 5x512x512 arrays.</p>
 <p>The value of <code class="docutils literal notranslate"><span class="pre">n_frames</span></code> in the dataset should correspond the value of <code class="docutils literal notranslate"><span class="pre">channels</span></code> in the model.
 That is, the number of output frames in the dataset should correspond to the amount of input channels in the model.</p>
@@ -268,7 +268,7 @@ This prevents overfitting as different frames from the same tile may be overly s
 For simplicity, all additional non-horizontal/vertical image dimensions are flattened to a single channel dimension by the dataset.
 For example, an image with a T (time) resolution of 10 and a Z resolution of 5 would have 50 frames (10 T frames x 5 Z frames).</p>
 <p>The order of the dimensions being combined has an effect on how the frames are handled.
-In all <strong>PSSR</strong> datasets, the <code class="docutils literal notranslate"><span class="pre">stack</span></code> argument determines this order:</p>
+In all <strong>PSSR2</strong> datasets, the <code class="docutils literal notranslate"><span class="pre">stack</span></code> argument determines this order:</p>
 <ul class="simple">
 <li><p>By default, <code class="docutils literal notranslate"><span class="pre">stack=&quot;TZ&quot;</span></code>, meaning the Z dimension is flattened after the T dimension and changes more often.
 For the previous example of the 10 T frame x 5 Z frame image, <code class="docutils literal notranslate"><span class="pre">n_frames=10</span></code> would make the dataset load 5 Z frames at 2 different points in T.</p></li>
@@ -295,10 +295,10 @@ but only return the central T frame for the high-resolution image while returnin
 </section>
 <section id="image-denoising">
 <h2>Image Denoising<a class="headerlink" href="#image-denoising" title="Link to this heading">#</a></h2>
-<p>While the <strong>PSSR</strong> package is mainly used for image super-resolution, it can be used for image denoising as well.
+<p>While the <strong>PSSR2</strong> package is mainly used for image super-resolution, it can be used for image denoising as well.
 Set the <code class="docutils literal notranslate"><span class="pre">lr_scale=1</span></code> with an equivalent <code class="docutils literal notranslate"><span class="pre">scale</span></code> value in the model, and <code class="docutils literal notranslate"><span class="pre">hr_res</span></code> equal to the denoising image resolution.</p>
 <p>Multidimensional and 2.5-dimensional images can be used with this approach as well,
-meaning that <strong>PSSR</strong> can be used for things such as temporal super-resolution without necessarily needing to be used for image super-resolution as well.</p>
+meaning that <strong>PSSR2</strong> can be used for things such as temporal super-resolution without necessarily needing to be used for image super-resolution as well.</p>
 </section>
 </section>
 
@@ -375,7 +375,7 @@ meaning that <strong>PSSR</strong> can be used for things such as temporal super
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+</div><script src="../_static/documentation_options.js?v=c2377ec0"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=32e29ea5"></script>

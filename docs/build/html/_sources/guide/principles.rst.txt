@@ -6,6 +6,8 @@ Principles of PSSR
    This section can be considered an abbreviation of important concepts covered in the full **PSSR** paper,
    `Deep learning-based point-scanning super-resolution imaging <https://www.nature.com/articles/s41592-021-01080-z>`_.
 
+   This page will soon be updated to contain information contained within the **PSSR2** preprint!
+
 
 Why Use PSSR
 -------------
@@ -37,7 +39,7 @@ In order to train a super-resolution model, *high-low-resolution* image pairs mu
 However, due to the difficulty and costs of acquiring *high-low-resolution* image pairs for training, this approach is not just impractical,
 but may be impossible for non-static live samples such as subcellular organelles.
 
-To circumvent this, a novel :doc:`../reference/crappifiers/Crappifier` is used during training to computationally degrade *high-resolution* images into their *low-resolution* image counterparts.
+To circumvent this, a :doc:`../reference/crappifiers/Crappifier` is used during training to computationally degrade *high-resolution* images into their *low-resolution* image counterparts.
 This process of crappification does not require *low-resolution* images to be acquired for training.
 
 It first downsamples the *high-resolution* image to a lower resolution, before injecting a layer of noise that approximates the sampling noise of a true *low-resolution* image.
