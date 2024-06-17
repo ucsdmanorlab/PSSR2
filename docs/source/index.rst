@@ -1,9 +1,10 @@
 PSSR2 Documentation
 ====================
 
-**PSSR2** *(Point-Scanning Super-Resolution 2)* is a standardized `PyTorch <https://pytorch.org/>`_-based workflow for super-resolution tasks using microscopy images.
-This is the official reimplementation of the methods described in the original paper: `Deep learning-based point-scanning super-resolution imaging <https://www.nature.com/articles/s41592-021-01080-z>`_,
-containing various improvements and new features.
+**PSSR2** *(Point-Scanning Super-Resolution 2)* is a user-friendly `PyTorch <https://pytorch.org/>`_-based workflow for super-resolution tasks using microscopy images.
+This is the official reimplementation and extention of the methods described in the original paper: `Deep learning-based point-scanning super-resolution imaging <https://www.nature.com/articles/s41592-021-01080-z>`_.
+**PSSR2** contains various improvements from its predecessor, which are elaborated in our preprint:
+`PSSR2: a user-friendly Python package for democratizing deep learning-based point-scanning super-resolution microscopy <https://www.biorxiv.org/content/10.1101/2024.06.16.599221v1>`_.
 
 If you have never used **PSSR2** before, :doc:`guide/start` outlines installation and basic usage.
 Full reference and explanations of all **PSSR2** tools is available in :doc:`API Reference <reference/api>`.
