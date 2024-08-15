@@ -3,11 +3,10 @@ import torch.nn as nn
 import numpy as np
 from torch.utils.data import Dataset
 from skimage.metrics import peak_signal_noise_ratio, structural_similarity
-from skimage.transform import resize
 from tqdm import tqdm
 from PIL import Image
 from .data import _RandomIterIdx, _slice_center
-from .util import _get_callbacks, pixel_metric
+from .util import _get_callbacks, pixel_metric, normalize_preds
 
 def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", norm : bool = False, prefix : str = None, out_dir : str = "preds", callbacks = None):
     r"""Predicts high-resolution images from low-resolution images using a given model.
@@ -64,13 +63,14 @@ def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", n
 
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
-        for idx, hr_hat in enumerate(outs):
+        for idx, hr_hat in zip(dataset.val_idx, outs):
             tifffile.imwrite(f"{out_dir}/{prefix+'_' if prefix else ''}{dataset._get_name(idx)}.tif", np.asarray(hr_hat))
     else:
         return outs
 
 def predict_collage(model : nn.Module, dataset : Dataset, device : str = "cpu", norm : bool = True, n_images : int = None, prefix : str = None, out_dir : str = "preds", callbacks = None):
     r"""Saves to file an image collage of vertically stacked instances of horizontally aligned low-resolution, PSSR upscaled, and high-resolution images in that order.
+    If the dataset is in LR mode, the collage will not have high-resolution images.
     Only the center frame of each slice is displayed.
 
     Only uses evaluation images if applicable. Set ``val_split=1`` in dataset to use all images.
@@ -92,7 +92,7 @@ def predict_collage(model : nn.Module, dataset : Dataset, device : str = "cpu", 
 
         callbacks (list[Callable]) : Callbacks after each prediction. Can optionally specify an argument for locals to be passed. Default is None.
     """
-    if dataset.is_lr: raise ValueError("Dataset cannot be in LR mode when creating a collage.")
+    if norm and dataset.is_lr: raise ValueError("Dataset must be paired with high-low-resolution images for normalization.")
 
     callbacks, callback_locals = _get_callbacks(callbacks)
     n_images = min(50, len(dataset)) if n_images is None else n_images
@@ -100,16 +100,20 @@ def predict_collage(model : nn.Module, dataset : Dataset, device : str = "cpu", 
     model.to(device)
     model.eval()
 
-    collage = Image.new("L", (dataset.crop_res*3, dataset.crop_res*n_images))
+    collage = Image.new("L", (dataset.crop_res*(2 if dataset.is_lr else 3), dataset.crop_res*n_images))
     with torch.no_grad():
         # Only shuffle if val_split < 1
         for idx, data_idx in enumerate(_RandomIterIdx(dataset.val_idx, seed=True) if len(dataset.val_idx) < len(dataset) else dataset.val_idx):
-            hr, lr = dataset[data_idx]
-            hr, lr = hr.to(device).unsqueeze(0), lr.to(device).unsqueeze(0)
+            if dataset.is_lr:
+                lr = dataset[data_idx]
+                lr = lr.to(device).unsqueeze(0)
+            else:
+                hr, lr = dataset[data_idx]
+                hr, lr = hr.to(device).unsqueeze(0), lr.to(device).unsqueeze(0)
 
             hr_hat = model(lr)
 
-            collage.paste(_collage_preds(lr, hr_hat, hr, norm, 1, dataset.crop_res, dataset.lr_scale), (0, dataset.crop_res*idx))
+            collage.paste(_collage_preds(lr, hr_hat, None if dataset.is_lr else hr, norm, 1, dataset.crop_res, dataset.lr_scale), (0, dataset.crop_res*idx))
 
             for idx, callback in enumerate(callbacks):
                 if callback_locals[idx]:
@@ -192,63 +196,12 @@ def test_metrics(model : nn.Module, dataset : Dataset, device : str = "cpu", met
 
     return {metric:(sum(values)/len(values) if avg else values) for metric, values in metrics.items()}
 
-def normalize_preds(hr : np.ndarray, hr_hat : np.ndarray, pmin : float = 0.1, pmax : float = 99.9):
-    r"""Normalizes prediction image intensities to ground truth for fair benchmarking.
-
-    Args:
-        hr (ndarray) : High-resolution ground truth images as array.
-
-        hr_hat (ndarray) : High-resolution prediction images as array.
-
-        pmin (float) : Percentile minimum image intensity. Default is 0.1.
-
-        pmax (float) : Percentile maximum image intensity. Default is 99.9.
-    
-    Returns:
-        hr_norm (ndarray) : Normalized high-resolution ground truth image.
-
-        hr_hat_norm (ndarray) : Normalized high-resolution prediction image.
-    """
-    hr, hr_hat = np.asarray(hr), np.asarray(hr_hat)
-    if len(hr.shape) != len(hr_hat.shape): raise ValueError(f"hr and hr_hat must have the same number of dimensions. Dimension lengths are {hr.shape} and {hr_hat.shape} respectively.")
-    hr_shape, hr_hat_shape = hr.shape, hr_hat.shape
-
-    if len(hr.shape) < 3:
-        hr, hr_hat = hr[np.newaxis, ...], hr_hat[np.newaxis, ...]
-    hr, hr_hat = hr.reshape(-1, *hr.shape[-2:]), hr_hat.reshape(-1, *hr_hat.shape[-2:])
-    if len(hr) != len(hr_hat): raise ValueError(f"hr and hr_hat must have the same number of images. Received {len(hr)} and {len(hr_hat)} images respectively.")
-
-    hr_norms, hr_hat_norms = [], []
-    for idx in range(len(hr)):
-        # Same procedure as in intial PSSR implementation
-        hr_norm = hr[idx].astype(np.float32)
-        hr_hat_norm = hr_hat[idx].astype(np.float32)
-
-        base_max = np.percentile(hr_norm, pmax)
-        base_mean = np.mean(hr_norm)
-
-        hr_norm = _normalize_minmax(hr_norm, pmin, pmax)
-
-        hr_hat_norm = hr_hat_norm - np.mean(hr_hat_norm)
-        hr_norm = hr_norm - np.mean(hr_norm)
-
-        scaled = resize(hr_hat_norm, hr_norm.shape) if hr_hat_norm.shape != hr_norm.shape else hr_hat_norm
-        amp = np.cov(scaled.flatten(), hr_norm.flatten())[0, 1] / np.var(hr_hat_norm.flatten())
-        hr_hat_norm = amp * hr_hat_norm
-        
-        # Rescale to initial image intensity
-        hr_norm, hr_hat_norm = (hr_norm-hr_norm.min())*base_max, (hr_hat_norm-hr_norm.min())*base_max
-        hr_norm, hr_hat_norm = hr_norm/(hr_norm.mean()/base_mean), hr_hat_norm/(hr_hat_norm.mean()/base_mean)
-
-        hr_norms.append(hr_norm)
-        hr_hat_norms.append(hr_hat_norm)
-    
-    hr, hr_hat = np.asarray(hr_norms).clip(0, 255), np.asarray(hr_hat_norms).clip(0, 255)
-    return hr.reshape(hr_shape).astype(np.uint8), hr_hat.reshape(hr_hat_shape).astype(np.uint8)
-
 def _collage_preds(lr, hr_hat, hr, norm : bool = True, max_images : int = 5, crop_res : int = None, lr_scale : int = 4):
-    crop_res = hr.shape[-1] if crop_res is None else crop_res
-    lr, hr_hat, hr = _pred_array(lr)[:,:,:crop_res//lr_scale,:crop_res//lr_scale], _pred_array(hr_hat)[:,:,:crop_res,:crop_res], _pred_array(hr)[:,:,:crop_res,:crop_res]
+    crop_res = hr_hat.shape[-1] if crop_res is None else crop_res
+    lr_scale = int(hr_hat.shape[-1]/lr.shape[-1]) if lr_scale is None else lr_scale
+
+    # hr is None in LR mode
+    lr, hr_hat, hr = _pred_array(lr)[:,:,:crop_res//lr_scale,:crop_res//lr_scale], _pred_array(hr_hat)[:,:,:crop_res,:crop_res], None if hr is None else _pred_array(hr)[:,:,:crop_res,:crop_res]
 
     if norm:
         hr, hr_hat = normalize_preds(hr, hr_hat)
@@ -256,13 +209,13 @@ def _collage_preds(lr, hr_hat, hr, norm : bool = True, max_images : int = 5, cro
 
     lr = _image_stack(lr, max_images)
     hr_hat = _image_stack(hr_hat, max_images)
-    hr = _image_stack(hr, max_images)
+    hr = None if hr is None else _image_stack(hr, max_images)
 
-    lr = lr.resize((hr.width, hr.height), Image.Resampling.NEAREST)
-    if hr_hat.size != hr.size:
+    lr = lr.resize((hr_hat.width, hr_hat.height), Image.Resampling.NEAREST)
+    if hr is not None and hr_hat.size != hr.size:
         hr_hat = hr_hat.resize((hr.width, hr.height), Image.Resampling.NEAREST)
 
-    return _image_stack([lr, hr_hat, hr], raw=False)
+    return _image_stack([lr, hr_hat] + ([hr] if hr is not None else []), raw=False)
 
 def _image_stack(data, max_images : int = 5, raw : bool = True):
     images = [Image.fromarray(image.astype(np.uint8), mode="L") for image in data[:min(max_images, len(data)), 0]] if raw else data
@@ -274,20 +227,6 @@ def _image_stack(data, max_images : int = 5, raw : bool = True):
         else:
             stack.paste(image, (width*idx, 0))
     return stack
-
-def _normalize_minmax(x, pmin=0.1, pmax=99.9, eps=1e-20, dtype=np.float32):
-    # From csbdeep
-    x_min = np.percentile(x, pmin, keepdims=True)
-    x_max = np.percentile(x, pmax, keepdims=True)
-
-    x = x.astype(dtype,copy=False)
-    x_min = dtype(x_min) if np.isscalar(x_min) else x_min.astype(dtype,copy=False)
-    x_max = dtype(x_max) if np.isscalar(x_max) else x_max.astype(dtype,copy=False)
-    eps = dtype(eps)
-
-    x = (x - x_min) / (x_max - x_min + eps)
-
-    return x
 
 def _pred_array(data, n_frames=1):
     n_frames = [0, n_frames]

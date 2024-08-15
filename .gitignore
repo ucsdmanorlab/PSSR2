@@ -9,3 +9,5 @@ testnapari/
 *.pth
 *.lock
 *.txt
+
+test.ipynb

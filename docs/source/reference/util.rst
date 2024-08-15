@@ -15,4 +15,5 @@ Modules
    :titlesonly:
 
    util/SSIMLoss
+   util/normalize_preds
    util/pixel_metric

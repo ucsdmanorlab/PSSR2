@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="data" href="../data.html" /><link rel="prev" title="test_metrics" href="test_metrics.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="pixel_metric" href="pixel_metric.html" /><link rel="prev" title="SSIMLoss" href="SSIMLoss.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>normalize_preds - PSSR2 2.0.2 documentation</title>
+        <title>normalize_preds - PSSR2 2.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">PSSR2 2.0.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">PSSR2 2.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -147,7 +147,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR2 2.0.2 documentation</span>
+  <span class="sidebar-brand-text">PSSR2 2.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -171,11 +171,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../train/train_crappifier.html">train_crappifier</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="../predict.html">predict</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of predict</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="predict_images.html">predict_images</a></li>
-<li class="toctree-l3"><a class="reference internal" href="predict_collage.html">predict_collage</a></li>
-<li class="toctree-l3"><a class="reference internal" href="test_metrics.html">test_metrics</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">normalize_preds</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../predict.html">predict</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of predict</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../predict/predict_images.html">predict_images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../predict/predict_collage.html">predict_collage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../predict/test_metrics.html">test_metrics</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../data.html">data</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of data</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -200,9 +199,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../models/SwinIR.html">SwinIR</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../util.html">util</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of util</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../util/SSIMLoss.html">SSIMLoss</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../util/pixel_metric.html">pixel_metric</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../util.html">util</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of util</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="SSIMLoss.html">SSIMLoss</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">normalize_preds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pixel_metric.html">pixel_metric</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../CLI.html">CLI</a></li>
@@ -244,12 +244,12 @@
         <article role="main">
           <section id="normalize-preds">
 <h1>normalize_preds<a class="headerlink" href="#normalize-preds" title="Link to this heading">#</a></h1>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.predict</span> <span class="kn">import</span> <span class="n">normalize_preds</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.util</span> <span class="kn">import</span> <span class="n">normalize_preds</span>
 </pre></div>
 </div>
 <dl class="py function">
-<dt class="sig sig-object py" id="pssr.predict.normalize_preds">
-<span class="sig-prename descclassname"><span class="pre">pssr.predict.</span></span><span class="sig-name descname"><span class="pre">normalize_preds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hr_hat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">99.9</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.predict.normalize_preds" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pssr.util.normalize_preds">
+<span class="sig-prename descclassname"><span class="pre">pssr.util.</span></span><span class="sig-name descname"><span class="pre">normalize_preds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hr_hat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">99.9</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pssr.util.normalize_preds" title="Link to this definition">#</a></dt>
 <dd><p>Normalizes prediction image intensities to ground truth for fair benchmarking.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -278,23 +278,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../data.html">
+          <a class="next-page" href="pixel_metric.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">data</div>
+                <div class="title">pixel_metric</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="test_metrics.html">
+          <a class="prev-page" href="SSIMLoss.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">test_metrics</div>
+                <div class="title">SSIMLoss</div>
                 
               </div>
             </a>
@@ -329,7 +329,7 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">normalize_preds</a><ul>
-<li><a class="reference internal" href="#pssr.predict.normalize_preds"><code class="docutils literal notranslate"><span class="pre">normalize_preds()</span></code></a></li>
+<li><a class="reference internal" href="#pssr.util.normalize_preds"><code class="docutils literal notranslate"><span class="pre">normalize_preds()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -341,7 +341,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=c2377ec0"></script>
+</div><script src="../../_static/documentation_options.js?v=20623aea"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>

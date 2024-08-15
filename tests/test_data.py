@@ -29,7 +29,7 @@ def test_imagedataset(tmp_path):
 
     # LR mode
     make_tifs(tmp_path/"lr", get_shape(LR_RES, batch=N_IMAGES))
-    dataset = ImageDataset(tmp_path/"lr")
+    dataset = ImageDataset(tmp_path/"lr", val_split=1)
     assert str(dataset)
     assert len(dataset) == N_IMAGES
     assert dataset.is_lr
@@ -76,7 +76,7 @@ def test_slidingdataset(tmp_path):
 
     # LR mode
     make_tifs(tmp_path/"lr", get_shape(LR_RES*TILE_MULT, batch=N_IMAGES))
-    dataset = SlidingDataset(tmp_path/"lr", hr_res=LR_RES, lr_scale=-1, extension="tif", overlap=None, preload=False)
+    dataset = SlidingDataset(tmp_path/"lr", hr_res=LR_RES, lr_scale=-1, extension="tif", overlap=None, preload=False, val_split=1)
     assert str(dataset)
     assert len(dataset) == N_IMAGES * TILE_MULT**2
     assert dataset.is_lr

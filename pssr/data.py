@@ -56,9 +56,13 @@ class ImageDataset(Dataset):
             max_size = max(max(image.size), max_size)
 
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed)
-        self.is_lr = lr_scale == None or max_size <= hr_res//lr_scale
-        if self.is_lr: print("LR mode is enabled, dataset will load only unmodified low-resolution images.")
         self.crop_res = min(hr_res, max_size)
+
+        self.is_lr = lr_scale == None or max_size <= hr_res//lr_scale
+        if self.is_lr:
+            print("LR mode is enabled, dataset will load only unmodified low-resolution images.")
+            if val_split < 1:
+                warnings.warn("val_split is less than 1, not all low-resolution images will be used in prediciton.", stacklevel=2)
 
         self.hr_res = hr_res
         self.lr_scale = lr_scale if lr_scale is not None else 1
@@ -151,9 +155,13 @@ class SlidingDataset(Dataset):
             self.slices.append(1 if self.n_frames is None else image.shape[0] // self.n_frames[0])
 
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed, self.tiles)
-        self.is_lr = (lr_scale == None)
-        if self.is_lr: print("LR mode is enabled, dataset will load only unmodified low-resolution images.")
         self.crop_res = hr_res
+
+        self.is_lr = (lr_scale == None)
+        if self.is_lr:
+            print("LR mode is enabled, dataset will load only unmodified low-resolution images.")
+            if val_split < 1:
+                warnings.warn("val_split is less than 1, not all low-resolution images will be used in prediciton.", stacklevel=2)
 
         self.hr_res = hr_res
         self.lr_scale = lr_scale
@@ -182,7 +190,7 @@ class SlidingDataset(Dataset):
     
     def _get_name(self, idx):
         image_idx, idx = _get_image_idx(idx, self.slices, self.tiles)
-        return f"{self.hr_files[image_idx].split('.')[0]}_{idx}"
+        return f"{self.hr_files[image_idx].split('.')[0]}_{idx//self.slices[image_idx]}_{idx%self.slices[image_idx]}"
 
 class PairedImageDataset(Dataset):
     def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, n_frames : list[int] = -1, extension : str = "tif", val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None):
@@ -351,7 +359,7 @@ class PairedSlidingDataset(Dataset):
     
     def _get_name(self, idx):
         image_idx, idx = _get_image_idx(idx, self.slices, self.tiles)
-        return f"{self.lr_files[image_idx].split('.')[0]}_{idx}"
+        return f"{self.lr_files[image_idx].split('.')[0]}_{idx//self.slices[image_idx]}_{idx%self.slices[image_idx]}"
 
 def preprocess_dataset(dataset : Dataset, preprocess_hr : bool = False, out_dir : str = "preprocess"):
     r"""Saves processed frame slices from a given dataset, including processes such as crappification or cropping/padding.
@@ -529,7 +537,7 @@ def _sliding_window(image, size, stride, n_frames, n_slices, idx):
 
     return _slice_image(image, n_frames, n_slices, idx)
 
-def _frame_channel(image, mode):
+def _frame_channel(image, mode = "L"):
     # Create frame dimension
     if image.n_frames > 1:
         image = np.stack([np.asarray(_seek_channel(image, frame).convert(mode), dtype=np.uint8) for frame in range(image.n_frames)])
