@@ -64,7 +64,7 @@ def reassemble_sheets(pred_path : Path, lr_path : Path, lr_scale : int, overlap 
         overlap (int) : Overlap between adjacent low-resolution images tiles. Should be the same value as dataset. Default is 0.
 
         margin (int) : Size of margins for overlapping inner image tiles. The generated image sheet doesn't include margin pixels.
-        It is recommended to increase this value to reduce grid artifacts. Must be smaller than overlap. Default is 0.
+            It is recommended to increase this value to reduce grid artifacts. Must be smaller than overlap. Default is 0.
 
         out_dir (str) : Directory to save images. A value of None returns images. Default is "preds".
     

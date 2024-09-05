@@ -15,5 +15,6 @@ Modules
    :titlesonly:
 
    util/SSIMLoss
+   util/reassemble_sheets
    util/normalize_preds
    util/pixel_metric
