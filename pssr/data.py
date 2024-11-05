@@ -52,7 +52,7 @@ class ImageDataset(Dataset):
         self.slices, max_size = [], 0
         for image_idx in range(len(self.hr_files)):
             image = Image.open(Path(self.path, self.hr_files[image_idx]))
-            self.slices.append(1 if self.n_frames is None else image.n_frames // self.n_frames[0])
+            self.slices.append(1 if self.n_frames is None else image.n_frames // max(self.n_frames))
             max_size = max(max(image.size), max_size)
 
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed)
@@ -76,7 +76,7 @@ class ImageDataset(Dataset):
         is_val = idx in self.val_idx or pp
         image_idx, idx = _get_image_idx(idx, self.slices)
 
-        hr = _load_image(self.path, self.hr_files[image_idx], self.mode, self.n_frames[0] if self.n_frames is not None else None, self.slices[image_idx], idx)
+        hr = _load_image(self.path, self.hr_files[image_idx], self.mode, max(self.n_frames) if self.n_frames is not None else None, self.slices[image_idx], idx)
         
         if self.is_lr:
             # Rotation and crappifier is disabled in lr mode
@@ -152,7 +152,7 @@ class SlidingDataset(Dataset):
             image = self.preload[image_idx] if self.preload else _load_sheet(self.path, self.hr_files[image_idx], self.stack, self.mode)
             tiles_x, tiles_y = _n_tiles(image, hr_res, self.stride)
             self.tiles.append(tiles_x * tiles_y)
-            self.slices.append(1 if self.n_frames is None else image.shape[0] // self.n_frames[0])
+            self.slices.append(1 if self.n_frames is None else image.shape[0] // max(self.n_frames))
 
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed, self.tiles)
         self.crop_res = hr_res
@@ -175,7 +175,7 @@ class SlidingDataset(Dataset):
         is_val = idx in self.val_idx or pp
         image_idx, idx = _get_image_idx(idx, self.slices, self.tiles)
 
-        hr = _sliding_window(self.preload[image_idx] if self.preload else _load_sheet(self.path, self.hr_files[image_idx], self.stack, self.mode), self.hr_res, self.stride, self.n_frames[0] if self.n_frames is not None else None, self.slices[image_idx], idx)
+        hr = _sliding_window(self.preload[image_idx] if self.preload else _load_sheet(self.path, self.hr_files[image_idx], self.stack, self.mode), self.hr_res, self.stride, max(self.n_frames) if self.n_frames is not None else None, self.slices[image_idx], idx)
 
         if self.is_lr:
             return _ready_lr(hr, self.hr_res, self.transforms)
@@ -236,7 +236,7 @@ class PairedImageDataset(Dataset):
         self.slices, max_size = [], 0
         for image_idx in range(len(self.hr_files)):
             image = Image.open(Path(self.hr_path, self.hr_files[image_idx]))
-            self.slices.append(1 if self.n_frames is None else image.n_frames // self.n_frames[0])
+            self.slices.append(1 if self.n_frames is None else image.n_frames // max(self.n_frames))
             max_size = max(max(image.size), max_size)
 
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed)
@@ -254,7 +254,7 @@ class PairedImageDataset(Dataset):
         is_val = idx in self.val_idx or pp
         image_idx, idx = _get_image_idx(idx, self.slices)
 
-        hr = _load_image(self.hr_path, self.hr_files[image_idx], self.mode, self.n_frames[0] if self.n_frames is not None else None, self.slices[image_idx], idx)
+        hr = _load_image(self.hr_path, self.hr_files[image_idx], self.mode, self.n_frames[1] if self.n_frames is not None else None, self.slices[image_idx], idx)
         lr = _load_image(self.lr_path, self.lr_files[image_idx], self.mode, self.n_frames[0] if self.n_frames is not None else None, self.slices[image_idx], idx)
 
         return _transform_pair(hr, lr, self.hr_res, self.hr_res//self.lr_scale, False if is_val else self.rotation, self.transforms, self.n_frames)
@@ -329,7 +329,7 @@ class PairedSlidingDataset(Dataset):
             image = self.preload[0][image_idx] if self.preload else _load_sheet(self.hr_path, self.hr_files[image_idx], self.stack, self.mode)
             tiles_x, tiles_y = _n_tiles(image, hr_res, self.stride)
             self.tiles.append(tiles_x * tiles_y)
-            self.slices.append(1 if self.n_frames is None else image.shape[0] // self.n_frames[0])
+            self.slices.append(1 if self.n_frames is None else image.shape[0] // max(self.n_frames))
 
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed, self.tiles)
         self.is_lr = False
@@ -346,7 +346,7 @@ class PairedSlidingDataset(Dataset):
         is_val = idx in self.val_idx or pp
         image_idx, idx = _get_image_idx(idx, self.slices, self.tiles)
 
-        hr = _sliding_window(self.preload[0][image_idx] if self.preload else _load_sheet(self.hr_path, self.hr_files[image_idx], self.stack, self.mode), self.hr_res, self.stride, self.n_frames[0] if self.n_frames is not None else None, self.slices[image_idx], idx)
+        hr = _sliding_window(self.preload[0][image_idx] if self.preload else _load_sheet(self.hr_path, self.hr_files[image_idx], self.stack, self.mode), self.hr_res, self.stride, self.n_frames[1] if self.n_frames is not None else None, self.slices[image_idx], idx)
         lr = _sliding_window(self.preload[1][image_idx] if self.preload else _load_sheet(self.lr_path, self.lr_files[image_idx], self.stack, self.mode), self.hr_res//self.lr_scale, self.stride//self.lr_scale, self.n_frames[0] if self.n_frames is not None else None, self.slices[image_idx], idx)
 
         return _transform_pair(hr, lr, self.hr_res, self.hr_res//self.lr_scale, False if is_val else self.rotation, self.transforms, self.n_frames)
@@ -404,7 +404,11 @@ def _gen_pair(hr, hr_res, lr_scale, rotation, crappifier, transforms, n_frames):
         lr = crappifier.crappify(lr) if issubclass(type(crappifier), Crappifier) else crappifier(lr)
         lr = np.clip(lr.round(), 0, 255)
 
-    hr = _slice_center(hr, n_frames)
+    if n_frames is not None and n_frames[0] != n_frames[1]:
+        if not n_frames[1] > hr.shape[-3]:
+            hr = _slice_center(hr, n_frames[1])
+        if not n_frames[0] > lr.shape[-3]:
+            lr = _slice_center(lr, n_frames[0])
 
     return _tensor_ready(hr, transforms), _tensor_ready(lr, transforms)
 
@@ -423,7 +427,11 @@ def _transform_pair(hr, lr, hr_res, lr_res, rotation, transforms, n_frames):
         hr, lr = np.rot90(hr, axes=(1,2)) if choice[0] else hr, np.rot90(lr, axes=(1,2)) if choice[0] else lr
         hr, lr = np.flip(hr, axis=choice[1]), np.flip(lr, axis=choice[1])
     
-    hr = _slice_center(hr, n_frames)
+    if n_frames is not None and n_frames[0] != n_frames[1]:
+        if not n_frames[1] > hr.shape[-3]:
+            hr = _slice_center(hr, n_frames[1])
+        if not n_frames[0] > lr.shape[-3]:
+            lr = _slice_center(lr, n_frames[0])
 
     return _tensor_ready(hr, transforms), _tensor_ready(lr, transforms)
 
@@ -556,12 +564,9 @@ def _slice_image(image, n_frames, n_slices, idx):
     return image[idx:idx+n_frames]
 
 def _slice_center(image, n_frames):
-    if n_frames is None or n_frames[0] == n_frames[1] or n_frames[1] > image.shape[-3]:
-        return image
-
     center = image.shape[-3] // 2
-    half = n_frames[1] // 2
-    if n_frames[1] % 2 == 0:
+    half = n_frames // 2
+    if n_frames % 2 == 0:
         return image[...,center - half:center + half,:,:]
     else:
         return image[...,center - half:center + half + 1,:,:]

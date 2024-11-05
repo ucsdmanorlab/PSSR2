@@ -5,6 +5,7 @@ trained/
 imports/
 model_testing/
 testnapari/
+figures/
 
 *.pth
 *.lock

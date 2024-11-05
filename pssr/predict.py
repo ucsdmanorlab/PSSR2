@@ -32,6 +32,8 @@ def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", n
         images (list[np.ndarray]) : Returns predicted images if ``out_dir`` is None.
     """
     if norm and dataset.is_lr: raise ValueError("Dataset must be paired with high-low-resolution images for normalization.")
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
 
     callbacks, callback_locals = _get_callbacks(callbacks)
 
@@ -55,17 +57,16 @@ def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", n
             hr_hat = hr_hat[:,:crop_res,:crop_res]
             outs.append(hr_hat)
 
+            if out_dir:
+                tifffile.imwrite(f"{out_dir}/{prefix+'_' if prefix else ''}{dataset._get_name(idx)}.tif", np.asarray(hr_hat))
+
             for idx, callback in enumerate(callbacks):
                 if callback_locals[idx]:
                     callback(locals())
                 else:
                     callback()
 
-    if out_dir:
-        os.makedirs(out_dir, exist_ok=True)
-        for idx, hr_hat in zip(dataset.val_idx, outs):
-            tifffile.imwrite(f"{out_dir}/{prefix+'_' if prefix else ''}{dataset._get_name(idx)}.tif", np.asarray(hr_hat))
-    else:
+    if not out_dir:
         return outs
 
 def predict_collage(model : nn.Module, dataset : Dataset, device : str = "cpu", norm : bool = True, n_images : int = None, prefix : str = None, out_dir : str = "preds", callbacks = None):
@@ -229,5 +230,4 @@ def _image_stack(data, max_images : int = 5, raw : bool = True):
     return stack
 
 def _pred_array(data, n_frames=1):
-    n_frames = [0, n_frames]
     return _slice_center(np.clip(data.detach().cpu().numpy(), 0, 255).astype(np.uint8), n_frames)

@@ -260,7 +260,7 @@ class TrainProcess(QObject):
         batch_idx, log_frequency, progress = train_locals["batch_idx"], train_locals["log_frequency"], train_locals["progress"]
         if batch_idx % log_frequency == 0 or batch_idx == len(progress) - 1:
             data = train_locals["last_full"] if batch_idx == len(progress) - 1 else [train_locals["lr"].cpu(), train_locals["hr_hat"].cpu(), train_locals["hr"].cpu()]
-            lr, hr_hat, hr = [image.detach().numpy().astype(np.uint8) for image in data]
+            lr, hr_hat, hr = [np.clip(image.detach().numpy(), 0, 255).astype(np.uint8) for image in data]
             channels = max([lr.shape[1], hr_hat.shape[1], hr.shape[1]])
 
             for name, batched in zip(["LR", "PSSR", "HR"], [lr, hr_hat, hr]):
