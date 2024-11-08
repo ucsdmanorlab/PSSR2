@@ -121,6 +121,6 @@ Next Steps
 
 If you are not familar with **PSSR2** or super-resolution, understand the :doc:`principles`.
 
-For usage of **PSSR2** beyond the extents of the demo, learn how to implement your own :doc:`workflow`.
+For usage of **PSSR2** beyond the extents of the demo, learn how to implement your own :doc:`workflow <workflow>`.
 
 Full reference and explanations of all **PSSR2** tools is available in :doc:`API Reference <../reference/api>`.

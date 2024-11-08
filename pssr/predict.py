@@ -55,10 +55,11 @@ def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", n
 
             crop_res = dataset.crop_res if not dataset.is_lr else dataset.crop_res * (hr_hat.shape[-1]//lr.shape[-1])
             hr_hat = hr_hat[:,:crop_res,:crop_res]
-            outs.append(hr_hat)
 
             if out_dir:
                 tifffile.imwrite(f"{out_dir}/{prefix+'_' if prefix else ''}{dataset._get_name(idx)}.tif", np.asarray(hr_hat))
+            else:
+                outs.append(hr_hat)
 
             for idx, callback in enumerate(callbacks):
                 if callback_locals[idx]:

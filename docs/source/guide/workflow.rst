@@ -1,5 +1,5 @@
-Workflow
-=========
+PSSR2 Workflow
+===============
 
 .. note::
 

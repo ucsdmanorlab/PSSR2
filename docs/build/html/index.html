@@ -159,8 +159,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="guide/start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/principles.html">Principles of PSSR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide/workflow.html">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/workflow.html">PSSR2 Workflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/dataloading.html">Advanced Dataloading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/napari.html">Using Napari</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -249,6 +250,12 @@
 This is the official reimplementation and extention of the methods described in the original paper: <a class="reference external" href="https://www.nature.com/articles/s41592-021-01080-z">Deep learning-based point-scanning super-resolution imaging</a>.
 <strong>PSSR2</strong> contains various improvements from its predecessor, which are elaborated in our preprint:
 <a class="reference external" href="https://www.biorxiv.org/content/10.1101/2024.06.16.599221v1">PSSR2: a user-friendly Python package for democratizing deep learning-based point-scanning super-resolution microscopy</a>.</p>
+<p>The functionality of <strong>PSSR2</strong> is accessible in three ways:</p>
+<ul class="simple">
+<li><p>Directly through the <a class="reference external" href="https://pypi.org/project/pssr">Python package</a></p></li>
+<li><p>Through the integrated <a class="reference internal" href="reference/CLI.html"><span class="doc">Command Line Interface</span></a></p></li>
+<li><p>Through the integrated <a class="reference internal" href="guide/napari.html"><span class="doc">Napari plugin</span></a></p></li>
+</ul>
 <p>If you have never used <strong>PSSR2</strong> before, <a class="reference internal" href="guide/start.html"><span class="doc">Getting Started</span></a> outlines installation and basic usage.
 Full reference and explanations of all <strong>PSSR2</strong> tools is available in <a class="reference internal" href="reference/api.html"><span class="doc">API Reference</span></a>.</p>
 <p>This package is under continuous development. All code can be found at <a class="reference external" href="https://github.com/ucsdmanorlab/PSSR2">https://github.com/ucsdmanorlab/PSSR2</a>.
@@ -271,7 +278,7 @@ If you experience any bugs, unexpected behaviors, or have any suggestions, make 
 <li class="toctree-l2"><a class="reference internal" href="guide/principles.html#the-crappifier">The Crappifier</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="guide/workflow.html">Workflow</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="guide/workflow.html">PSSR2 Workflow</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="guide/workflow.html#training-a-basic-model">Training a Basic Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/workflow.html#using-the-model-for-predictions">Using the Model for Predictions</a></li>
 </ul>
@@ -279,6 +286,11 @@ If you experience any bugs, unexpected behaviors, or have any suggestions, make 
 <li class="toctree-l1"><a class="reference internal" href="guide/dataloading.html">Advanced Dataloading</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="guide/dataloading.html#multidimensional-images">Multidimensional Images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/dataloading.html#image-denoising">Image Denoising</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide/napari.html">Using Napari</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide/napari.html#train-model">Train Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/napari.html#predict-images">Predict Images</a></li>
 </ul>
 </li>
 </ul>

@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Using Napari" href="napari.html" /><link rel="prev" title="PSSR2 Workflow" href="workflow.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="pssr" href="../reference/api.html" /><link rel="prev" title="Advanced Dataloading" href="dataloading.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>Advanced Dataloading - PSSR2 2.1.1 documentation</title>
+        <title>Using Napari - PSSR2 2.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -160,8 +160,8 @@
 <li class="toctree-l1"><a class="reference internal" href="start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="principles.html">Principles of PSSR</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflow.html">PSSR2 Workflow</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Advanced Dataloading</a></li>
-<li class="toctree-l1"><a class="reference internal" href="napari.html">Using Napari</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataloading.html">Advanced Dataloading</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Using Napari</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -244,63 +244,69 @@
           </label>
         </div>
         <article role="main">
-          <section id="advanced-dataloading">
-<h1>Advanced Dataloading<a class="headerlink" href="#advanced-dataloading" title="Link to this heading">#</a></h1>
-<section id="multidimensional-images">
-<h2>Multidimensional Images<a class="headerlink" href="#multidimensional-images" title="Link to this heading">#</a></h2>
-<p><strong>PSSR2</strong> supports the use of multidimensional images.</p>
-<p>By default the dataset will provide all frames of each image/tile in a single array.
-For example, a single image with a horizontal and vertical resolution of 512 and a Z resolution of 20 will be treated as a single 20x512x512 array.</p>
-<p>However, it is often preferred that a model is trained using a lower number of frames.
-In all <strong>PSSR2</strong> datasets, the <code class="docutils literal notranslate"><span class="pre">n_frames</span></code> argument can be specified as the number of image frames to use at once.
-For example, with <code class="docutils literal notranslate"><span class="pre">n_frames=5</span></code>, the same image that was previously treated as a single 20x512x512 array would now be treated as 4 different 5x512x512 arrays.</p>
-<p>The value of <code class="docutils literal notranslate"><span class="pre">n_frames</span></code> in the dataset should correspond the value of <code class="docutils literal notranslate"><span class="pre">channels</span></code> in the model.
-That is, the number of output frames in the dataset should correspond to the amount of input channels in the model.</p>
+          <section id="using-napari">
+<h1>Using Napari<a class="headerlink" href="#using-napari" title="Link to this heading">#</a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Images are separated into training/validation sets by tile (x and y position), disregarding additional dimensions.
-This prevents overfitting as different frames from the same tile may be overly similar to one another.</p>
+<p>Napari must first be installed to use the <strong>PSSR2</strong> plugin.
+Detailed instructions can be found in the <a class="reference external" href="https://napari.org/stable/tutorials/fundamentals/installation.html">Napari Documentation</a></p>
 </div>
+<section id="train-model">
+<h2>Train Model<a class="headerlink" href="#train-model" title="Link to this heading">#</a></h2>
+<p>The <strong>PSSR2</strong> Napari plugin is automatically installed with the rest of the package.
+To access the plugin, open Napari and navigate to <code class="docutils literal notranslate"><span class="pre">Plugins</span> <span class="pre">&gt;</span> <span class="pre">PSSR2</span> <span class="pre">&gt;</span> <span class="pre">Train</span> <span class="pre">Model</span></code>.
+The training GUI will be visible on the right side of the active Napari window.</p>
+<p>The <strong>PSSR2</strong> Napari plugin is similar to the <strong>PSSR2</strong> <a class="reference internal" href="../reference/CLI.html"><span class="doc">CLI</span></a>,
+in that it exposes package features and object parameters in an easily accessible format,
+and shares much of the same functionality.
+All features included in the <a class="reference internal" href="../reference/CLI.html"><span class="doc">CLI</span></a> are also included in the Napari plugin.</p>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<section id="images-with-many-dimensions">
-<h3>Images with Many Dimensions<a class="headerlink" href="#images-with-many-dimensions" title="Link to this heading">#</a></h3>
-<p>Typically, images are passed to a neural network with 2 spacial dimensions and a channel dimension.
-For simplicity, all additional non-horizontal/vertical image dimensions are flattened to a single channel dimension by the dataset.
-For example, an image with a T (time) resolution of 10 and a Z resolution of 5 would have 50 frames (10 T frames x 5 Z frames).</p>
-<p>The order of the dimensions being combined has an effect on how the frames are handled.
-In all <strong>PSSR2</strong> datasets, the <code class="docutils literal notranslate"><span class="pre">stack</span></code> argument determines this order:</p>
+<p><a class="reference internal" href="../reference/data.html"><span class="doc">Datasets</span></a> and <a class="reference internal" href="../reference/models.html"><span class="doc">models</span></a> are defined under their respective dropdown menus.
+Here, the type of each object can be selected along with the parameters of the object.
+The <a class="reference internal" href="../reference/api.html"><span class="doc">API Reference</span></a> can be consulted for full documentation on all parameters.</p>
+<p>Different parameters types are edited in different ways.
+For example, the number of elements in a list can be increased or decreased with the rightmost buttons,
+while the values in the list can be increased or decreased with their respective buttons.</p>
+<img alt="../_images/Napari1.png" src="../_images/Napari1.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Options for training can also be defined, such as the training device, batch size, and loss function.
+By selecting <code class="docutils literal notranslate"><span class="pre">Save</span> <span class="pre">Checkpoints</span></code> or <code class="docutils literal notranslate"><span class="pre">Save</span> <span class="pre">Losses</span></code>,
+model checkpoints or training losses will be saved at the end of every epoch.
+By selecting <code class="docutils literal notranslate"><span class="pre">Load</span> <span class="pre">Checkpoint</span></code>, training can be resumed from a model checkpoint.</p>
+<p>By default, everything is saved in the folder that Napari was launched from.</p>
+<img alt="../_images/Napari2.png" src="../_images/Napari2.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>After properly defining all objects and options, the model can then be trained by selecting <code class="docutils literal notranslate"><span class="pre">Train</span> <span class="pre">Model</span></code>:</p>
+<img alt="../_images/Napari3.png" src="../_images/Napari3.png" />
+<p>The training objects/parameters will be replaced by a read-only console, similar to that in the <a class="reference internal" href="../reference/CLI.html"><span class="doc">CLI</span></a>,
+showing the status of model training over time.</p>
+<p>The performance of the model can be monitored via the Napari viewer.
+There are three viewer layers:</p>
 <ul class="simple">
-<li><p>By default, <code class="docutils literal notranslate"><span class="pre">stack=&quot;TZ&quot;</span></code>, meaning the Z dimension is flattened after the T dimension and changes more often.
-For the previous example of the 10 T frame x 5 Z frame image, <code class="docutils literal notranslate"><span class="pre">n_frames=10</span></code> would make the dataset load 5 Z frames at 2 different points in T.</p></li>
-<li><p>Setting <code class="docutils literal notranslate"><span class="pre">stack=&quot;ZT&quot;</span></code> reverses this behavior, so the T dimension is flattened after the Z dimension and changes more often.
-The image would therefore be treated as a 5 Z frame x 10 T frame image, and <code class="docutils literal notranslate"><span class="pre">n_frames=20</span></code> would make the dataset load 10 different T frames at 2 different points in Z.</p></li>
+<li><p><strong>HR</strong> (ground truth high-resolution images)</p></li>
+<li><p><strong>PSSR</strong> (PSSR super-resolution model predictions)</p></li>
+<li><p><strong>LR</strong> (crappified low-resolution images)</p></li>
 </ul>
-<p>Color channels are also considered an additional dimension that are flattened after all other dimensions if present.</p>
-<p>The dimensions that are flattened last are essentially “bound”, meaning that as long as the value of <code class="docutils literal notranslate"><span class="pre">n_frames</span></code> is a multiple of the sizes of every non-first dimension,
-the channels will all stay together in proper order.</p>
-<p>For example, consider a single 512x512 image with 10 T channels x 5 Z channels x 3 C (color) channels.
-With <code class="docutils literal notranslate"><span class="pre">n_frames=30</span></code> (5 Z frames x 3 C frames x 2 T frames) would be treated as 5 different 30x512x512 arrays at different points in T.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
+<p>Each viewer layer contains all of the images of their respective quality, updated every 50 iterations.
+There is also a plot of training losses where new points are plotted at the same frequency.</p>
+<p>When model training has completed, the trained model will be saved.</p>
 </section>
-<section id="dimensional-data">
-<h3>2.5-Dimensional Data<a class="headerlink" href="#dimensional-data" title="Link to this heading">#</a></h3>
-<p>The number of frames in the low-resolution image does not necessarily have to correspond to that of the high-resolution image.
-Consider temporal super-resolution, where multiple images at different points in time are used to produce a higher quality image at a central point in time.</p>
-<p>To do this, <code class="docutils literal notranslate"><span class="pre">n_frames</span></code> can be specified as a list with 2 elements, corresponding to the number frames in both high-resolution and low-resolution images.
-For example, with a high-resolution training image with 20 T frames, a value of <code class="docutils literal notranslate"><span class="pre">n_frames=[5,1]</span></code> would process data equivalently to <code class="docutils literal notranslate"><span class="pre">n_frames=5</span></code>,
-but only return the central T frame for the high-resolution image while returning all 5 T frames for the low-resolution image.</p>
-</section>
-</section>
-<section id="image-denoising">
-<h2>Image Denoising<a class="headerlink" href="#image-denoising" title="Link to this heading">#</a></h2>
-<p>While the <strong>PSSR2</strong> package is mainly used for image super-resolution, it can be used for image denoising as well.
-Set the <code class="docutils literal notranslate"><span class="pre">lr_scale=1</span></code> with an equivalent <code class="docutils literal notranslate"><span class="pre">scale</span></code> value in the model, and <code class="docutils literal notranslate"><span class="pre">hr_res</span></code> equal to the denoising image resolution.</p>
-<p>Multidimensional and 2.5-dimensional images can be used with this approach as well,
-meaning that <strong>PSSR2</strong> can be used for things such as temporal super-resolution without necessarily needing to be used for image super-resolution as well.</p>
+<section id="predict-images">
+<h2>Predict Images<a class="headerlink" href="#predict-images" title="Link to this heading">#</a></h2>
+<p>To super-resolve images using a trained model from the previous step,
+open Napari and navigate to <code class="docutils literal notranslate"><span class="pre">Plugins</span> <span class="pre">&gt;</span> <span class="pre">PSSR2</span> <span class="pre">&gt;</span> <span class="pre">Predict</span> <span class="pre">Images</span></code>.
+The predict GUI will be visible on the right side of the active Napari window.</p>
+<p>The <a class="reference internal" href="../reference/data.html"><span class="doc">dataset</span></a> and <a class="reference internal" href="../reference/models.html"><span class="doc">model</span></a> objects will be visible again.
+The dataset should now be defined with the low-resolution images to be super-resolved.
+The model must have the same settings as the trained model to be properly loaded.</p>
+<p>After entering the path to the trained model, the given low-resolution images can be super-resolved by selecting <code class="docutils literal notranslate"><span class="pre">Predict</span> <span class="pre">Images</span></code>.
+The predicted images will then be saved to the <code class="docutils literal notranslate"><span class="pre">preds</span></code> folder relative to where Napari was launched from.</p>
 </section>
 </section>
 
@@ -309,23 +315,23 @@ meaning that <strong>PSSR2</strong> can be used for things such as temporal supe
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="napari.html">
+          <a class="next-page" href="../reference/api.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Using Napari</div>
+                <div class="title">pssr</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="workflow.html">
+          <a class="prev-page" href="dataloading.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">PSSR2 Workflow</div>
+                <div class="title">Advanced Dataloading</div>
                 
               </div>
             </a>
@@ -359,13 +365,9 @@ meaning that <strong>PSSR2</strong> can be used for things such as temporal supe
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Advanced Dataloading</a><ul>
-<li><a class="reference internal" href="#multidimensional-images">Multidimensional Images</a><ul>
-<li><a class="reference internal" href="#images-with-many-dimensions">Images with Many Dimensions</a></li>
-<li><a class="reference internal" href="#dimensional-data">2.5-Dimensional Data</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#image-denoising">Image Denoising</a></li>
+<li><a class="reference internal" href="#">Using Napari</a><ul>
+<li><a class="reference internal" href="#train-model">Train Model</a></li>
+<li><a class="reference internal" href="#predict-images">Predict Images</a></li>
 </ul>
 </li>
 </ul>

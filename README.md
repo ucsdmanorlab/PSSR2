@@ -5,6 +5,12 @@ This is the official reimplementation and extention of the methods described in 
 **PSSR2** contains various improvements from its predecessor, which are elaborated in our preprint:
 [PSSR2: a user-friendly Python package for democratizing deep learning-based point-scanning super-resolution microscopy](https://www.biorxiv.org/content/10.1101/2024.06.16.599221v1).
 
+The functionality of **PSSR2** is accessible in three ways:
+
+- Directly through the [Python package](https://pypi.org/project/pssr)
+- Through the integrated [Command Line Interface](https://ucsdmanorlab.github.io/PSSR2/reference/CLI.html)
+- Through the integrated [Napari plugin](https://ucsdmanorlab.github.io/PSSR2/guide/napari.html)
+
 The **PSSR2** User Guide and full API Reference is available in the [PSSR2 Documentation](https://ucsdmanorlab.github.io/PSSR2).
 
 If you have never used **PSSR2** before, [Getting Started](https://ucsdmanorlab.github.io/PSSR2/guide/start.html) outlines installation and basic usage.
