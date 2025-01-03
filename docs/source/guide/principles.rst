@@ -3,11 +3,10 @@ Principles of PSSR
 
 .. note::
 
-   This section can be considered an abbreviation of important concepts covered in the full **PSSR** paper,
-   `Deep learning-based point-scanning super-resolution imaging <https://www.nature.com/articles/s41592-021-01080-z>`_.
-
-   This page will soon be updated to contain information contained within the **PSSR2** preprint,
-   `PSSR2: a user-friendly Python package for democratizing deep learning-based point-scanning super-resolution microscopy <https://www.biorxiv.org/content/10.1101/2024.06.16.599221v1>`_.
+   This section can be considered an abbreviation of important concepts covered in the original **PSSR** manuscript,
+   `Deep learning-based point-scanning super-resolution imaging <https://www.nature.com/articles/s41592-021-01080-z>`_,
+   and in the **PSSR2** manuscript,
+   `PSSR2: a user-friendly Python package for democratizing deep learning-based point-scanning super-resolution microscopy <https://bmcmethods.biomedcentral.com/articles/10.1186/s44330-024-00020-5>`_.
 
 
 Why Use PSSR
