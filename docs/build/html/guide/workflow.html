@@ -5,12 +5,12 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Advanced Dataloading" href="dataloading.html" /><link rel="prev" title="Principles of PSSR" href="principles.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>PSSR2 Workflow - PSSR2 2.1.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
-    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>PSSR2 Workflow - PSSR2 2.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
     
     
 
@@ -69,7 +69,7 @@
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -84,22 +84,63 @@
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
 </svg>
@@ -113,6 +154,8 @@
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
 
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
 
 
 <div class="page">
@@ -124,13 +167,14 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">PSSR2 2.1.1 documentation</div></a>
+      <a href="../index.html"><div class="brand">PSSR2 2.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
         <button class="theme-toggle">
           <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
@@ -147,7 +191,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">PSSR2 2.1.1 documentation</span>
+  <span class="sidebar-brand-text">PSSR2 2.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -229,11 +273,17 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/guide/workflow.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
 <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
@@ -243,40 +293,37 @@
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
-        <article role="main">
+        <article role="main" id="furo-main-content">
           <section id="pssr2-workflow">
-<h1>PSSR2 Workflow<a class="headerlink" href="#pssr2-workflow" title="Link to this heading">#</a></h1>
+<h1>PSSR2 Workflow<a class="headerlink" href="#pssr2-workflow" title="Link to this heading">¶</a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This section explains how to use an example <strong>PSSR2</strong> workflow, similar to that implemented in the CLI.
 It does not necessarily apply to all use cases and is meant to be expanded upon.</p>
 </div>
 <section id="training-a-basic-model">
-<h2>Training a Basic Model<a class="headerlink" href="#training-a-basic-model" title="Link to this heading">#</a></h2>
+<h2>Training a Basic Model<a class="headerlink" href="#training-a-basic-model" title="Link to this heading">¶</a></h2>
 <p>Before diving into the code, we will first specify our imports.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">pssr.data</span> <span class="kn">import</span> <span class="n">ImageDataset</span>
-<span class="kn">from</span> <span class="nn">pssr.crappifiers</span> <span class="kn">import</span> <span class="n">Poisson</span>
-<span class="kn">from</span> <span class="nn">pssr.models</span> <span class="kn">import</span> <span class="n">ResUNet</span>
-<span class="kn">from</span> <span class="nn">pssr.util</span> <span class="kn">import</span> <span class="n">SSIMLoss</span>
-<span class="kn">from</span> <span class="nn">pssr.train</span> <span class="kn">import</span> <span class="n">train_paired</span>
-<span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">ReduceLROnPlateau</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pssr.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pssr.crappifiers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Poisson</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pssr.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResUNet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pssr.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">SSIMLoss</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pssr.train</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_paired</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.optim.lr_scheduler</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReduceLROnPlateau</span>
 </pre></div>
 </div>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <section id="defining-objects">
-<h3>Defining Objects<a class="headerlink" href="#defining-objects" title="Link to this heading">#</a></h3>
+<h3>Defining Objects<a class="headerlink" href="#defining-objects" title="Link to this heading">¶</a></h3>
 <p>Before we define our dataset we must first define our <a class="reference internal" href="../reference/crappifiers/Crappifier.html"><span class="doc">Crappifier</span></a>, as it is utilized by our dataset.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">crappifier</span> <span class="o">=</span> <span class="n">Poisson</span><span class="p">(</span><span class="n">intensity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This sets the <code class="docutils literal notranslate"><span class="pre">crappifier</span></code> variable to an instance of the <a class="reference internal" href="../reference/crappifiers/Poisson.html"><span class="doc">Poisson</span></a> crappifier with default arguments.
 It will be used to synthetically generate <em>low-resolution</em> images to train on, given the <em>high-resolution</em> images in our dataset.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <p>Which dataset to use depends on the format of your images.
 If you are using multidimensional or time series images, consider learning <a class="reference internal" href="dataloading.html"><span class="doc">Advanced Dataloading</span></a>.</p>
 <p>In this example, we will use <a class="reference internal" href="../reference/data/ImageDataset.html"><span class="doc">ImageDataset</span></a>, assuming that our images are already sliced.</p>
@@ -292,9 +339,6 @@ generate <em>low-resolution</em> images <code class="docutils literal notranslat
 <p class="admonition-title">Note</p>
 <p>Users are advised to keep image resolutions to a power of 2 even if the raw input images have a different size.
 This is elaborated in <a class="reference internal" href="../reference/models.html"><span class="doc">models</span></a>.</p>
-</div>
-<div class="line-block">
-<div class="line"><br /></div>
 </div>
 <p>The last thing we need to define before training is our model.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ResUNet</span><span class="p">(</span>
@@ -312,21 +356,15 @@ The other arguments specify the number of channels per hidden layer, and the dep
 </div>
 </section>
 <section id="train-arguments">
-<h3>Train Arguments<a class="headerlink" href="#train-arguments" title="Link to this heading">#</a></h3>
+<h3>Train Arguments<a class="headerlink" href="#train-arguments" title="Link to this heading">¶</a></h3>
 <p>As we are training on a synthetic paired <em>high-low-resolution</em> dataset, we will use the <a class="reference internal" href="../reference/train/train_paired.html"><span class="doc">train_paired</span></a> function.</p>
 <p>For simplicity, we will define our arguments before beginning training.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <p>We will first define our loss function.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">SSIMLoss</span><span class="p">(</span><span class="n">mix</span><span class="o">=</span><span class="mf">.8</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>While MSE loss can also be used to good results, we will instead use <a class="reference internal" href="../reference/util/SSIMLoss.html"><span class="doc">SSIMLoss</span></a> here, which will optimize visually significant elements our predictions.
 The <code class="docutils literal notranslate"><span class="pre">mix</span></code> argument controls the inverse contribution of corrected L1 loss, while the <code class="docutils literal notranslate"><span class="pre">ms</span></code> argument enables MS-SSIM, a more robust version of SSIM.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <p>We also need to provide an optimizer.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">optim</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
 <span class="n">scheduler</span> <span class="o">=</span> <span class="n">ReduceLROnPlateau</span><span class="p">(</span><span class="n">optim</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">patience</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -334,9 +372,6 @@ The <code class="docutils literal notranslate"><span class="pre">mix</span></cod
 </div>
 <p>This defines the optimizer of our model with starting learning rate of 1e-3.
 By defining a scheduler, the learning rate of the optimizer will decay by <code class="docutils literal notranslate"><span class="pre">factor=0.1</span></code> after model performance doesn’t improve for <code class="docutils literal notranslate"><span class="pre">patience=5</span></code> epochs.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <p>And finally we define our miscellaneous arguments.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">16</span>
 <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
@@ -354,7 +389,7 @@ The batch size can be adjusted depending on the amount of memory available for t
 </div>
 </section>
 <section id="training">
-<h3>Training<a class="headerlink" href="#training" title="Link to this heading">#</a></h3>
+<h3>Training<a class="headerlink" href="#training" title="Link to this heading">¶</a></h3>
 <p>We can now train our model using the <a class="reference internal" href="../reference/train/train_paired.html"><span class="doc">train_paired</span></a> function.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">losses</span> <span class="o">=</span> <span class="n">train_paired</span><span class="p">(</span>
    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
@@ -372,18 +407,12 @@ The batch size can be adjusted depending on the amount of memory available for t
 <p>While training, various metrics will be provided along with the loss to easily monitor progress.</p>
 <p>Additionally, at the end of every epoch a collage will be saved to the <code class="docutils literal notranslate"><span class="pre">preds</span></code> folder containing
 <em>low-resolution</em> crappified images, upscaled <em>high-resolution</em> predictions, and ground truth <em>high-resolution</em> images in that order.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <p>After training is over, we should save our model for future use.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="s2">&quot;model.pth&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <p>We can also plot the training losses returned by <a class="reference internal" href="../reference/train/train_paired.html"><span class="doc">train_paired</span></a> to see the progress of our model over time.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
 </pre></div>
@@ -391,12 +420,9 @@ The batch size can be adjusted depending on the amount of memory available for t
 </section>
 </section>
 <section id="using-the-model-for-predictions">
-<h2>Using the Model for Predictions<a class="headerlink" href="#using-the-model-for-predictions" title="Link to this heading">#</a></h2>
+<h2>Using the Model for Predictions<a class="headerlink" href="#using-the-model-for-predictions" title="Link to this heading">¶</a></h2>
 <p>We now have our trained model, which takes in <em>low-resolution</em> input images and outputs upscaled <em>high-resolution</em> images.</p>
 <p>There are now two things we can do with our trained model, use it for predictions, or benchmark it.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <p>If you decide to run your model predictions in a separate file, you will want to load your trained model before proceeding with</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;model.pth&quot;</span><span class="p">))</span>
 </pre></div>
@@ -406,13 +432,10 @@ The batch size can be adjusted depending on the amount of memory available for t
 <div class="line"><br /></div>
 </div>
 <section id="predicting-images">
-<h3>Predicting Images<a class="headerlink" href="#predicting-images" title="Link to this heading">#</a></h3>
+<h3>Predicting Images<a class="headerlink" href="#predicting-images" title="Link to this heading">¶</a></h3>
 <p>To use our model, we will use the <a class="reference internal" href="../reference/predict/predict_images.html"><span class="doc">predict_images</span></a> function.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pssr.predict</span> <span class="kn">import</span> <span class="n">predict_images</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pssr.predict</span><span class="w"> </span><span class="kn">import</span> <span class="n">predict_images</span>
 </pre></div>
-</div>
-<div class="line-block">
-<div class="line"><br /></div>
 </div>
 <p>During the training phase, we loaded <em>high-resolution</em> images to create synthetic <em>low-resolution</em> images using a <a class="reference internal" href="../reference/crappifiers/Crappifier.html"><span class="doc">Crappifier</span></a>.
 While predicting images, we will instead use experimentally acquired <em>low-resolution</em> images to predict upscaled <em>high-resolution</em> images.</p>
@@ -422,9 +445,6 @@ While predicting images, we will instead use experimentally acquired <em>low-res
 </div>
 <p>The <em>low-resolution</em> images are implied to have a horizontal and vertical resolution of 128 (<code class="docutils literal notranslate"><span class="pre">hr_res=512</span></code> / <code class="docutils literal notranslate"><span class="pre">lr_scale=4</span></code>).
 A crappifier does not have to be specified, as it will not be used.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <p>We can now use our model to upscale the <em>low-resolution</em> images.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">predict_images</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">test_dataset</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
 </pre></div>
@@ -435,7 +455,7 @@ A crappifier does not have to be specified, as it will not be used.</p>
 </div>
 </section>
 <section id="benchmarking-the-model">
-<h3>Benchmarking the Model<a class="headerlink" href="#benchmarking-the-model" title="Link to this heading">#</a></h3>
+<h3>Benchmarking the Model<a class="headerlink" href="#benchmarking-the-model" title="Link to this heading">¶</a></h3>
 <p>If you have a dataset containing aligned <em>high-low-resolution</em> pairs (every <em>high-resolution</em> image has an aligned <em>low-resolution</em> counterpart),
 we can use <a class="reference internal" href="../reference/predict/test_metrics.html"><span class="doc">test_metrics</span></a> to quantify the performance of our model on real world data.</p>
 <div class="admonition note">
@@ -443,17 +463,11 @@ we can use <a class="reference internal" href="../reference/predict/test_metrics
 <p>Metrics can still be acquired from training datasets with only <em>high-resolution</em> images,
 but they will only represent training performance on crappified data and may not represent real world performance.</p>
 </div>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <p>We can do this by creating a new <a class="reference internal" href="../reference/data/PairedImageDataset.html"><span class="doc">PairedImageDataset</span></a> instance, containing our <em>high-low-resolution</em> image pairs.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">paired_dataset</span> <span class="o">=</span> <span class="n">PairedImageDataset</span><span class="p">(</span><span class="s2">&quot;your/hr&quot;</span><span class="p">,</span> <span class="s2">&quot;your/lr&quot;</span><span class="p">,</span> <span class="n">hr_res</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">lr_scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The images in each folder should be properly aligned and have a similar naming/ordering scheme so that they are returned in the same order when that dataset is iterated.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <p>We can then compute metrics for all images.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">test_metrics</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">paired_dataset</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 </pre></div>
@@ -540,10 +554,10 @@ but they will only represent training performance on crappified data and may not
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=841abef3"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+</div><script src="../_static/documentation_options.js?v=b21de401"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/scripts/furo.js?v=32e29ea5"></script>
-    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     </body>
 </html>

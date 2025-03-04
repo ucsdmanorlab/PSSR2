@@ -85,14 +85,19 @@ def train_paired(
         print(f"Epoch {epoch}:")
 
         progress = tqdm(train_dataloader)
-        for batch_idx, (hr, lr) in enumerate(progress):
+        for batch_idx, data in enumerate(progress):
+            if dataset.extra_hr_files is None:
+                hr, lr = data
+            else:
+                (hr, lr), extra = data
+                extra = extra.to(device)
             hr, lr = hr.to(device), lr.to(device)
 
             hr_hat = model(lr)
             if clamp:
                 hr_hat = torch.clamp(hr_hat, 0, image_range)
 
-            loss = loss_fn(hr_hat/image_range, hr/image_range)
+            loss = loss_fn(hr_hat/image_range, hr/image_range) if dataset.extra_hr_files is None else loss_fn(hr_hat/image_range, hr/image_range, extra/image_range)
             loss.backward()
             optim.step()
             optim.zero_grad()
@@ -121,14 +126,19 @@ def train_paired(
         progress = tqdm(val_dataloader)
 
         with torch.no_grad():
-            for batch_idx, (hr, lr) in enumerate(progress):
+            for batch_idx, data in enumerate(progress):
+                if dataset.extra_hr_files is None:
+                    hr, lr = data
+                else:
+                    (hr, lr), extra = data
+                    extra = extra.to(device)
                 hr, lr = hr.to(device), lr.to(device)
 
                 hr_hat = model(lr)
                 if clamp:
                     hr_hat = torch.clamp(hr_hat, 0, image_range)
 
-                loss = loss_fn(hr_hat/image_range, hr/image_range)
+                loss = loss_fn(hr_hat/image_range, hr/image_range) if dataset.extra_hr_files is None else loss_fn(hr_hat/image_range, hr/image_range, extra/image_range)
                 val_loss.append(loss.item())
 
                 if batch_idx == max(len(progress), 2) - 2:

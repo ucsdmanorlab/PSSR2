@@ -15,8 +15,6 @@ Before installing **PSSR2**, you may want to create an environment for it with
 
 or the equivalent for any other environment manager if you chose to do so.
 
-|
-
 .. note::
 
    The package name of **PSSR2** is ``pssr``! All modules are referenced as such.
@@ -52,8 +50,6 @@ The CLI can run in either *train* or *predict* mode. It takes in a number of aru
 Keep in mind that arguments representing an object such as a dataset or model can be defined as a class declaration with additonal arguments in Python syntax as a string.
 For example ``--model-type`` could be given as ``-mt "ResUNet(hidden=[128, 256], scale=4)"``. 
 
-|
-
 If you do not have access to a microscopy dataset, a sample EM training dataset can be found
 `here <https://drive.google.com/file/d/1Sirrh180WrkHgPR0S8_43-f0S2GaK7iZ/view>`__ containing *high-resolution* 512x512 images (``hr_res=512``) with a pixel size of 2nm.
 Real-world EM *high-low-resolution* image pairs for testing can be found `here <https://drive.google.com/file/d/1BI6K5r65ubn3Vj866ikUUj8VVqHT0j-4/view>`__ of the same resolution.
@@ -74,8 +70,6 @@ A model can be trained by running
 where ``your/path`` is replaced with the path of your training dataset (folder containing *high-resolution* images/image sheets).
 
 The *low-resolution* images will generated via :doc:`../reference/crappifiers/Crappifier`, which is explained in :doc:`principles`.
-
-|
 
 The trained model will be saved in your current directory.
 
@@ -99,8 +93,6 @@ The `-mp` argument must be set to the path of your trained model. The predicted 
    :doc:`../reference/data/SlidingDataset` does not automatically detect *low-resolution* inputs.
    ``hr_res`` must be lowered to the size of the *low-resolution* image and ``lr_scale`` must be set to -1.
 
-|
-
 If a :doc:`../reference/data/PairedImageDataset` instance with *high-low-resolution* image pairs is given as the dataset, additional performance metrics will be calculated.
 To define both *high-resolution* and *low-resolution* data paths, provide both paths in order separated by a comma for the ``-dp`` argument
 
@@ -109,8 +101,6 @@ To define both *high-resolution* and *low-resolution* data paths, provide both p
    $ pssr -dp your/hr,your/lr -dt PairedImageDataset
 
 where ``your/hr`` and ``your/lr`` are repleaced by your *high-resolution* and *low-resolution* data paths respectively.
-
-|
 
 If *high-resolution* images are given using an :doc:`../reference/data/ImageDataset`,
 then *low-resolution* images will be generated via :doc:`../reference/crappifiers/Crappifier` and performance metrics will still be calculated.

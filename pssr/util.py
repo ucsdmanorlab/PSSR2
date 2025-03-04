@@ -51,7 +51,7 @@ class SSIMLoss(nn.Module):
             x = self.mix*x + (1-self.mix)*l1
         return x
     
-def reassemble_sheets(pred_path : Path, lr_path : Path, lr_scale : int, overlap : int = 0, margin : int = 0, out_dir : str = "preds"):
+def reassemble_sheets(pred_path : Path, lr_path : Path, lr_scale : int, overlap : int = 0, margin : int = 0, out_dir : str = "sheets"):
     r"""Reassembles image sheets from tiled images created during prediction by sliding datasets.
     
     Args:
@@ -78,27 +78,26 @@ def reassemble_sheets(pred_path : Path, lr_path : Path, lr_scale : int, overlap 
         raise ValueError(f"The value of margin cannot be greater than overlap. Given {margin} and {overlap} respectively.")
 
     sheet_files = glob.glob(f"{lr_path}/*.tif", recursive=True)
-    # sheet_files = list(set(["_".join(file.split('/')[-1].split('.')[0].split("_")[:-2]) for file in glob.glob(f"{path}/*.tif", recursive=True)]))
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
 
     outs = []
     for sheet in sheet_files:
         files = sorted(glob.glob(f"{pred_path}/{sheet.split('/')[-1].split('.')[0]}*"), key=_sort_tiles)
-        # files = sorted(glob.glob(f"{path}/{sheet}*"), key=_sort_tiles)
         batched = np.asarray([_frame_channel(Image.open(file)).squeeze() for file in files])
 
         lr_shape = _frame_channel(Image.open(sheet)).squeeze().shape
         
-        # TODO: Check n_rows and n_cols are in correct order
         n_rows, n_cols = (lr_shape[1] * lr_scale - batched.shape[1]) // (batched.shape[1] - overlap * lr_scale) + 1, (lr_shape[2] * lr_scale - batched.shape[2]) // (batched.shape[2] - overlap * lr_scale) + 1
 
-        outs.append(np.asarray([_patch_images(batched[idx*n_rows*n_cols:idx*n_rows*n_cols+n_rows*n_cols], n_cols, n_rows, overlap * lr_scale, margin) for idx in range(lr_shape[0])], dtype=np.uint8))
+        out_stacks = batched.shape[0]//n_rows//n_cols
 
-    if out_dir:
-        os.makedirs(out_dir, exist_ok=True)
-        for idx, sheet in enumerate(sheet_files):
-            tifffile.imwrite(f"{out_dir}/{sheet.split('/')[-1].split('.')[0]}.tif", outs[idx])
-    else:
-        return outs
+        image = np.asarray([_patch_images(batched[idx*n_rows*n_cols:idx*n_rows*n_cols+n_rows*n_cols], n_cols, n_rows, overlap * lr_scale, margin) for idx in range(out_stacks)], dtype=np.uint8)
+
+        if out_dir:
+            tifffile.imwrite(f"{out_dir}/{sheet.split('/')[-1].split('.')[0]}.tif", image)
+        else:
+            outs.append(image)
 
 def _sort_tiles(name : str):
     parts = name.replace(".", "_").split("_")

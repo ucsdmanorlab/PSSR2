@@ -11,4 +11,4 @@ figures/
 *.lock
 *.txt
 
-test.ipynb
+/*.ipynb

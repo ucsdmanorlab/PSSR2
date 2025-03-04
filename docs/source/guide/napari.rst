@@ -18,30 +18,23 @@ in that it exposes package features and object parameters in an easily accessibl
 and shares much of the same functionality.
 All features included in the :doc:`../reference/CLI` are also included in the Napari plugin.
 
-|
-
 :doc:`Datasets <../reference/data>` and :doc:`../reference/models` are defined under their respective dropdown menus.
 Here, the type of each object can be selected along with the parameters of the object.
 The :doc:`API Reference <../reference/api>` can be consulted for full documentation on all parameters.
 
 Different parameters types are edited in different ways.
 For example, the number of elements in a list can be increased or decreased with the rightmost buttons,
-while the values in the list can be increased or decreased with their respective buttons.
+while the values in the list can be increased or decreased with their respective buttons:
 
 .. image:: ../images/Napari1.png
-
-|
 
 Options for training can also be defined, such as the training device, batch size, and loss function.
 By selecting ``Save Checkpoints`` or ``Save Losses``,
 model checkpoints or training losses will be saved at the end of every epoch.
 By selecting ``Load Checkpoint``, training can be resumed from a model checkpoint.
-
-By default, everything is saved in the folder that Napari was launched from.
+By default, everything is saved in the folder that Napari was launched from:
 
 .. image:: ../images/Napari2.png
-
-|
 
 After properly defining all objects and options, the model can then be trained by selecting ``Train Model``:
 

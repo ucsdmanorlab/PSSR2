@@ -19,10 +19,10 @@ ADVANCED_PARAMS = {
 
 IGNORE_PARAMS = {
     SwinIR : [15],
-    ImageDataset : [3,9],
-    SlidingDataset : [3,12],
+    ImageDataset : [3,11],
+    SlidingDataset : [3,15],
     PairedImageDataset : [9],
-    PairedSlidingDataset : [12],
+    PairedSlidingDataset : [13],
 }
 
 class ObjectEdit(QWidget):

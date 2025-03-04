@@ -7,8 +7,10 @@ from PIL import Image
 from .crappifiers import Crappifier, Poisson
 from .util import _force_list
 
+# TODO: dataset call: return (hr, lr), extra or hr, lr
+
 class ImageDataset(Dataset):
-    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), n_frames : list[int] = -1, extension : str = "tif", val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, transforms : list[torch.nn.Module] = None):
+    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), n_frames : list[int] = -1, extension : str = "tif", val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, extra_path : Path = None, extra_scale : int = 1, transforms : list[torch.nn.Module] = None):
         r"""Training dataset for loading high-resolution images from individual files and returning high-low-resolution pairs, the latter receiving crappification.
 
         Dataset used for pre-tiled image files. For image sheets (e.g. .czi files), use :class:`SlidingDataset`.
@@ -35,6 +37,10 @@ class ImageDataset(Dataset):
 
             split_seed (int) : Seed for random train/evaluation data splitting. A value of None splits the last images as evaluation. Default is 0.
 
+            extra_path (Path) : Optional path to folder containing images with additional information to be used in training loss functions. Each image in `path` must have a corresponding image of the same shape with a scale factor of extra_scale. Default is None.
+
+            extra_scale (int) : Scale factor for extra images. Default is 1.
+
             transforms (list[nn.Module]) : Additional final data transforms to apply. Default is None.
         """
         super().__init__()
@@ -43,6 +49,18 @@ class ImageDataset(Dataset):
 
         self.hr_files = _root_glob(f"*.{extension}", root_dir=self.path)
         if not len(self.hr_files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{self.path}".')
+
+        if extra_path is not None:
+            self.extra_path = Path(extra_path) if type(extra_path) is str else extra_path
+            if not extra_path or not self.extra_path.exists(): raise FileNotFoundError(f'Extra path "{self.extra_path}" does not exist.')
+
+            self.extra_hr_files = _root_glob(f"*.{extension}", root_dir=self.extra_path)
+            if not len(self.extra_hr_files) > 0: raise FileNotFoundError(f'No .{extension} files exist in extra path "{self.extra_path}".')
+
+            if len(self.hr_files) != len(self.extra_hr_files): raise FileNotFoundError(f'Number of files in "path" and "extra_path" are not equal. Found {len(self.hr_files)} files and {len(self.extra_hr_files)} files respectively.')
+        else:
+            self.extra_path = None
+            self.extra_hr_files = None
 
         lr_scale = None if lr_scale == -1 else lr_scale
         self.mode = "L"
@@ -55,6 +73,12 @@ class ImageDataset(Dataset):
             self.slices.append(1 if self.n_frames is None else image.n_frames // max(self.n_frames))
             max_size = max(max(image.size), max_size)
 
+            if self.extra_hr_files is not None:
+                extra_image = Image.open(Path(self.extra_path, self.extra_hr_files[image_idx]))
+                needed_extra = tuple([size * extra_scale for size in image.shape[1:]])
+                if extra_image.shape[1:] != needed_extra: raise ValueError(f'The corresponding image to "{self.hr_files[image_idx]}" does not have the correct shape. From image shape of {image.shape[1:]} and "extra_scale" of {extra_scale}, expected extra image shape of {needed_extra}, but got {extra_image.shape[1:]}.')
+                if image.shape[0] != extra_image.shape[0] and self.n_frames is not None: raise ValueError(f'The corresponding image to "{self.hr_files[image_idx]}" does not have the correct number of frames. n_frames must be -1 if number of image and extra_image frames are not equal. Respective number of frames are {image.shape[0]} and {extra_image.shape[0]}')
+
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed)
         self.crop_res = min(hr_res, max_size)
 
@@ -64,10 +88,13 @@ class ImageDataset(Dataset):
             if val_split < 1:
                 warnings.warn("val_split is less than 1, not all low-resolution images will be used in prediciton.", stacklevel=2)
 
+            # if self.extra_path is not None: raise ValueError("extra_path cannot be provided when LR mode is enabled.")
+
         self.hr_res = hr_res
         self.lr_scale = lr_scale if lr_scale is not None else 1
         self.crappifier = crappifier
         self.rotation = rotation
+        self.extra_scale = extra_scale
         self.transforms = transforms
 
     def __getitem__(self, idx, pp=False):
@@ -78,11 +105,19 @@ class ImageDataset(Dataset):
 
         hr = _load_image(self.path, self.hr_files[image_idx], self.mode, max(self.n_frames) if self.n_frames is not None else None, self.slices[image_idx], idx)
         
-        if self.is_lr:
-            # Rotation and crappifier is disabled in lr mode
-            return _ready_lr(hr, self.hr_res//self.lr_scale, self.transforms)
+        cur_rot = [bool(random.getrandbits(1)), random.choice((1,2,(1,2)))] if self.rotation and not is_val else False
 
-        return _gen_pair(hr, self.hr_res, self.lr_scale, False if is_val else self.rotation, self.crappifier, self.transforms, self.n_frames)
+        out =  _gen_pair(hr, self.hr_res, self.lr_scale, cur_rot, self.crappifier, self.transforms, self.n_frames) if not self.is_lr else _ready_lr(hr, self.hr_res//self.lr_scale, self.transforms)
+
+        if self.extra_hr_files is not None:
+            extra = _load_image(self.extra_path, self.extra_hr_files[image_idx], self.mode, max(self.n_frames) if self.n_frames is not None else None, self.slices[image_idx], idx)
+            if cur_rot:
+                extra = np.rot90(extra, axes=(1,2)) if cur_rot[0] else extra
+                extra = np.flip(extra, axis=cur_rot[1])
+            extra = _tensor_ready(extra, self.transforms)
+            return out, extra
+        else:
+            return out
     
     def __len__(self):
         return sum(self.slices)
@@ -95,7 +130,7 @@ class ImageDataset(Dataset):
         return self.hr_files[image_idx].split('.')[0] + (f"_{idx}" if self.n_frames is not None else "")
 
 class SlidingDataset(Dataset):
-    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), overlap : int = 128, n_frames : list[int] = -1, stack : str = "TZ", extension : str = "czi", preload : bool = True, val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, transforms : list[torch.nn.Module] = None):
+    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), overlap : int = 128, n_frames : list[int] = -1, slide : bool = False, stack : str = "TZ", extension : str = "czi", preload : bool = True, val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, extra_path : Path = None, extra_scale : int = 1, transforms : list[torch.nn.Module] = None):
         r"""Training dataset for loading high-resolution image tiles from image sheets and returning high-low-resolution pairs, the latter receiving crappification.
 
         Dataset used for image sheets (e.g. .czi files). For pre-tiled image files, use :class:`ImageDataset`.
@@ -115,6 +150,8 @@ class SlidingDataset(Dataset):
 
             n_frames (list[int]) : Amount of stacked frames per image tile. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
 
+            slide (bool) : Whether to slide over stack dimensions rather than taking discrete non-overlapping slices, increasing the effective size of the dataset. Should not be used if more than one dimension is stacked. Default is False.
+
             stack (str) : Multiframe stack handling mode, e.g "T" for time stack, "Z" for z dimension stack, "TZ" or "ZT" for both, determining flattenting order. Only applicable if loading from czi. Default is "TZ".
 
             extension (str) : File extension of images. Default is "czi".
@@ -127,14 +164,30 @@ class SlidingDataset(Dataset):
 
             split_seed (int) : Seed for random train/evaluation data splitting. A value of None splits the last images as evaluation. Default is 0.
 
+            extra_path (Path) : Optional path to folder containing images with additional information to be used in training loss functions. Each image in `path` must have a corresponding image of the same shape with a scale factor of extra_scale. Default is None.
+
+            extra_scale (int) : Scale factor for extra images. Default is 1.
+
             transforms (list[nn.Module]) : Additional final data transforms to apply. Default is None.
         """
         super().__init__()
         self.path = Path(path) if type(path) is str else path
         if not path or not self.path.exists(): raise FileNotFoundError(f'Path "{self.path}" does not exist.')
-        
+
         self.hr_files = _root_glob(f"*.{extension}", root_dir=self.path)
         if not len(self.hr_files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{self.path}".')
+
+        if extra_path is not None:
+            self.extra_path = Path(extra_path) if type(extra_path) is str else extra_path
+            if not extra_path or not self.extra_path.exists(): raise FileNotFoundError(f'Extra path "{self.extra_path}" does not exist.')
+
+            self.extra_hr_files = _root_glob(f"*.{extension}", root_dir=self.extra_path)
+            if not len(self.extra_hr_files) > 0: raise FileNotFoundError(f'No .{extension} files exist in extra path "{self.extra_path}".')
+
+            if len(self.hr_files) != len(self.extra_hr_files): raise FileNotFoundError(f'Number of files in "path" and "extra_path" are not equal. Found {len(self.hr_files)} files and {len(self.extra_hr_files)} files respectively.')
+        else:
+            self.extra_path = None
+            self.extra_hr_files = None
 
         overlap = 0 if overlap is None else overlap
         if not hr_res > overlap: raise ValueError(f"hr_res must be greater than overlap. Given values are {hr_res} and {overlap} respectively.")
@@ -144,15 +197,23 @@ class SlidingDataset(Dataset):
         lr_scale = None if lr_scale == -1 else lr_scale
         self.mode = "L"
         self.n_frames = _get_n_frames(n_frames)
+        self.slide = slide
         
         self.preload = _preload(preload, [self.path], [self.hr_files], self.mode, self.stack)
+        self.extra_preload = _preload(preload, [self.extra_path], [self.extra_hr_files], self.mode, self.stack) if self.extra_hr_files is not None else None
 
         self.tiles, self.slices = [], []
         for image_idx in range(len(self.hr_files)):
             image = self.preload[image_idx] if self.preload else _load_sheet(self.path, self.hr_files[image_idx], self.stack, self.mode)
             tiles_x, tiles_y = _n_tiles(image, hr_res, self.stride)
             self.tiles.append(tiles_x * tiles_y)
-            self.slices.append(1 if self.n_frames is None else image.shape[0] // max(self.n_frames))
+            self.slices.append(1 if self.n_frames is None else ((image.shape[0] - max(self.n_frames) + 1) if slide else (image.shape[0] // max(self.n_frames))))
+
+            if self.extra_hr_files is not None:
+                extra_image = self.extra_preload[image_idx] if self.extra_preload else _load_sheet(self.extra_path, self.extra_hr_files[image_idx], self.stack, self.mode)
+                needed_extra = tuple([size * extra_scale for size in image.shape[1:]])
+                if extra_image.shape[1:] != needed_extra: raise ValueError(f'The corresponding image to "{self.hr_files[image_idx]}" does not have the correct shape. From image shape of {image.shape[1:]} and "extra_scale" of {extra_scale}, expected extra image shape of {needed_extra}, but got {extra_image.shape[1:]}.')
+                if image.shape[0] != extra_image.shape[0] and self.n_frames is not None: raise ValueError(f'The corresponding image to "{self.hr_files[image_idx]}" does not have the correct number of frames. n_frames must be -1 if number of image and extra_image frames are not equal. Respective number of frames are {image.shape[0]} and {extra_image.shape[0]}')
 
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed, self.tiles)
         self.crop_res = hr_res
@@ -163,10 +224,13 @@ class SlidingDataset(Dataset):
             if val_split < 1:
                 warnings.warn("val_split is less than 1, not all low-resolution images will be used in prediciton.", stacklevel=2)
 
+            # if self.extra_path is not None: raise ValueError("extra_path cannot be provided when LR mode is enabled.")
+
         self.hr_res = hr_res
         self.lr_scale = lr_scale
         self.crappifier = crappifier
         self.rotation = rotation
+        self.extra_scale = extra_scale
         self.transforms = transforms
     
     def __getitem__(self, idx, pp=False):
@@ -175,12 +239,21 @@ class SlidingDataset(Dataset):
         is_val = idx in self.val_idx or pp
         image_idx, idx = _get_image_idx(idx, self.slices, self.tiles)
 
-        hr = _sliding_window(self.preload[image_idx] if self.preload else _load_sheet(self.path, self.hr_files[image_idx], self.stack, self.mode), self.hr_res, self.stride, max(self.n_frames) if self.n_frames is not None else None, self.slices[image_idx], idx)
+        hr = _sliding_window(self.preload[image_idx] if self.preload else _load_sheet(self.path, self.hr_files[image_idx], self.stack, self.mode), self.hr_res, self.stride, max(self.n_frames) if self.n_frames is not None else None, self.slices[image_idx], idx, self.slide)
 
-        if self.is_lr:
-            return _ready_lr(hr, self.hr_res, self.transforms)
+        cur_rot = [bool(random.getrandbits(1)), random.choice((1,2,(1,2)))] if self.rotation and not is_val else False
 
-        return _gen_pair(hr, self.hr_res, self.lr_scale, False if is_val else self.rotation, self.crappifier, self.transforms, self.n_frames)
+        out = _gen_pair(hr, self.hr_res, self.lr_scale, cur_rot, self.crappifier, self.transforms, self.n_frames) if not self.is_lr else _ready_lr(hr, self.hr_res, self.transforms)
+
+        if self.extra_hr_files is not None:
+            extra = _sliding_window(self.extra_preload[image_idx] if self.extra_preload else _load_sheet(self.extra_path, self.extra_hr_files[image_idx], self.stack, self.mode), self.hr_res*self.extra_scale, self.stride*self.extra_scale, max(self.n_frames) if self.n_frames is not None else None, self.slices[image_idx], idx, self.slide)
+            if cur_rot:
+                extra = np.rot90(extra, axes=(1,2)) if cur_rot[0] else extra
+                extra = np.flip(extra, axis=cur_rot[1])
+            extra = _tensor_ready(extra, self.transforms)
+            return out, extra
+        else:
+            return out
     
     def __len__(self):
         return sum([self.tiles[idx] * self.slices[idx] for idx in range(len(self.hr_files))])
@@ -242,6 +315,7 @@ class PairedImageDataset(Dataset):
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed)
         self.is_lr = False
         self.crop_res = min(hr_res, max_size)
+        self.extra_hr_files = None
 
         self.hr_res = hr_res
         self.lr_scale = lr_scale
@@ -257,7 +331,9 @@ class PairedImageDataset(Dataset):
         hr = _load_image(self.hr_path, self.hr_files[image_idx], self.mode, self.n_frames[1] if self.n_frames is not None else None, self.slices[image_idx], idx)
         lr = _load_image(self.lr_path, self.lr_files[image_idx], self.mode, self.n_frames[0] if self.n_frames is not None else None, self.slices[image_idx], idx)
 
-        return _transform_pair(hr, lr, self.hr_res, self.hr_res//self.lr_scale, False if is_val else self.rotation, self.transforms, self.n_frames)
+        cur_rot = [bool(random.getrandbits(1)), random.choice((1,2,(1,2)))] if self.rotation and not is_val else False
+
+        return _transform_pair(hr, lr, self.hr_res, self.hr_res//self.lr_scale, cur_rot, self.transforms, self.n_frames)
     
     def __len__(self):
         return sum(self.slices)
@@ -270,7 +346,7 @@ class PairedImageDataset(Dataset):
         return self.lr_files[image_idx].split('.')[0] + (f"_{idx}" if self.n_frames is not None else "")
 
 class PairedSlidingDataset(Dataset):
-    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, overlap : int = 128, n_frames : list[int] = -1, stack : str = "TZ", extension : str = "czi", preload : bool = True, val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None):
+    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, overlap : int = 128, n_frames : list[int] = -1, slide : bool = False, stack : str = "TZ", extension : str = "czi", preload : bool = True, val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None):
         r"""Testing dataset for loading high-low-resolution image tiles from image sheets without crappification. Can also be used for approximating :class:`Crappifier` parameters.
 
         Dataset used for image sheets (e.g. .czi files). For pre-tiled image files, use :class:`ImageDataset`.
@@ -287,6 +363,8 @@ class PairedSlidingDataset(Dataset):
             overlap (int) : Overlapping pixels between neighboring tiles to increase effective dataset size. Default is 128.
 
             n_frames (list[int]) : Amount of stacked frames per image tile. Can also be list of low-resolution and high-resolution stack amounts respectively. A value of -1 uses all stacked image frames. Default is -1.
+
+            slide (bool) : Whether to slide over stack dimensions rather than taking discrete non-overlapping slices, increasing the effective size of the dataset. Should not be used if more than one dimension is stacked. Default is False.
 
             stack (str) : Multiframe stack handling mode, e.g "T" for time stack, "Z" for z dimension stack, "TZ" or "ZT" for both, determining flattenting order. Only applicable if loading from czi. Default is "TZ".
 
@@ -321,6 +399,7 @@ class PairedSlidingDataset(Dataset):
         self.stack = stack.upper()
         self.mode = "L"
         self.n_frames = _get_n_frames(n_frames)
+        self.slide = slide
 
         self.preload = _preload(preload, [self.hr_path, self.lr_path], [self.hr_files, self.lr_files], self.mode, self.stack)
 
@@ -329,11 +408,12 @@ class PairedSlidingDataset(Dataset):
             image = self.preload[0][image_idx] if self.preload else _load_sheet(self.hr_path, self.hr_files[image_idx], self.stack, self.mode)
             tiles_x, tiles_y = _n_tiles(image, hr_res, self.stride)
             self.tiles.append(tiles_x * tiles_y)
-            self.slices.append(1 if self.n_frames is None else image.shape[0] // max(self.n_frames))
+            self.slices.append(1 if self.n_frames is None else ((image.shape[0] - max(self.n_frames) + 1) if slide else (image.shape[0] // max(self.n_frames))))
 
         self.val_idx = _get_val_idx(self.slices, val_split, split_seed, self.tiles)
         self.is_lr = False
         self.crop_res = hr_res
+        self.extra_hr_files = None
 
         self.hr_res = hr_res
         self.lr_scale = lr_scale
@@ -346,10 +426,12 @@ class PairedSlidingDataset(Dataset):
         is_val = idx in self.val_idx or pp
         image_idx, idx = _get_image_idx(idx, self.slices, self.tiles)
 
-        hr = _sliding_window(self.preload[0][image_idx] if self.preload else _load_sheet(self.hr_path, self.hr_files[image_idx], self.stack, self.mode), self.hr_res, self.stride, self.n_frames[1] if self.n_frames is not None else None, self.slices[image_idx], idx)
-        lr = _sliding_window(self.preload[1][image_idx] if self.preload else _load_sheet(self.lr_path, self.lr_files[image_idx], self.stack, self.mode), self.hr_res//self.lr_scale, self.stride//self.lr_scale, self.n_frames[0] if self.n_frames is not None else None, self.slices[image_idx], idx)
+        hr = _sliding_window(self.preload[0][image_idx] if self.preload else _load_sheet(self.hr_path, self.hr_files[image_idx], self.stack, self.mode), self.hr_res, self.stride, self.n_frames[1] if self.n_frames is not None else None, self.slices[image_idx], idx, self.slide)
+        lr = _sliding_window(self.preload[1][image_idx] if self.preload else _load_sheet(self.lr_path, self.lr_files[image_idx], self.stack, self.mode), self.hr_res//self.lr_scale, self.stride//self.lr_scale, self.n_frames[0] if self.n_frames is not None else None, self.slices[image_idx], idx, self.slide)
 
-        return _transform_pair(hr, lr, self.hr_res, self.hr_res//self.lr_scale, False if is_val else self.rotation, self.transforms, self.n_frames)
+        cur_rot = [bool(random.getrandbits(1)), random.choice((1,2,(1,2)))] if self.rotation and not is_val else False
+
+        return _transform_pair(hr, lr, self.hr_res, self.hr_res//self.lr_scale, cur_rot, self.transforms, self.n_frames)
     
     def __len__(self):
         return sum([self.tiles[idx] * self.slices[idx] for idx in range(len(self.hr_files))])
@@ -394,8 +476,8 @@ def _gen_pair(hr, hr_res, lr_scale, rotation, crappifier, transforms, n_frames):
     
     # Set random rotation and flip in xy axis
     if rotation:
-        hr = np.rot90(hr, axes=(1,2)) if bool(random.getrandbits(1)) else hr
-        hr = np.flip(hr, axis=random.choice((1,2,(1,2))))
+        hr = np.rot90(hr, axes=(1,2)) if rotation[0] else hr
+        hr = np.flip(hr, axis=rotation[1])
 
     # Crappification
     lr = np.stack([Image.fromarray(channel).resize(([hr_res//lr_scale]*2), Image.Resampling.BILINEAR) for channel in hr])
@@ -422,10 +504,8 @@ def _transform_pair(hr, lr, hr_res, lr_res, rotation, transforms, n_frames):
     lr = _pad_image(lr, lr_res)
 
     if rotation:
-        choice = bool(random.getrandbits(1)), random.choice((0,1,(0,1)))
-
-        hr, lr = np.rot90(hr, axes=(1,2)) if choice[0] else hr, np.rot90(lr, axes=(1,2)) if choice[0] else lr
-        hr, lr = np.flip(hr, axis=choice[1]), np.flip(lr, axis=choice[1])
+        hr, lr = np.rot90(hr, axes=(1,2)) if rotation[0] else hr, np.rot90(lr, axes=(1,2)) if rotation[0] else lr
+        hr, lr = np.flip(hr, axis=rotation[1]), np.flip(lr, axis=rotation[1])
     
     if n_frames is not None and n_frames[0] != n_frames[1]:
         if not n_frames[1] > hr.shape[-3]:
@@ -444,7 +524,7 @@ def _ready_lr(lr, lr_res, transforms):
     return _tensor_ready(lr, transforms)
 
 def _tensor_ready(image, transforms):
-    image = torch.tensor(image.copy(), dtype=torch.float)
+    image = torch.tensor(image.copy().astype(np.float32), dtype=torch.float)
 
     # Additional nn.Module user transforms
     if transforms is not None:
@@ -479,18 +559,25 @@ def _preload(preload, path, files, mode, stack):
     if size > memory:
         warnings.warn(f"Total dataset size {size:.2f}GB is greater than available memory of {memory:.2f}GB. Consider disabling preloading to avoid potential slowdowns.", stacklevel=2)
 
-    print(f"Preloading {sum([len(item) for item in files])} images into memory...")
+    print(f"Preloading {sum([len(item) for item in files])} image sheets into memory...")
     preload = [[_load_sheet(idx_path, file, stack, mode) for file in idx_files] for idx_path, idx_files in zip(path, files)]
     return preload[0] if len(preload) == 1 else preload
 
 def _load_image(path, file, mode, n_frames, slices, idx):
-    hr = Image.open(Path(path, file))
+    extension = file.split(".")[-1].lower()
+    if extension in ("tif", "tiff"):
+        image = tifffile.imread(Path(path, file))
+        if len(image.shape) < 3:
+            image = image[np.newaxis]
+    else:
+        image = Image.open(Path(path, file))
+        image = _frame_channel(image, mode)
 
-    hr = _frame_channel(hr, mode)
-    return _slice_image(hr, n_frames, slices, idx)
+    # TODO: Allow slide for ImageDataset?
+    return _slice_image(image, n_frames, slices, idx, slide=False)
 
 def _load_sheet(path, file, stack, mode):
-    extension = file.split(".")[-1]
+    extension = file.split(".")[-1].lower()
     if extension == "czi":
         # Retrieve same channel information from czi regardless of channel order
         image = czifile.CziFile(Path(path, file))
@@ -530,11 +617,16 @@ def _load_sheet(path, file, stack, mode):
         if image.max() != 0:
             image = image / (image.max() / 255)
         return image.astype(np.uint8)
+    elif extension in ("tif", "tiff"):
+        image = tifffile.imread(Path(path, file))
+        if len(image.shape) < 3:
+            image = image[np.newaxis]
+        return image
     else:
         image = Image.open(Path(path, file))
         return _frame_channel(image, mode)
 
-def _sliding_window(image, size, stride, n_frames, n_slices, idx):
+def _sliding_window(image, size, stride, n_frames, n_slices, idx, slide):
     tiles_x, tiles_y = _n_tiles(image, size, stride)
     tile_idx = idx // n_slices
 
@@ -543,7 +635,7 @@ def _sliding_window(image, size, stride, n_frames, n_slices, idx):
 
     image = image[..., start_x:start_x + size, start_y:start_y + size]
 
-    return _slice_image(image, n_frames, n_slices, idx)
+    return _slice_image(image, n_frames, n_slices, idx, slide)
 
 def _frame_channel(image, mode = "L"):
     # Create frame dimension
@@ -554,13 +646,17 @@ def _frame_channel(image, mode = "L"):
     
     return image
 
-def _slice_image(image, n_frames, n_slices, idx):
+def _slice_image(image, n_frames, n_slices, idx, slide):
     if n_frames == None:
         return image
     
     # Only need to calculate residual idx of specific tile
-    idx = idx % n_slices
-    idx *= n_frames
+    if slide:
+        idx = idx % n_slices
+    else:
+        idx = idx % n_slices
+        idx *= n_frames
+
     return image[idx:idx+n_frames]
 
 def _slice_center(image, n_frames):

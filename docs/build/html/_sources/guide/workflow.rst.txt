@@ -36,8 +36,6 @@ Before we define our dataset we must first define our :doc:`../reference/crappif
 This sets the ``crappifier`` variable to an instance of the :doc:`../reference/crappifiers/Poisson` crappifier with default arguments.
 It will be used to synthetically generate *low-resolution* images to train on, given the *high-resolution* images in our dataset.
 
-|
-
 Which dataset to use depends on the format of your images.
 If you are using multidimensional or time series images, consider learning :doc:`dataloading`.
 
@@ -58,8 +56,6 @@ generate *low-resolution* images ``lr_scale=4`` times smaller than the *high-res
 
    Users are advised to keep image resolutions to a power of 2 even if the raw input images have a different size.
    This is elaborated in :doc:`../reference/models`.
-
-|
 
 The last thing we need to define before training is our model.
 
@@ -84,8 +80,6 @@ As we are training on a synthetic paired *high-low-resolution* dataset, we will 
 
 For simplicity, we will define our arguments before beginning training.
 
-|
-
 We will first define our loss function.
 
 .. code-block:: python
@@ -94,8 +88,6 @@ We will first define our loss function.
 
 While MSE loss can also be used to good results, we will instead use :doc:`../reference/util/SSIMLoss` here, which will optimize visually significant elements our predictions.
 The ``mix`` argument controls the inverse contribution of corrected L1 loss, while the ``ms`` argument enables MS-SSIM, a more robust version of SSIM.
-
-|
 
 We also need to provide an optimizer.
 
@@ -106,8 +98,6 @@ We also need to provide an optimizer.
 
 This defines the optimizer of our model with starting learning rate of 1e-3.
 By defining a scheduler, the learning rate of the optimizer will decay by ``factor=0.1`` after model performance doesn't improve for ``patience=5`` epochs.
-
-|
 
 And finally we define our miscellaneous arguments.
 
@@ -150,15 +140,11 @@ While training, various metrics will be provided along with the loss to easily m
 Additionally, at the end of every epoch a collage will be saved to the ``preds`` folder containing
 *low-resolution* crappified images, upscaled *high-resolution* predictions, and ground truth *high-resolution* images in that order.
 
-|
-
 After training is over, we should save our model for future use.
 
 .. code-block:: python
 
    torch.save(model.state_dict(), "model.pth")
-
-|
 
 We can also plot the training losses returned by :doc:`../reference/train/train_paired` to see the progress of our model over time.
 
@@ -175,8 +161,6 @@ Using the Model for Predictions
 We now have our trained model, which takes in *low-resolution* input images and outputs upscaled *high-resolution* images.
 
 There are now two things we can do with our trained model, use it for predictions, or benchmark it.
-
-|
 
 If you decide to run your model predictions in a separate file, you will want to load your trained model before proceeding with
 
@@ -197,8 +181,6 @@ To use our model, we will use the :doc:`../reference/predict/predict_images` fun
 
    from pssr.predict import predict_images
 
-|
-
 During the training phase, we loaded *high-resolution* images to create synthetic *low-resolution* images using a :doc:`../reference/crappifiers/Crappifier`.
 While predicting images, we will instead use experimentally acquired *low-resolution* images to predict upscaled *high-resolution* images.
 
@@ -210,8 +192,6 @@ We can do this by creating the same :doc:`../reference/data/ImageDataset`, only 
 
 The *low-resolution* images are implied to have a horizontal and vertical resolution of 128 (``hr_res=512`` / ``lr_scale=4``).
 A crappifier does not have to be specified, as it will not be used.
-
-|
 
 We can now use our model to upscale the *low-resolution* images.
 
@@ -234,8 +214,6 @@ we can use :doc:`../reference/predict/test_metrics` to quantify the performance 
    Metrics can still be acquired from training datasets with only *high-resolution* images,
    but they will only represent training performance on crappified data and may not represent real world performance.
 
-|
-
 We can do this by creating a new :doc:`../reference/data/PairedImageDataset` instance, containing our *high-low-resolution* image pairs.
 
 .. code-block:: python
@@ -243,8 +221,6 @@ We can do this by creating a new :doc:`../reference/data/PairedImageDataset` ins
    paired_dataset = PairedImageDataset("your/hr", "your/lr", hr_res=512, lr_scale=4)
 
 The images in each folder should be properly aligned and have a similar naming/ordering scheme so that they are returned in the same order when that dataset is iterated.
-
-|
 
 We can then compute metrics for all images.
 

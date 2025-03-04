@@ -198,7 +198,7 @@ def test_metrics(model : nn.Module, dataset : Dataset, device : str = "cpu", met
 
     return {metric:(sum(values)/len(values) if avg else values) for metric, values in metrics.items()}
 
-def _collage_preds(lr, hr_hat, hr, norm : bool = True, max_images : int = 5, crop_res : int = None, lr_scale : int = 4):
+def _collage_preds(lr, hr_hat, hr, norm : bool = False, max_images : int = 5, crop_res : int = None, lr_scale : int = 4):
     crop_res = hr_hat.shape[-1] if crop_res is None else crop_res
     lr_scale = int(hr_hat.shape[-1]/lr.shape[-1]) if lr_scale is None else lr_scale
 

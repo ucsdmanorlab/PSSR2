@@ -24,7 +24,7 @@ copyright = "2024, Hayden Stites"
 author = "Hayden Stites"
 
 # The full version, including alpha/beta/rc tags
-release = "2.1.1"
+release = "2.2.0"
 
 
 # -- General configuration ---------------------------------------------------

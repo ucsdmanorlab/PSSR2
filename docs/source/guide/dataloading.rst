@@ -59,6 +59,7 @@ To do this, ``n_frames`` can be specified as a list with 2 elements, correspondi
 For example, with a high-resolution training image with 20 T frames, a value of ``n_frames=[5,1]`` would process data equivalently to ``n_frames=5``,
 but only return the central T frame for the high-resolution image while returning all 5 T frames for the low-resolution image.
 
+
 Image Denoising
 ----------------
 
