@@ -44,7 +44,7 @@ class PSSRWidget(QWidget):
         if is_train:
             self.epochs = create_widget(value=10, name="Epochs")
             self.lr = create_widget(value=0.001, name="Learning Rate", options=dict(step=1e-5))
-            self.patience = create_widget(value=3, name="Patience")
+            self.gamma = create_widget(value=0.5, name="Learning Rate Decay")
             self.loss_fn = ComboBox(name="Loss Function", choices=["MS-SSIM", "SSIM", "MSE"])
             self.checkpoint = create_widget(value=False, name="Save Checkpoints")
             self.losses = create_widget(value=False, name="Save Losses")
@@ -59,7 +59,7 @@ class PSSRWidget(QWidget):
             self.params.append(self.epochs)
             self.params.append(self.batch_size)
             self.params.append(self.lr)
-            self.params.append(self.patience)
+            self.params.append(self.gamma)
             self.params.append(self.loss_fn)
             self.params.append(self.checkpoint)
             self.params.append(self.losses)
@@ -102,7 +102,7 @@ class PSSRWidget(QWidget):
                 epochs=self.epochs.value,
                 batch_size=self.batch_size.value,
                 lr=self.lr.value,
-                patience=self.patience.value,
+                gamma=self.gamma.value,
                 loss_fn=self.loss_fn.value,
                 checkpoint=self.checkpoint.value,
                 losses=self.losses.value,
@@ -201,7 +201,7 @@ class TrainProcess(QObject):
     if USE_PLOT:
         loss = Signal(float)
 
-    def __init__(self, model, dataset, device, epochs, batch_size, lr, patience, loss_fn, checkpoint, losses, model_path):
+    def __init__(self, model, dataset, device, epochs, batch_size, lr, gamma, loss_fn, checkpoint, losses, model_path):
         super().__init__()
         self.model = model
         self.dataset = dataset
@@ -209,7 +209,7 @@ class TrainProcess(QObject):
         self.epochs = epochs
         self.batch_size = batch_size
         self.lr = lr
-        self.patience = patience
+        self.gamma = gamma
         self.loss_fn = loss_fn
         self.checkpoint = checkpoint
         self.losses = losses
@@ -234,7 +234,7 @@ class TrainProcess(QObject):
                 epochs=self.epochs,
                 batch_size=self.batch_size,
                 lr=self.lr,
-                patience=self.patience,
+                gamma=self.gamma,
                 loss_fn=self.loss_fn,
                 checkpoint=self.checkpoint,
                 losses=self.losses,
@@ -322,7 +322,7 @@ class PredictProcess(QObject):
                 epochs=None,
                 batch_size=None,
                 lr=None,
-                patience=None,
+                gamma=None,
                 loss_fn=None,
                 checkpoint=None,
                 losses=None,

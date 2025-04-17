@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pssr"
-version = "2.2.0"
+version = "2.3.0"
 description = "Point-Scanning Super-Resolution 2"
 authors = ["Hayden Stites"]
 readme = "README.md"
@@ -33,6 +33,7 @@ tqdm = "^4.0.0"
 pytorch-msssim = "^1.0.0"
 psutil = ">=5.0.0"
 timm = ">=0.8.0"
+magicgui = ">=0.6.0, <=0.8.2"
 
 napari = {version = "^0.4.13", optional = true}
 

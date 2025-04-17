@@ -1,7 +1,7 @@
 import sys
 sys.path.append("..")
 
-import torch, argparse
+import torch, argparse, warnings
 from torch.nn import MSELoss
 from pssr.models import ResUNet, ResUNetA, RDResUNet, RDResUNetA, SwinIR
 from pssr.data import ImageDataset, SlidingDataset, PairedImageDataset, PairedSlidingDataset
@@ -9,6 +9,7 @@ from pssr.crappifiers import MultiCrappifier, Poisson, AdditiveGaussian, SaltPep
 from pssr.util import SSIMLoss, _tab_string
 from pssr.train import train_paired
 from pssr.predict import predict_images, test_metrics
+from pssr import __version__
 
 IS_NAPARI = False
 
@@ -23,7 +24,7 @@ def _handle_declaration(arg, defaults, req=None):
     return eval(expression)
 
 def parse():
-    parser = argparse.ArgumentParser(prog="pssr", description="PSSR2 CLI for basic usage", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(prog="pssr", description=f"PSSR2 CLI for basic usage (v{__version__})", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument("-t", "--train", action="store_true", help="enable train mode")
 
@@ -34,8 +35,8 @@ def parse():
 
     parser.add_argument("-e", "--epochs", type=int, default=10, help="specify number of training epochs")
     parser.add_argument("-b", "--batch-size", type=int, default=16, help="specify batch size")
-    parser.add_argument("-lr", "--lr", type=float, default=1e-3, help="specify learning rate")
-    parser.add_argument("-p", "--patience", type=int, default=3, help="specify learning rate decay patience")
+    parser.add_argument("-lr", "--lr", type=float, default=1e-3, help="specify initial learning rate")
+    parser.add_argument("-g", "--gamma", type=float, default=0.7, help="specify learning rate decay factor")
     parser.add_argument("-mse", "--mse", action="store_true", help="use MSE loss instead of MS-SSIM loss")
 
     parser.add_argument("-cp", "--checkpoint", action="store_true", help="save model checkpoints during training")
@@ -61,10 +62,10 @@ def main():
     dataset = _handle_declaration(args.data_type, ["ImageDataset", "SlidingDataset", "PairedImageDataset", "PairedSlidingDataset"], 
         req=[f"'{item.strip()}'" for item in args.data_path.split(",")] + (["val_split=1"] if not args.train else []))
     
-    pssr_head(args.train, model, dataset, None, args.epochs, args.batch_size, args.lr, args.patience, args.mse, args.checkpoint, args.save_losses, args.model_path)
+    pssr_head(args.train, model, dataset, None, args.epochs, args.batch_size, args.lr, args.gamma, args.mse, args.checkpoint, args.save_losses, args.model_path)
     print("\n")
 
-def pssr_head(train, model, dataset, device, epochs, batch_size, lr, patience, loss_fn, checkpoint, losses, model_path, callbacks = None, stage = None, metrics = None):
+def pssr_head(train, model, dataset, device, epochs, batch_size, lr, gamma, loss_fn, checkpoint, losses, model_path, callbacks = None, stage = None, metrics = None):
     # Shared code with napari plugin
     if stage is not None:
         global IS_NAPARI
@@ -101,23 +102,26 @@ def pssr_head(train, model, dataset, device, epochs, batch_size, lr, patience, l
     
     if not IS_NAPARI:
         if train:
-            func = lambda : _train_meta(model, dataset, device, epochs, batch_size, lr, patience, loss_fn, checkpoint, losses)
+            func = lambda : _train_meta(model, dataset, device, epochs, batch_size, lr, gamma, loss_fn, checkpoint, losses)
         else:
             func = lambda : _predict_meta(model, dataset, device)
     else:
         if train:
-            func = lambda : _train_meta(model, dataset, device, epochs, batch_size, lr, patience, loss_fn, checkpoint, losses, callbacks, stage)
+            func = lambda : _train_meta(model, dataset, device, epochs, batch_size, lr, gamma, loss_fn, checkpoint, losses, callbacks, stage)
         else:
             func = lambda : _predict_meta(model, dataset, device, callbacks, stage, metrics)
     # Move model to cpu after completion, useful for napari
     _cpu_wrapper(func, model)
 
-def _train_meta(model, dataset, device, epochs, batch_size, lr, patience, loss_fn, checkpoint, losses, callbacks = None, stage = None):
+def _train_meta(model, dataset, device, epochs, batch_size, lr, gamma, loss_fn, checkpoint, losses, callbacks = None, stage = None):
     if not IS_NAPARI:
         loss_fn = MSELoss() if loss_fn else SSIMLoss()
     optim = torch.optim.AdamW(model.parameters(), lr=lr)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, factor=0.1, patience=patience, threshold=5e-3, verbose=True)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        scheduler = torch.optim.lr_scheduler.ExponentialLR(optim, gamma, verbose=True)
     checkpoint_dir = "checkpoints" if checkpoint else None
+    collage_dir = "collages" if losses else None
 
     kwargs = dict(
         num_workers = 4,
@@ -138,6 +142,7 @@ def _train_meta(model, dataset, device, epochs, batch_size, lr, patience, loss_f
         device=device,
         scheduler=scheduler,
         checkpoint_dir=checkpoint_dir,
+        collage_dir=collage_dir,
         dataloader_kwargs=kwargs,
         callbacks=callbacks,
     )

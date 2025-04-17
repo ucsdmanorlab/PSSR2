@@ -672,9 +672,12 @@ def _seek_channel(image, idx):
     image.seek(idx)
     return image
 
-def _root_glob(search, root_dir):
-    files = glob.glob(f"{root_dir}/{search}")
-    return sorted([item.split("/")[-1] for item in files])
+def _root_glob(search, root_dir, recursive : bool = True):
+    if recursive:
+        files = glob.glob(f"{root_dir}/**/{search}", recursive=True)
+    else:
+        files = glob.glob(f"{root_dir}/{search}")
+    return sorted([item.split(str(root_dir))[-1].strip("/") for item in files])
 
 def _n_tiles(image, size, stride):
     x, y = image.shape[-2:]

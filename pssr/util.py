@@ -64,7 +64,7 @@ def reassemble_sheets(pred_path : Path, lr_path : Path, lr_scale : int, overlap 
         overlap (int) : Overlap between adjacent low-resolution images tiles. Should be the same value as dataset. Default is 0.
 
         margin (int) : Size of margins for overlapping inner image tiles. The generated image sheet doesn't include margin pixels.
-            It is recommended to increase this value to reduce grid artifacts. Must be smaller than overlap. Default is 0.
+            It is recommended to increase this value to reduce grid artifacts. Cannot be larger than overlap. Default is 0.
 
         out_dir (str) : Directory to save images. A value of None returns images. Default is "preds".
     
@@ -86,7 +86,7 @@ def reassemble_sheets(pred_path : Path, lr_path : Path, lr_scale : int, overlap 
         files = sorted(glob.glob(f"{pred_path}/{sheet.split('/')[-1].split('.')[0]}*"), key=_sort_tiles)
         batched = np.asarray([_frame_channel(Image.open(file)).squeeze() for file in files])
 
-        lr_shape = _frame_channel(Image.open(sheet)).squeeze().shape
+        lr_shape = _frame_channel(Image.open(sheet)).shape
         
         n_rows, n_cols = (lr_shape[1] * lr_scale - batched.shape[1]) // (batched.shape[1] - overlap * lr_scale) + 1, (lr_shape[2] * lr_scale - batched.shape[2]) // (batched.shape[2] - overlap * lr_scale) + 1
 
