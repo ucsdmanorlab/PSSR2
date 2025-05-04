@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pssr"
-version = "2.3.0"
+version = "2.3.0-post1"
 description = "Point-Scanning Super-Resolution 2"
 authors = ["Hayden Stites"]
 readme = "README.md"
