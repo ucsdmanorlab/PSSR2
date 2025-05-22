@@ -1,6 +1,7 @@
 import numpy as np
 from abc import ABC, abstractmethod
 from skimage.util import random_noise
+from skimage.filters import gaussian
 
 class Crappifier(ABC):
     r"""Crappifier base class for custom crappifiers. Override the :meth:`crappify` method for logic.
@@ -60,7 +61,7 @@ class AdditiveGaussian(Crappifier):
 
     def crappify(self, image : np.ndarray):
         intensity = max(np.random.normal(self.intensity, self.spread), 0) if self.spread > 0 else self.intensity
-        return image + np.random.normal(self.gain, intensity, image.shape)
+        return image.astype(np.float32) + np.random.normal(self.gain, intensity, image.shape)
     
 class Poisson(Crappifier):
     def __init__(self, intensity : float = 1, gain : float = 0, spread : float = 0):
@@ -78,7 +79,7 @@ class Poisson(Crappifier):
         self.spread = spread
         
     def crappify(self, image : np.ndarray):
-        return self._interpolate(image, np.random.poisson(np.clip(image, 0, np.inf))) + self.gain
+        return self._interpolate(image.astype(np.float32), np.random.poisson(np.clip(image, 0, np.inf))) + self.gain
     
     def _interpolate(self, x, y):
         intensity = max(np.random.normal(self.intensity, self.spread), 0) if self.spread > 0 else self.intensity
@@ -101,4 +102,23 @@ class SaltPepper(Crappifier):
         
     def crappify(self, image : np.ndarray):
         intensity = max(np.random.normal(self.intensity, self.spread), 0) if self.spread > 0 else self.intensity
-        return random_noise(np.clip(image + self.gain, 0, 255)/255, mode="s&p", amount=intensity) * 255
+        return random_noise(np.clip(image.astype(np.float32) + self.gain, 0, 255)/255, mode="s&p", amount=intensity) * 255
+
+class Blur(Crappifier):
+    def __init__(self, intensity : float = 2, gain : float = 0, spread : float = 0):
+        r"""Crappifier using Gaussian blurring. Adds Gaussian blur to a low resolution image.
+
+        Args:
+            intensity (float) : Sigma standard deviation of Gaussian kernel. Higher values introduce more blurring to the image. Default is 2.
+
+            gain (float) : Value gain added to the output. Default is 0.
+
+            spread (float) : Standard deviation of crappifier intensity for training on a range of crappifications. Default is 0.
+        """
+        self.intensity = intensity
+        self.gain = gain
+        self.spread = spread
+
+    def crappify(self, image : np.ndarray):
+        intensity = max(np.random.normal(self.intensity, self.spread), 0) if self.spread > 0 else self.intensity
+        return gaussian(image.astype(np.float32), intensity, channel_axis=0) + self.gain

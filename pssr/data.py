@@ -130,7 +130,7 @@ class ImageDataset(Dataset):
         return self.hr_files[image_idx].split('.')[0] + (f"_{idx}" if self.n_frames is not None else "")
 
 class SlidingDataset(Dataset):
-    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), overlap : int = 128, n_frames : list[int] = -1, slide : bool = False, stack : str = "TZ", extension : str = "czi", preload : bool = True, val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, extra_path : Path = None, extra_scale : int = 1, transforms : list[torch.nn.Module] = None):
+    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), overlap : int = 128, n_frames : list[int] = -1, slide : bool = False, stack : str = "TZ", extension : str = "tif", preload : bool = True, val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, extra_path : Path = None, extra_scale : int = 1, transforms : list[torch.nn.Module] = None):
         r"""Training dataset for loading high-resolution image tiles from image sheets and returning high-low-resolution pairs, the latter receiving crappification.
 
         Dataset used for image sheets (e.g. .czi files). For pre-tiled image files, use :class:`ImageDataset`.
@@ -346,7 +346,7 @@ class PairedImageDataset(Dataset):
         return self.lr_files[image_idx].split('.')[0] + (f"_{idx}" if self.n_frames is not None else "")
 
 class PairedSlidingDataset(Dataset):
-    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, overlap : int = 128, n_frames : list[int] = -1, slide : bool = False, stack : str = "TZ", extension : str = "czi", preload : bool = True, val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None):
+    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, overlap : int = 128, n_frames : list[int] = -1, slide : bool = False, stack : str = "TZ", extension : str = "tif", preload : bool = True, val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None):
         r"""Testing dataset for loading high-low-resolution image tiles from image sheets without crappification. Can also be used for approximating :class:`Crappifier` parameters.
 
         Dataset used for image sheets (e.g. .czi files). For pre-tiled image files, use :class:`ImageDataset`.
@@ -480,7 +480,7 @@ def _gen_pair(hr, hr_res, lr_scale, rotation, crappifier, transforms, n_frames):
         hr = np.flip(hr, axis=rotation[1])
 
     # Crappification
-    lr = np.stack([Image.fromarray(channel).resize(([hr_res//lr_scale]*2), Image.Resampling.BILINEAR) for channel in hr])
+    lr = np.stack([Image.fromarray(channel).resize(([hr_res//lr_scale]*2), Image.Resampling.BILINEAR) for channel in hr]).astype(np.float32)
     if crappifier is not None:
         # Allows either Crappifier or nn.Module (or any callable function) to be used as a crappifier
         lr = crappifier.crappify(lr) if issubclass(type(crappifier), Crappifier) else crappifier(lr)
@@ -718,7 +718,7 @@ def _get_val_idx(slices, split, seed, tiles=None):
     if seed is not None and split < 1:
         np.random.seed(seed)
         np.random.shuffle(val_slices)
-    val_slices = val_slices[-max(1,int(split*len(slices))):]
+    val_slices = set(val_slices[-max(1,int(split*len(slices))):])
     
     # Convert image indexes to frame indexes for dataloading
     val_idx, idx = [], 0

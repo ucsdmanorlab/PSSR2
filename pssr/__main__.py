@@ -5,7 +5,7 @@ import torch, argparse, warnings
 from torch.nn import MSELoss
 from pssr.models import ResUNet, ResUNetA, RDResUNet, RDResUNetA, SwinIR
 from pssr.data import ImageDataset, SlidingDataset, PairedImageDataset, PairedSlidingDataset
-from pssr.crappifiers import MultiCrappifier, Poisson, AdditiveGaussian, SaltPepper
+from pssr.crappifiers import MultiCrappifier, Poisson, AdditiveGaussian, SaltPepper, Blur
 from pssr.util import SSIMLoss, _tab_string
 from pssr.train import train_paired
 from pssr.predict import predict_images, test_metrics
@@ -34,9 +34,10 @@ def parse():
     parser.add_argument("-mp", "--model-path", type=str, help="specify model path")
 
     parser.add_argument("-e", "--epochs", type=int, default=10, help="specify number of training epochs")
-    parser.add_argument("-b", "--batch-size", type=int, default=16, help="specify batch size")
-    parser.add_argument("-lr", "--lr", type=float, default=1e-3, help="specify initial learning rate")
+    parser.add_argument("-b", "--batch-size", type=int, default=16, help="specify training batch size")
+    parser.add_argument("-lr", "--lr", type=float, default=1e-3, help="specify initial training learning rate")
     parser.add_argument("-g", "--gamma", type=float, default=0.7, help="specify learning rate decay factor")
+    parser.add_argument("-mix", "--mix", type=float, default=0.8, help="specify MS-SSIM loss mix factor")
     parser.add_argument("-mse", "--mse", action="store_true", help="use MSE loss instead of MS-SSIM loss")
 
     parser.add_argument("-cp", "--checkpoint", action="store_true", help="save model checkpoints during training")
@@ -62,10 +63,10 @@ def main():
     dataset = _handle_declaration(args.data_type, ["ImageDataset", "SlidingDataset", "PairedImageDataset", "PairedSlidingDataset"], 
         req=[f"'{item.strip()}'" for item in args.data_path.split(",")] + (["val_split=1"] if not args.train else []))
     
-    pssr_head(args.train, model, dataset, None, args.epochs, args.batch_size, args.lr, args.gamma, args.mse, args.checkpoint, args.save_losses, args.model_path)
+    pssr_head(args.train, model, dataset, None, args.epochs, args.batch_size, args.lr, args.gamma, args.mse, args.checkpoint, args.save_losses, args.model_path, mix=args.mix)
     print("\n")
 
-def pssr_head(train, model, dataset, device, epochs, batch_size, lr, gamma, loss_fn, checkpoint, losses, model_path, callbacks = None, stage = None, metrics = None):
+def pssr_head(train, model, dataset, device, epochs, batch_size, lr, gamma, loss_fn, checkpoint, losses, model_path, callbacks = None, stage = None, metrics = None, mix = None):
     # Shared code with napari plugin
     if stage is not None:
         global IS_NAPARI
@@ -98,11 +99,11 @@ def pssr_head(train, model, dataset, device, epochs, batch_size, lr, gamma, loss
     if model_path:
         if str(model_path) == ".": raise ValueError("Attempted to load model from checkpoint, but path is not provided")
         print(f"Loading {model.__class__.__name__} model from {model_path}")
-        model.load_state_dict(torch.load(model_path))
+        model.load_state_dict(torch.load(model_path, weights_only=True))
     
     if not IS_NAPARI:
         if train:
-            func = lambda : _train_meta(model, dataset, device, epochs, batch_size, lr, gamma, loss_fn, checkpoint, losses)
+            func = lambda : _train_meta(model, dataset, device, epochs, batch_size, lr, gamma, loss_fn, checkpoint, losses, mix=mix)
         else:
             func = lambda : _predict_meta(model, dataset, device)
     else:
@@ -113,9 +114,9 @@ def pssr_head(train, model, dataset, device, epochs, batch_size, lr, gamma, loss
     # Move model to cpu after completion, useful for napari
     _cpu_wrapper(func, model)
 
-def _train_meta(model, dataset, device, epochs, batch_size, lr, gamma, loss_fn, checkpoint, losses, callbacks = None, stage = None):
+def _train_meta(model, dataset, device, epochs, batch_size, lr, gamma, loss_fn, checkpoint, losses, callbacks = None, stage = None, mix = None):
     if not IS_NAPARI:
-        loss_fn = MSELoss() if loss_fn else SSIMLoss()
+        loss_fn = MSELoss() if loss_fn else SSIMLoss(channels=1 if dataset.n_frames is None else dataset.n_frames[-1], mix=mix if mix is not None else 0.8, win_size=min(_max_ssim_win(dataset.hr_res), 11))
     optim = torch.optim.AdamW(model.parameters(), lr=lr)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -187,6 +188,12 @@ def _cpu_wrapper(func, model):
         raise error
     model.to("cpu")
     return out
+
+def _max_ssim_win(hr_res : int):
+    size = (hr_res - 1) // 16
+    if size % 2 == 0:
+        size += 1
+    return size
 
 if __name__ == "__main__":
     main()

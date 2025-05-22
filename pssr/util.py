@@ -51,11 +51,11 @@ class SSIMLoss(nn.Module):
             x = self.mix*x + (1-self.mix)*l1
         return x
     
-def reassemble_sheets(pred_path : Path, lr_path : Path, lr_scale : int, overlap : int = 0, margin : int = 0, out_dir : str = "sheets"):
+def reassemble_sheets(pred_path : Path | dict[str, np.ndarray], lr_path : Path, lr_scale : int, overlap : int = 0, margin : int = 0, out_dir : str = "sheets"):
     r"""Reassembles image sheets from tiled images created during prediction by sliding datasets.
     
     Args:
-        pred_path (Path) : Path to predicted image tiles.
+        pred_path (Path) : Path to predicted image tiles. Can also be dict of named images from :func:`predict_images`.
 
         lr_path (Path) : Path to low-resolution image sheets.
 
@@ -78,13 +78,18 @@ def reassemble_sheets(pred_path : Path, lr_path : Path, lr_scale : int, overlap 
         raise ValueError(f"The value of margin cannot be greater than overlap. Given {margin} and {overlap} respectively.")
 
     sheet_files = glob.glob(f"{lr_path}/*.tif", recursive=True)
+    if len(sheet_files) == 0: raise FileExistsError("No files exist in lr_path.")
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
 
     outs = []
     for sheet in sheet_files:
-        files = sorted(glob.glob(f"{pred_path}/{sheet.split('/')[-1].split('.')[0]}*"), key=_sort_tiles)
-        batched = np.asarray([_frame_channel(Image.open(file)).squeeze() for file in files])
+        if type(pred_path) is dict:
+            files = sorted([file for file in list(pred_path.keys()) if "_".join(file.split("_")[:-2]) == sheet.split('/')[-1].split('.')[0]], key=_sort_tiles)
+            batched = np.asarray([pred_path[file].squeeze() for file in files])
+        else:
+            files = sorted(glob.glob(f"{pred_path}/{sheet.split('/')[-1].split('.')[0]}*"), key=_sort_tiles)
+            batched = np.asarray([_frame_channel(Image.open(file)).squeeze() for file in files])
 
         lr_shape = _frame_channel(Image.open(sheet)).shape
         
@@ -98,8 +103,13 @@ def reassemble_sheets(pred_path : Path, lr_path : Path, lr_scale : int, overlap 
             tifffile.imwrite(f"{out_dir}/{sheet.split('/')[-1].split('.')[0]}.tif", image)
         else:
             outs.append(image)
+    
+    if out_dir is None:
+        return outs
 
 def _sort_tiles(name : str):
+    if "." not in name:
+        name += "."
     parts = name.replace(".", "_").split("_")
     return int(parts[-2]), int(parts[-3])
 

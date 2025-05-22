@@ -1,14 +1,14 @@
 import torch, os, tifffile
 import torch.nn as nn
 import numpy as np
-from torch.utils.data import Dataset
+from torch.utils.data import DataLoader, Dataset
 from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 from tqdm import tqdm
 from PIL import Image
 from .data import _RandomIterIdx, _slice_center
 from .util import _get_callbacks, pixel_metric, normalize_preds
 
-def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", norm : bool = False, prefix : str = None, out_dir : str = "preds", callbacks = None):
+def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", batch_size = None, out_dir : str = "preds", norm : bool = False, prefix : str = None, dataloader_kwargs = None, callbacks = None):
     r"""Predicts high-resolution images from low-resolution images using a given model.
     
     Only uses evaluation images if applicable. Set ``val_split=1`` in dataset to use all images.
@@ -19,18 +19,24 @@ def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", n
         dataset (Dataset) : Dataset to load low-resolution images from.
 
         device (str) : Device to train model on. Default is "cpu".
+        
+        batch_size (int) : Batch size for dataloader. If None, use batch size of 1. Default is None.
+
+        out_dir (str) : Directory to save images. A value of None returns images, which can be passed to :func:`reassemble_sheets`. Default is "preds".
 
         norm (bool) : Whether to normalize prediction image intensities to ground truth, which must be provided by a paired dataset. Default is False.
 
         prefix (str) : Prefix to append at the beginning the output file name. Default is None.
 
-        out_dir (str) : Directory to save images. A value of None returns images. Default is "preds".
+        dataloader_kwargs (dict[str, Any]) : Keyword arguments for pytorch ``Dataloader``. Default is None.
 
         callbacks (list[Callable]) : Callbacks after each prediction. Can optionally specify an argument for locals to be passed. Default is None.
     
     Returns:
         images (list[np.ndarray]) : Returns predicted images if ``out_dir`` is None.
     """
+    dataloader_kwargs = {} if dataloader_kwargs is None else dataloader_kwargs
+    batch_size = 1 if batch_size is None else batch_size
     if norm and dataset.is_lr: raise ValueError("Dataset must be paired with high-low-resolution images for normalization.")
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
@@ -40,34 +46,40 @@ def predict_images(model : nn.Module, dataset : Dataset, device : str = "cpu", n
     model.to(device)
     model.eval()
 
-    progress = tqdm(dataset.val_idx)
-    outs = []
+    dataloader = DataLoader(dataset, batch_size, sampler=dataset.val_idx, **dataloader_kwargs)
+    progress = tqdm(dataloader)
+    outs, cur_idx = {}, 0
     with torch.no_grad():
-        for idx in progress:
-            lr = dataset[idx] if dataset.is_lr else dataset[idx][1]
-            lr = lr.to(device).unsqueeze(0)
+        for item in progress:
+            if dataset.is_lr:
+                lr = item
+            else:
+                hr, lr = item
+            lr = lr.to(device)
 
             hr_hat = model(lr)
-            hr_hat = _pred_array(hr_hat).squeeze(0)
+            hr_hat = _pred_array(hr_hat)
             
             if norm:
-                _, hr_hat = normalize_preds(_pred_array(dataset[idx][0]), hr_hat)
+                _, hr_hat = normalize_preds(_pred_array(hr), hr_hat)
 
             crop_res = dataset.crop_res if not dataset.is_lr else dataset.crop_res * (hr_hat.shape[-1]//lr.shape[-1])
-            hr_hat = hr_hat[:,:crop_res,:crop_res]
+            hr_hat = hr_hat[:,:,:crop_res,:crop_res]
 
-            if out_dir:
-                tifffile.imwrite(f"{out_dir}/{prefix+'_' if prefix else ''}{dataset._get_name(idx)}.tif", np.asarray(hr_hat))
-            else:
-                outs.append(hr_hat)
-
-            for idx, callback in enumerate(callbacks):
-                if callback_locals[idx]:
-                    callback(locals())
+            for batch_idx, image_idx in enumerate(range(cur_idx, min(cur_idx+batch_size, len(dataset.val_idx)))):
+                if out_dir:
+                    tifffile.imwrite(f"{out_dir}/{prefix+'_' if prefix else ''}{dataset._get_name(image_idx)}.tif", hr_hat[batch_idx])
                 else:
-                    callback()
+                    outs[dataset._get_name(image_idx)] = hr_hat[batch_idx]
 
-    if not out_dir:
+                for idx, callback in enumerate(callbacks):
+                    if callback_locals[idx]:
+                        callback(locals())
+                    else:
+                        callback()
+            cur_idx += batch_size
+
+    if out_dir is None:
         return outs
 
 def predict_collage(model : nn.Module, dataset : Dataset, device : str = "cpu", norm : bool = True, n_images : int = None, prefix : str = None, out_dir : str = "preds", callbacks = None):
