@@ -11,12 +11,12 @@ Before installing **PSSR2**, you may want to create an environment for it with
 
 .. code-block:: console
 
-   $ conda env create pssr
+   $ conda create -n pssr python=3.9
 
-or the equivalent for any other environment manager if you chose to do so.
+or the equivalent for any other environment manager if you choose to do so.
 
 .. note::
-
+   Here,``-n`` specifies the environment name, which is ``pssr`` in this example.
    The package name of **PSSR2** is ``pssr``! All modules are referenced as such.
 
 You can easily install **PSSR2** via the ``pip`` package manager:
@@ -25,7 +25,9 @@ You can easily install **PSSR2** via the ``pip`` package manager:
 
    $ pip install pssr
 
-All package versions are also available on the `GitHub <https://github.com/ucsdmanorlab/PSSR>`_ repository:
+All package versions are also available on the `GitHub <https://github.com/ucsdmanorlab/PSSR>`_ repository.
+When installing PSSR2 from a GitHub wheel file, replace the placeholder filename -x.x.x-
+with the exact version you want to install.
 
 .. code-block:: console
 
@@ -38,7 +40,7 @@ Running the CLI
 The **PSSR2** CLI is included with package installation and can be run with the ``pssr`` command in the command line.
 It provides a simple interface for using **PSSR2** without having to write any code, and covers most basic use cases.
 
-The CLI can run in either *train* or *predict* mode. It takes in a number of arugments, described below.
+The CLI can run in either *train* or *predict* mode. It takes in a number of arguments, described below.
 
 .. dropdown:: CLI Arguments
 
@@ -69,15 +71,17 @@ A model can be trained by running
 
 where ``your/path`` is replaced with the path of your training dataset (folder containing *high-resolution* images/image sheets).
 
-The *low-resolution* images will generated via :doc:`../reference/crappifiers/Crappifier`, which is explained in :doc:`principles`.
+.. note::
+   Find the path to the folder that contains your images using Get Info on macOS or Properties on Linux and Windows. Use that folder path as the value for the -dp argument.
+
+The *low-resolution* images will be generated via :doc:`../reference/crappifiers/Crappifier`, which is explained in :doc:`principles`.
 
 The trained model will be saved in your current directory.
 
-By default the dataset used is :doc:`../reference/data/ImageDataset`.
+By default, the dataset used is :doc:`../reference/data/ImageDataset`.
 If your dataset contains image sheets (e.g. .czi files) rather than many images, you can use :doc:`../reference/data/SlidingDataset` by adding the argument ``-dt SlidingDataset``.
 The batch size can also be changed with the ``-b`` argument.
 
-|
 
 Predicting
 +++++++++++
@@ -94,7 +98,7 @@ The `-mp` argument must be set to the path of your trained model. The predicted 
    ``hr_res`` must be lowered to the size of the *low-resolution* image and ``lr_scale`` must be set to -1.
 
 If a :doc:`../reference/data/PairedImageDataset` instance with *high-low-resolution* image pairs is given as the dataset, additional performance metrics will be calculated.
-To define both *high-resolution* and *low-resolution* data paths, provide both paths in order separated by a comma for the ``-dp`` argument
+To define both *high-resolution* and *low-resolution* data paths, provide both paths in order, separated by a comma for the ``-dp`` argument
 
 .. code-block:: console
 
@@ -109,7 +113,7 @@ then *low-resolution* images will be generated via :doc:`../reference/crappifier
 Next Steps
 -----------
 
-If you are not familar with **PSSR2** or super-resolution, understand the :doc:`principles`.
+If you are not familiar with **PSSR2** or super-resolution, understand the :doc:`principles`.
 
 For usage of **PSSR2** beyond the extents of the demo, learn how to implement your own :doc:`workflow <workflow>`.
 
