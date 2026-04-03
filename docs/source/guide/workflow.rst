@@ -6,6 +6,10 @@ PSSR2 Workflow
    This section explains how to use an example **PSSR2** workflow, similar to that implemented in the CLI.
    It does not necessarily apply to all use cases and is meant to be expanded upon.
 
+.. note::
+
+   PSSR2 training currently supports only 8-bit images. If your images are 16-bit
+   or another format, convert them to 8-bit before training.
 
 Training a Basic Model
 -----------------------
@@ -27,7 +31,7 @@ Before diving into the code, we will first specify our imports.
 Defining Objects
 +++++++++++++++++
 
-Before we define our dataset we must first define our :doc:`../reference/crappifiers/Crappifier`, as it is utilized by our dataset.
+Before we define our dataset, we must first define our :doc:`../reference/crappifiers/Crappifier`, as it is utilized by our dataset.
 
 .. code-block:: python
 
@@ -54,7 +58,7 @@ generate *low-resolution* images ``lr_scale=4`` times smaller than the *high-res
 
 .. note::
 
-   Users are advised to keep image resolutions to a power of 2 even if the raw input images have a different size.
+   Users are advised to keep image resolutions to a power of 2, even if the raw input images have a different size.
    This is elaborated in :doc:`../reference/models`.
 
 The last thing we need to define before training is our model.
@@ -69,7 +73,13 @@ The last thing we need to define before training is our model.
 
 This sets the ``model`` variable to an instance of :doc:`../reference/models/ResUNet`.
 The ``scale`` argument sets the factor by which the input *low-resolution* images must be upscaled by, and should be equivalent to the ``lr_scale`` argument in our dataset.
-The other arguments specify the number of channels per hidden layer, and the depth of each hidden layer (number of hidden convolutions).
+The other arguments specify the number of channels per hidden layer and the depth of each hidden layer (number of hidden convolutions).
+
+.. note::
+
+   When using ``SlidingDataset``, the model input and output channels must match
+   the dataset setting ``n_frames``. For example, if ``n_frames=[10,1]``, then
+   the model should use ``channels=[10,1]``.
 
 |
 
