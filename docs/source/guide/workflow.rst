@@ -26,6 +26,11 @@ Before diving into the code, we will first specify our imports.
    from pssr.train import train_paired
    from torch.optim.lr_scheduler import ReduceLROnPlateau
 
+.. note::
+
+   If a different crappifier or model architecture is used, the corresponding
+   classes should also be imported at the beginning of the script.
+
 |
 
 Defining Objects
@@ -145,6 +150,11 @@ We can now train our model using the :doc:`../reference/train/train_paired` func
       dataloader_kwargs=kwargs,
    )
 
+.. note::
+
+   The output directories for collages and model checkpoints may also be
+   specified here using the ``collage_dir`` and ``checkpoint_dir`` arguments.
+
 While training, various metrics will be provided along with the loss to easily monitor progress.
 
 Additionally, at the end of every epoch a collage will be saved to the ``preds`` folder containing
@@ -170,7 +180,7 @@ Using the Model for Predictions
 
 We now have our trained model, which takes in *low-resolution* input images and outputs upscaled *high-resolution* images.
 
-There are now two things we can do with our trained model, use it for predictions, or benchmark it.
+There are now two things we can do with our trained model: use it for predictions or benchmark it.
 
 If you decide to run your model predictions in a separate file, you will want to load your trained model before proceeding with
 
