@@ -153,10 +153,9 @@ def train_paired(
             torch.save(model.state_dict(), f"{checkpoint_dir}/checkpoint{epoch}_{model.__class__.__name__}_{val_loss:.4f}.pth")
 
         if collage_dir:
-            collage = _collage_preds(*last_full_val, crop_res=dataset.crop_res, lr_scale=dataset.lr_scale)
+            collage = _collage_preds(*last_full_val, crop_res=dataset.crop_res, lr_scale=dataset.lr_scale, norm = True)
+            print(collage.max(), collage.min())
             os.makedirs(collage_dir, exist_ok=True)
-            #change normalization to 8 bit for png
-            collage = normalization_collage(collage)
             collage.save(f"{collage_dir}/epoch{epoch}_loss{val_loss:.4f}.png")
 
         if scheduler:
@@ -166,13 +165,6 @@ def train_paired(
                 scheduler.step()
 
     return train_losses, val_losses
-
-def normalization_collage(collage):
-    # Normalize to 8 bit for png saving
-    collage = np.asarray(collage)
-    collage = collage / (collage.max() / 255)
-    collage = Image.fromarray(collage.astype(np.uint8))
-    return collage
 
 def train_crappifier(
         model : nn.Module,
@@ -318,7 +310,7 @@ def train_crappifier(
             torch.save(model.state_dict(), f"{checkpoint_dir}/checkpoint{epoch}_{model.__class__.__name__}_{val_loss:.4f}.pth")
 
         if collage_dir:
-            collage = _collage_preds(*last_full_val, crop_res=dataset.crop_res, lr_scale=dataset.lr_scale)
+            collage = _collage_preds(*last_full_val, crop_res=dataset.crop_res, lr_scale=dataset.lr_scale, norm = True)
             os.makedirs(collage_dir, exist_ok=True)
             collage.save(f"{collage_dir}/epoch{epoch}_loss{val_loss:.4f}.png")
 
