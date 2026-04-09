@@ -63,7 +63,7 @@ class ImageDataset(Dataset):
             self.extra_hr_files = None
 
         lr_scale = None if lr_scale == -1 else lr_scale
-        self.mode = "L"
+        self.mode = "L" # what if I change this to "I:16" for 16 bit grayscale?
         self.n_frames = _get_n_frames(n_frames)
 
         # TODO: Decrease loading times for large datasets
@@ -129,7 +129,7 @@ class ImageDataset(Dataset):
         image_idx, idx = _get_image_idx(idx, self.slices)
         return self.hr_files[image_idx].split('.')[0] + (f"_{idx}" if self.n_frames is not None else "")
 
-class SlidingDataset(Dataset):
+class SlidingDataset(Dataset): #Need to define argument inter_upscale 
     def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), overlap : int = 128, n_frames : list[int] = -1, slide : bool = False, stack : str = "TZ", extension : str = "tif", preload : bool = True, val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, extra_path : Path = None, extra_scale : int = 1, transforms : list[torch.nn.Module] = None):
         r"""Training dataset for loading high-resolution image tiles from image sheets and returning high-low-resolution pairs, the latter receiving crappification.
 
@@ -169,6 +169,8 @@ class SlidingDataset(Dataset):
             extra_scale (int) : Scale factor for extra images. Default is 1.
 
             transforms (list[nn.Module]) : Additional final data transforms to apply. Default is None.
+            
+            inter_upscale (bool) : Whether to upsample low-resolution images back to high-resolution size for calculating loss, which has been shown to improve performance in some cases. Not used in LR mode. Default is False.
         """
         super().__init__()
         self.path = Path(path) if type(path) is str else path
@@ -195,7 +197,7 @@ class SlidingDataset(Dataset):
         self.stack = stack.upper()
         
         lr_scale = None if lr_scale == -1 else lr_scale
-        self.mode = "L"
+        self.mode = "L" #I:16 too
         self.n_frames = _get_n_frames(n_frames)
         self.slide = slide
         
@@ -303,7 +305,7 @@ class PairedImageDataset(Dataset):
             if not len(files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{path}".')
         if len(self.hr_files) != len(self.lr_files): raise FileNotFoundError(f"Mismatch between amounts of high-low-resolution images. Found {len(self.hr_files)} high-resolution and {len(self.lr_files)} low-resolution images.")
 
-        self.mode = "L"
+        self.mode = "L" 
         self.n_frames = _get_n_frames(n_frames)
 
         self.slices, max_size = [], 0
@@ -460,7 +462,8 @@ def preprocess_dataset(dataset : Dataset, preprocess_hr : bool = False, out_dir 
     progress = tqdm(range(len(dataset)))
     for idx in progress:
         hr, lr = dataset.__getitem__(idx, pp=True)
-        hr, lr = np.asarray(hr, dtype=np.uint8), np.asarray(lr, dtype=np.uint8)
+        hr, lr = np.asarray(hr), np.asarray(lr) 
+        # gets cast down to 8 bit here, I wonder if I just change it to uint16 will it fix the issue. 
         
         tifffile.imwrite(f"{out_dir}/lr/{dataset._get_name(idx)}.tif", lr)
         if preprocess_hr:
@@ -616,7 +619,7 @@ def _load_sheet(path, file, stack, mode):
         image = np.reshape(image, [-1, image.shape[-2], image.shape[-1]])
         if image.max() != 0:
             image = image / (image.max() / 255)
-        return image.astype(np.uint8)
+        return image
     elif extension in ("tif", "tiff"):
         image = tifffile.imread(Path(path, file))
         if len(image.shape) < 3:
@@ -640,9 +643,9 @@ def _sliding_window(image, size, stride, n_frames, n_slices, idx, slide):
 def _frame_channel(image, mode = "L"):
     # Create frame dimension
     if image.n_frames > 1:
-        image = np.stack([np.asarray(_seek_channel(image, frame).convert(mode), dtype=np.uint8) for frame in range(image.n_frames)])
+        image = np.stack([np.asarray(_seek_channel(image, frame).convert(mode)) for frame in range(image.n_frames)])
     else:
-        image = np.asarray(image.convert(mode), dtype=np.uint8)[np.newaxis, :, :]
+        image = np.asarray(image.convert(mode))[np.newaxis, :, :]
     
     return image
 
