@@ -10,7 +10,21 @@ from .util import _force_list
 # TODO: dataset call: return (hr, lr), extra or hr, lr
 
 class ImageDataset(Dataset):
-    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), n_frames : list[int] = -1, extension : str = "tif", val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, extra_path : Path = None, extra_scale : int = 1, transforms : list[torch.nn.Module] = None):
+    def __init__(
+        self, 
+        path : Path, 
+        hr_res : int = 512, 
+        lr_scale : int = 4, 
+        crappifier : Crappifier = Poisson(), 
+        n_frames : list[int] = -1, 
+        extension : str = "tif", 
+        val_split : float = 0.1, 
+        rotation : bool = True, 
+        split_seed : int = 0, 
+        extra_path : Path = None, 
+        extra_scale : int = 1, 
+        transforms : list[torch.nn.Module] = None, 
+        bit_depth : int = 8, ):
         r"""Training dataset for loading high-resolution images from individual files and returning high-low-resolution pairs, the latter receiving crappification.
 
         Dataset used for pre-tiled image files. For image sheets (e.g. .czi files), use :class:`SlidingDataset`.
@@ -42,6 +56,8 @@ class ImageDataset(Dataset):
             extra_scale (int) : Scale factor for extra images. Default is 1.
 
             transforms (list[nn.Module]) : Additional final data transforms to apply. Default is None.
+
+            bit_depth (int) : Bit depth of images for normalization. Default is 8. Supported values are 8 and 16.
         """
         super().__init__()
         self.path = Path(path) if type(path) is str else path
@@ -63,7 +79,11 @@ class ImageDataset(Dataset):
             self.extra_hr_files = None
 
         lr_scale = None if lr_scale == -1 else lr_scale
-        self.mode = "L" # what if I change this to "I:16" for 16 bit grayscale?
+        ## change to support 16 bit
+        self.bit_depth = bit_depth
+        self.image_range = 65535 if bit_depth == 16 else 255
+        ##
+        self.mode = "L" 
         self.n_frames = _get_n_frames(n_frames)
 
         # TODO: Decrease loading times for large datasets
@@ -107,7 +127,7 @@ class ImageDataset(Dataset):
         
         cur_rot = [bool(random.getrandbits(1)), random.choice((1,2,(1,2)))] if self.rotation and not is_val else False
 
-        out =  _gen_pair(hr, self.hr_res, self.lr_scale, cur_rot, self.crappifier, self.transforms, self.n_frames) if not self.is_lr else _ready_lr(hr, self.hr_res//self.lr_scale, self.transforms)
+        out =  _gen_pair(hr, self.hr_res, self.lr_scale, cur_rot, self.crappifier, self.transforms, self.n_frames, self.image_range) if not self.is_lr else _ready_lr(hr, self.hr_res//self.lr_scale, self.transforms)
 
         if self.extra_hr_files is not None:
             extra = _load_image(self.extra_path, self.extra_hr_files[image_idx], self.mode, max(self.n_frames) if self.n_frames is not None else None, self.slices[image_idx], idx)
@@ -130,7 +150,25 @@ class ImageDataset(Dataset):
         return self.hr_files[image_idx].split('.')[0] + (f"_{idx}" if self.n_frames is not None else "")
 
 class SlidingDataset(Dataset): #Need to define argument inter_upscale 
-    def __init__(self, path : Path, hr_res : int = 512, lr_scale : int = 4, crappifier : Crappifier = Poisson(), overlap : int = 128, n_frames : list[int] = -1, slide : bool = False, stack : str = "TZ", extension : str = "tif", preload : bool = True, val_split : float = 0.1, rotation : bool = True, split_seed : int = 0, extra_path : Path = None, extra_scale : int = 1, transforms : list[torch.nn.Module] = None):
+    def __init__(
+        self, 
+        path : Path, 
+        hr_res : int = 512, 
+        lr_scale : int = 4, 
+        crappifier : Crappifier = Poisson(), 
+        overlap : int = 128, 
+        n_frames : list[int] = -1, 
+        slide : bool = False, 
+        stack : str = "TZ", 
+        extension : str = "tif", 
+        preload : bool = True, 
+        val_split : float = 0.1, 
+        rotation : bool = True, 
+        split_seed : int = 0, 
+        extra_path : Path = None, 
+        extra_scale : int = 1, 
+        transforms : list[torch.nn.Module] = None, 
+        bit_depth : int = 8, ):
         r"""Training dataset for loading high-resolution image tiles from image sheets and returning high-low-resolution pairs, the latter receiving crappification.
 
         Dataset used for image sheets (e.g. .czi files). For pre-tiled image files, use :class:`ImageDataset`.
@@ -197,6 +235,8 @@ class SlidingDataset(Dataset): #Need to define argument inter_upscale
         self.stack = stack.upper()
         
         lr_scale = None if lr_scale == -1 else lr_scale
+        self.bit_depth = bit_depth
+        self.image_range = 65535 if bit_depth == 16 else 255
         self.mode = "L" #I:16 too
         self.n_frames = _get_n_frames(n_frames)
         self.slide = slide
@@ -245,7 +285,7 @@ class SlidingDataset(Dataset): #Need to define argument inter_upscale
 
         cur_rot = [bool(random.getrandbits(1)), random.choice((1,2,(1,2)))] if self.rotation and not is_val else False
 
-        out = _gen_pair(hr, self.hr_res, self.lr_scale, cur_rot, self.crappifier, self.transforms, self.n_frames) if not self.is_lr else _ready_lr(hr, self.hr_res, self.transforms)
+        out = _gen_pair(hr, self.hr_res, self.lr_scale, cur_rot, self.crappifier, self.transforms, self.n_frames, self.image_range) if not self.is_lr else _ready_lr(hr, self.hr_res, self.transforms)
 
         if self.extra_hr_files is not None:
             extra = _sliding_window(self.extra_preload[image_idx] if self.extra_preload else _load_sheet(self.extra_path, self.extra_hr_files[image_idx], self.stack, self.mode), self.hr_res*self.extra_scale, self.stride*self.extra_scale, max(self.n_frames) if self.n_frames is not None else None, self.slices[image_idx], idx, self.slide)
@@ -268,7 +308,7 @@ class SlidingDataset(Dataset): #Need to define argument inter_upscale
         return f"{self.hr_files[image_idx].split('.')[0]}_{idx//self.slices[image_idx]}_{idx%self.slices[image_idx]}"
 
 class PairedImageDataset(Dataset):
-    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, n_frames : list[int] = -1, extension : str = "tif", val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None):
+    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, n_frames : list[int] = -1, extension : str = "tif", val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None, bit_depth : int = 8):
         r"""Testing dataset for loading paired high-low-resolution images without using crappification. Can also be used for approximating :class:`Crappifier` parameters.
 
         Args:
@@ -305,6 +345,8 @@ class PairedImageDataset(Dataset):
             if not len(files) > 0: raise FileNotFoundError(f'No .{extension} files exist in path "{path}".')
         if len(self.hr_files) != len(self.lr_files): raise FileNotFoundError(f"Mismatch between amounts of high-low-resolution images. Found {len(self.hr_files)} high-resolution and {len(self.lr_files)} low-resolution images.")
 
+        self.bit_depth = bit_depth
+        self.image_range = 65535 if bit_depth == 16 else 255
         self.mode = "L" 
         self.n_frames = _get_n_frames(n_frames)
 
@@ -348,7 +390,7 @@ class PairedImageDataset(Dataset):
         return self.lr_files[image_idx].split('.')[0] + (f"_{idx}" if self.n_frames is not None else "")
 
 class PairedSlidingDataset(Dataset):
-    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, overlap : int = 128, n_frames : list[int] = -1, slide : bool = False, stack : str = "TZ", extension : str = "tif", preload : bool = True, val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None):
+    def __init__(self, hr_path : Path, lr_path : Path, hr_res : int = 512, lr_scale : int = 4, overlap : int = 128, n_frames : list[int] = -1, slide : bool = False, stack : str = "TZ", extension : str = "tif", preload : bool = True, val_split : float = 1, rotation : bool = True, split_seed : int = None, transforms : list[torch.nn.Module] = None, bit_depth : int = 8):
         r"""Testing dataset for loading high-low-resolution image tiles from image sheets without crappification. Can also be used for approximating :class:`Crappifier` parameters.
 
         Dataset used for image sheets (e.g. .czi files). For pre-tiled image files, use :class:`ImageDataset`.
@@ -399,6 +441,8 @@ class PairedSlidingDataset(Dataset):
         if not hr_res > overlap: raise ValueError(f"hr_res must be greater than overlap. Given values are {hr_res} and {overlap} respectively.")
         self.stride = hr_res - overlap
         self.stack = stack.upper()
+        self.bit_depth = bit_depth
+        self.image_range = 65535 if bit_depth == 16 else 255
         self.mode = "L"
         self.n_frames = _get_n_frames(n_frames)
         self.slide = slide
@@ -471,7 +515,7 @@ def preprocess_dataset(dataset : Dataset, preprocess_hr : bool = False, out_dir 
 
 # TODO: crappify_images
 
-def _gen_pair(hr, hr_res, lr_scale, rotation, crappifier, transforms, n_frames):
+def _gen_pair(hr, hr_res, lr_scale, rotation, crappifier, transforms, n_frames, image_range):
     r"""Creates training ready pair of images from a single high-resolution image.
     """
     hr = _square_crop(hr, hr_res)
@@ -487,7 +531,7 @@ def _gen_pair(hr, hr_res, lr_scale, rotation, crappifier, transforms, n_frames):
     if crappifier is not None:
         # Allows either Crappifier or nn.Module (or any callable function) to be used as a crappifier
         lr = crappifier.crappify(lr) if issubclass(type(crappifier), Crappifier) else crappifier(lr)
-        lr = np.clip(lr.round(), 0, 255)
+        lr = np.clip(lr.round(), 0, image_range)
 
     if n_frames is not None and n_frames[0] != n_frames[1]:
         if not n_frames[1] > hr.shape[-3]:
