@@ -31,6 +31,7 @@ def train_paired(
         clamp : bool = False,
         dataloader_kwargs = None,
         callbacks = None,
+        bit_depth : int = 8,
     ):
     r"""Trains model on paired high-low-resolution crappified data.
 
@@ -70,7 +71,7 @@ def train_paired(
     """
     dataloader_kwargs = {} if dataloader_kwargs is None else dataloader_kwargs
     callbacks, callback_locals = _get_callbacks(callbacks)
-    image_range = 255
+    image_range = get_image_depth(bit_depth)
 
     train_dataloader = DataLoader(dataset, batch_size, sampler=_RandomIterIdx(_invert_idx(dataset.val_idx, len(dataset))), **dataloader_kwargs)
     val_dataloader = DataLoader(dataset, batch_size, sampler=_RandomIterIdx(dataset.val_idx, seed=True), **dataloader_kwargs)
@@ -180,7 +181,8 @@ def train_crappifier(
         checkpoint_dir : str = None,
         collage_dir : str = None,
         clamp : bool = False,
-        dataloader_kwargs = None
+        dataloader_kwargs = None, 
+        bit_depth : int = 8,
     ):
     r"""EXPERIMENTAL, NOT CURRENTLY RECOMMENDED FOR MOST WORKFLOWS!
     
@@ -226,7 +228,7 @@ def train_crappifier(
     """
     dataloader_kwargs = {} if dataloader_kwargs is None else dataloader_kwargs
     callbacks, callback_locals = _get_callbacks(callbacks)
-    image_range = 255
+    image_range = get_image_depth(bit_depth)
 
     train_dataloader = DataLoader(dataset, batch_size, sampler=_RandomIterIdx(_invert_idx(dataset.val_idx, len(dataset))), **dataloader_kwargs)
     val_dataloader = DataLoader(dataset, batch_size, sampler=_RandomIterIdx(dataset.val_idx, seed=True), **dataloader_kwargs)
@@ -340,17 +342,18 @@ def approximate_crappifier(crappifier : Crappifier, space : list[Dimension], dat
     n_samples = len(dataset) if max_images is None else min(max_images, len(dataset))
     opt_kwargs = {} if opt_kwargs is None else opt_kwargs
 
-    objective = _Crappifier_Objective(crappifier, dataset, n_samples).sample
+    objective = _Crappifier_Objective(crappifier, dataset, n_samples, bit_depth = bit_depth).sample # type: ignore
 
     result = gp_minimize(objective, space, **opt_kwargs)
 
     return result
 
 class _Crappifier_Objective():
-    def __init__(self, crappifier : Crappifier, dataset : Dataset, n_samples : int):
+    def __init__(self, crappifier : Crappifier, dataset : Dataset, n_samples : int, bit_depth : int = 8):
         self.crappifier = crappifier
         self.dataset = dataset
         self.n_samples = n_samples
+        self.bit_depth = bit_depth
 
     def sample(self, params):
         sample_idx = list(range(len(self.dataset)))
@@ -360,7 +363,8 @@ class _Crappifier_Objective():
         for idx in sample_idx[:self.n_samples]:
             # Grab gound truth high and low resolution images
             hr, lr = self.dataset[idx]
-            hr, lr = np.asarray(hr, dtype=np.uint8), np.asarray(lr, dtype=np.uint8)
+            data_type = numpy_dtype(self.bit_depth)
+            hr, lr = np.asarray(hr, dtype=data_type), np.asarray(lr, dtype=data_type)
             
             # Downsampled high resolution image is the baseline for noise profile comparison
             ds_hr = np.stack([np.asarray(Image.fromarray(channel).resize(lr.shape[-2:], Image.Resampling.BILINEAR)) for channel in hr])
@@ -401,3 +405,20 @@ def _crappifier_loss(lr, lr_hat, ds_hr, hist_fn, ssim_loss):
 
     loss = dist_error * profile_error
     return loss
+
+##Helper for hard code of 8 bti
+def get_image_depth(bit_depth):
+    if bit_depth == 8:
+        return 255
+    elif bit_depth == 16:
+        return 65535
+    else:
+        raise ValueError("Unsupported bit depth. Only 8 and 16 are supported.")
+    
+def numpy_dtype(bit_depth):
+    if bit_depth == 8:
+        return np.uint8
+    elif bit_depth == 16:
+        return np.uint16
+    else:
+        raise ValueError("Unsupported bit depth. Only 8 and 16 are supported.")
