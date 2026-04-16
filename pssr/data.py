@@ -83,7 +83,7 @@ class ImageDataset(Dataset):
         self.bit_depth = bit_depth
         self.image_range = 65535 if bit_depth == 16 else 255
         ##
-        self.mode = "L" 
+        self.mode = None if bit_depth == 16 else "L"
         self.n_frames = _get_n_frames(n_frames)
 
         # TODO: Decrease loading times for large datasets
@@ -237,7 +237,7 @@ class SlidingDataset(Dataset): #Need to define argument inter_upscale
         lr_scale = None if lr_scale == -1 else lr_scale
         self.bit_depth = bit_depth
         self.image_range = 65535 if bit_depth == 16 else 255
-        self.mode = "L" #I:16 too
+        self.mode = None if bit_depth == 16 else "L" #I:16 too
         self.n_frames = _get_n_frames(n_frames)
         self.slide = slide
         
@@ -347,7 +347,7 @@ class PairedImageDataset(Dataset):
 
         self.bit_depth = bit_depth
         self.image_range = 65535 if bit_depth == 16 else 255
-        self.mode = "L" 
+        self.mode = None if bit_depth == 16 else "L"
         self.n_frames = _get_n_frames(n_frames)
 
         self.slices, max_size = [], 0
@@ -443,7 +443,7 @@ class PairedSlidingDataset(Dataset):
         self.stack = stack.upper()
         self.bit_depth = bit_depth
         self.image_range = 65535 if bit_depth == 16 else 255
-        self.mode = "L"
+        self.mode = None if bit_depth == 16 else "L"
         self.n_frames = _get_n_frames(n_frames)
         self.slide = slide
 
@@ -662,7 +662,8 @@ def _load_sheet(path, file, stack, mode):
         # Flatten channel dimensions
         image = np.reshape(image, [-1, image.shape[-2], image.shape[-1]])
         if image.max() != 0:
-            image = image / (image.max() / 255)
+            image_range = 65535 if mode is None else 255
+            image = image / (image.max() / image_range)
         return image
     elif extension in ("tif", "tiff"):
         image = tifffile.imread(Path(path, file))
@@ -686,10 +687,16 @@ def _sliding_window(image, size, stride, n_frames, n_slices, idx, slide):
 
 def _frame_channel(image, mode = "L"):
     # Create frame dimension
-    if image.n_frames > 1:
-        image = np.stack([np.asarray(_seek_channel(image, frame).convert(mode)) for frame in range(image.n_frames)])
+    if mode is None:
+        if image.n_frames > 1:
+            image = np.stack([np.asarray(_seek_channel(image, frame)) for frame in range(image.n_frames)])
+        else:
+            image = np.asarray(image)[np.newaxis, :, :]
     else:
-        image = np.asarray(image.convert(mode))[np.newaxis, :, :]
+        if image.n_frames > 1:
+            image = np.stack([np.asarray(_seek_channel(image, frame).convert(mode)) for frame in range(image.n_frames)])
+        else:
+            image = np.asarray(image.convert(mode))[np.newaxis, :, :]
     
     return image
 
