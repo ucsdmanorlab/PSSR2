@@ -63,6 +63,8 @@ def train_paired(
         dataloader_kwargs (dict[str, Any]) : Keyword arguments for pytorch ``Dataloader``. Default is None.
 
         callbacks (list[Callable]) : Callbacks after each training batch. Can optionally specify an argument for locals to be passed. Default is None.
+        
+        bit_depth (int) : Bit depth of images for normalization. Default is 8. Supported values are 8 and 16.
 
     Returns:
         train_losses (list[float]) : List of losses during training.
@@ -221,6 +223,8 @@ def train_crappifier(
 
         callbacks (list[Callable]) : Callbacks after each training batch. Can optionally specify an argument for locals to be passed. Default is None.
 
+        bit_depth (int) : Bit depth of images for normalization. Default is 8. Supported values are 8 and 16.
+        
     Returns:
         train_losses (list[float]) : List of losses during training.
 
@@ -324,7 +328,14 @@ def train_crappifier(
 
     return train_losses, val_losses
 
-def approximate_crappifier(crappifier : Crappifier, space : list[Dimension], dataset : Dataset, max_images = None, opt_kwargs = None):
+def approximate_crappifier(
+    crappifier : Crappifier, 
+    space : list[Dimension], 
+    dataset : Dataset, 
+    max_images = None, 
+    opt_kwargs = None, 
+    bit_depth: int = 8, 
+    ):
     r"""Approximates :class:`Crappifier` parameters from ground truth paired images. Uses Bayesian optimization because Crappifier functions are not differentiable.
 
     Args:
@@ -337,6 +348,8 @@ def approximate_crappifier(crappifier : Crappifier, space : list[Dimension], dat
         max_images (int) : Number of image samples to average computations over for each optimization step. Default is None, using all images in dataset.
 
         opt_kwargs (dict[str, Any]) : Keyword arguments for skopt ``gp_minimize``. Default is None
+        
+        bit_depth (int) : Bit depth of images for normalization. Default is 8. Supported values are 8 and 16.
     """
     space = [space] if type(space) is not list else space
     n_samples = len(dataset) if max_images is None else min(max_images, len(dataset))
@@ -377,7 +390,8 @@ class _Crappifier_Objective():
             pred_profile = lr_hat.astype(np.float32) - ds_hr.astype(np.float32)
             target_profile = lr.astype(np.float32) - ds_hr.astype(np.float32)
 
-            bins = np.arange(-256, 256)
+            image_range = get_image_depth(self.bit_depth)
+            bins = np.arange(-image_range, image_range + 1)
             pred_dist, _ = np.histogram(pred_profile.flatten(), bins)
             target_dist, _ = np.histogram(target_profile.flatten(), bins)
             
@@ -406,7 +420,7 @@ def _crappifier_loss(lr, lr_hat, ds_hr, hist_fn, ssim_loss):
     loss = dist_error * profile_error
     return loss
 
-##Helper for hard code of 8 bti
+##Helper for hard code of 8 bit
 def get_image_depth(bit_depth):
     if bit_depth == 8:
         return 255
